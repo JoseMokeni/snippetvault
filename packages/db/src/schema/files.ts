@@ -11,8 +11,8 @@ export const files = pgTable('files', {
   content: text('content').notNull(),
   language: text('language').notNull(),
   order: integer('order').notNull().default(0),
-  createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 }, (table) => ({
   snippetIdIdx: index('idx_files_snippet_id').on(table.snippetId),
   orderIdx: index('idx_files_order').on(table.snippetId, table.order),

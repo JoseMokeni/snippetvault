@@ -17,8 +17,8 @@ export const snippets = pgTable('snippets', {
   isFavorite: boolean('is_favorite').notNull().default(false),
   isPublic: boolean('is_public').notNull().default(false),
   slug: text('slug'),
-  createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 }, (table) => ({
   userIdIdx: index('idx_snippets_user_id').on(table.userId),
   languageIdx: index('idx_snippets_language').on(table.language),

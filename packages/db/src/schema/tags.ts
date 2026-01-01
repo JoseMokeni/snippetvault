@@ -10,7 +10,7 @@ export const tags = pgTable('tags', {
     .references(() => users.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   color: text('color'),
-  createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
 }, (table) => ({
   userIdIdx: index('idx_tags_user_id').on(table.userId),
   nameIdx: index('idx_tags_name').on(table.userId, table.name),

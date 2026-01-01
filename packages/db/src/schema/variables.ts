@@ -1,4 +1,4 @@
-import { pgTable, text, integer, index } from 'drizzle-orm/pg-core'
+import { pgTable, text, integer, timestamp, index } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 import { snippets } from './snippets'
 
@@ -11,6 +11,8 @@ export const variables = pgTable('variables', {
   defaultValue: text('default_value').notNull(),
   description: text('description'),
   order: integer('order').notNull().default(0),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 }, (table) => ({
   snippetIdIdx: index('idx_variables_snippet_id').on(table.snippetId),
 }))
