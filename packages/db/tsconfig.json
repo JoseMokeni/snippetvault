@@ -4,7 +4,6 @@
     "module": "ESNext",
     "lib": ["ES2022"],
     "moduleResolution": "bundler",
-    "types": ["bun-types"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
