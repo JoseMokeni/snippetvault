@@ -1,0 +1,30 @@
+{
+  "name": "snippetvault",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun run --filter '*' dev",
+    "dev:api": "bun run --filter @snippetvault/api dev",
+    "dev:web": "bun run --filter @snippetvault/web dev",
+    "build": "bun run build:packages && bun run build:apps",
+    "build:packages": "bun run --filter './packages/*' build",
+    "build:apps": "bun run --filter './apps/*' build",
+    "db:generate": "bun run --filter @snippetvault/db generate",
+    "db:migrate": "bun run --filter @snippetvault/db migrate",
+    "db:push": "bun run --filter @snippetvault/db push",
+    "db:seed": "bun run --filter @snippetvault/db seed",
+    "db:studio": "bun run --filter @snippetvault/db studio",
+    "typecheck": "bun run --filter '*' typecheck",
+    "lint": "bun run --filter '*' lint",
+    "docker:build": "docker build -t snippetvault .",
+    "docker:run": "docker run -p 3000:3000 --env-file .env.prod snippetvault"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  }
+}

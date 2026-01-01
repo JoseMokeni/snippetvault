@@ -1,0 +1,11 @@
+[install]
+# Bun workspace configuration
+production = false
+
+[install.cache]
+# Cache dependencies
+dir = ".bun-cache"
+
+[test]
+# Test configuration
+preload = []
