@@ -34,3 +34,13 @@ coverage
 Dockerfile*
 docker-compose*
 .dockerignore
+
+# CI/CD
+.github
+.husky
+
+# Cache and temp
+.bun-cache
+**/.turbo
+.cache
+tmp
