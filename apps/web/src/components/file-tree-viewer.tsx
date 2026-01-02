@@ -281,10 +281,8 @@ export function FileTreeViewer({
     setTimeout(() => setCopiedFile(null), 2000);
   };
 
-  // Get processed content with variables replaced
-  const processedContent = selectedFile
-    ? replaceVariables(selectedFile.content, variables, variableValues)
-    : "";
+  // Use original content to show variables highlighted
+  const displayContent = selectedFile ? selectedFile.content : "";
 
   return (
     <div className="terminal-block rounded-lg overflow-hidden border border-border">
@@ -349,7 +347,7 @@ export function FileTreeViewer({
               {/* Code content */}
               <div className="flex-1 overflow-auto p-4 bg-bg-code">
                 <SyntaxHighlighter
-                  code={processedContent}
+                  code={displayContent}
                   language={selectedFile.language || "plaintext"}
                   showLineNumbers
                 />

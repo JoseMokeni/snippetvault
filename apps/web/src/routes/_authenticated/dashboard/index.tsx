@@ -64,7 +64,9 @@ function DashboardPage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["snippets"] });
       showSuccess(
-        data.snippet.isFavorite ? "Added to favorites" : "Removed from favorites"
+        data.snippet.isFavorite
+          ? "Added to favorites"
+          : "Removed from favorites"
       );
     },
     onError: (error) => {

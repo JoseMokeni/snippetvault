@@ -66,7 +66,9 @@ function SnippetDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["snippet", snippetId] });
       queryClient.invalidateQueries({ queryKey: ["snippets"] });
       showSuccess(
-        data.snippet.isFavorite ? "Added to favorites" : "Removed from favorites"
+        data.snippet.isFavorite
+          ? "Added to favorites"
+          : "Removed from favorites"
       );
     },
     onError: (error) => {
@@ -302,6 +304,7 @@ function SnippetDetailPage() {
       {/* Variables */}
       {snippet.variables && snippet.variables.length > 0 && (
         <div className="mb-8">
+          <h2 className="font-display text-xl font-bold mb-4">Variables</h2>
           <VariableEditor
             variables={snippet.variables}
             values={variableValues}
@@ -313,7 +316,7 @@ function SnippetDetailPage() {
       {/* Files / Code */}
       {snippet.files && snippet.files.length > 0 && (
         <div>
-          <h2 className="font-display font-bold mb-4">Files</h2>
+          <h2 className="font-display text-xl font-bold mb-4">Files</h2>
           <FileTreeViewer
             files={snippet.files}
             variables={snippet.variables || []}

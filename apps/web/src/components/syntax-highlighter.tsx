@@ -89,6 +89,29 @@ export function SyntaxHighlighter({
 }: SyntaxHighlighterProps) {
   const prismLanguage = languageMap[language.toLowerCase()] || "plain";
 
+  // Function to detect and split variable placeholders
+  const renderTokenWithVariables = (tokenContent: string) => {
+    // Match {{variableName}} pattern
+    const variableRegex = /(\{\{[^}]+\}\})/g;
+    const parts = tokenContent.split(variableRegex);
+
+    return parts.map((part, idx) => {
+      if (part.match(/^\{\{[^}]+\}\}$/)) {
+        // This is a variable placeholder - highlight it
+        return (
+          <span
+            key={idx}
+            className="bg-accent/20 text-accent font-semibold px-1 rounded"
+            style={{ color: "#00ff9f" }}
+          >
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <Highlight theme={terminalTheme} code={code} language={prismLanguage}>
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
@@ -110,6 +133,17 @@ export function SyntaxHighlighter({
                   {line.map((token, tokenIndex) => {
                     const { key: __, ...tokenProps } = getTokenProps({ token });
                     void __;
+                    const content = token.content;
+
+                    // Check if token contains variables
+                    if (typeof content === "string" && content.includes("{{")) {
+                      return (
+                        <span key={tokenIndex} {...tokenProps}>
+                          {renderTokenWithVariables(content)}
+                        </span>
+                      );
+                    }
+
                     return <span key={tokenIndex} {...tokenProps} />;
                   })}
                 </span>

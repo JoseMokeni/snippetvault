@@ -29,18 +29,12 @@ export function VariableEditor({
   };
 
   return (
-    <div className="terminal-block rounded-lg p-4">
-      <div className="flex items-center gap-2 mb-4">
-        <Variable size={16} className="text-accent" />
-        <h3 className="font-display font-bold">Variables</h3>
-        <span className="text-xs text-text-tertiary">({variables.length})</span>
-      </div>
-
+    <div className="terminal-block rounded-lg p-6">
       <div className="space-y-4">
         {variables.map((variable) => (
-          <div key={variable.id} className="space-y-1">
+          <div key={variable.id} className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-display text-text-secondary">
+              <label className="text-sm font-display font-semibold text-text-primary">
                 <span className="text-syntax-variable">{`{{${variable.name}}}`}</span>
               </label>
               {!readOnly &&
