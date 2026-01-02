@@ -88,7 +88,7 @@ function AuthenticatedLayout() {
                 <Link
                   key={tag.id}
                   to="/dashboard"
-                  search={{ tag: tag.id, filter: undefined }}
+                  search={{ tag: tag.name, filter: undefined }}
                   className="flex items-center justify-between px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors text-sm"
                 >
                   <div className="flex items-center gap-2">

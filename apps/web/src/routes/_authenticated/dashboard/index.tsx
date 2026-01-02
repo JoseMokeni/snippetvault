@@ -101,7 +101,7 @@ function DashboardPage() {
 
   const snippets = snippetsData?.snippets || [];
   const tags = tagsData?.tags || [];
-  const selectedTag = tag ? tags.find((t) => t.id === tag) : null;
+  const selectedTag = tag ? tags.find((t) => t.name === tag) : null;
 
   const getTitle = () => {
     if (filter === "favorites") return "Favorites";
@@ -163,9 +163,9 @@ function DashboardPage() {
             <Link
               key={t.id}
               to="/dashboard"
-              search={{ tag: t.id, filter: undefined }}
+              search={{ tag: t.name, filter: undefined }}
               className={`text-sm px-3 py-1.5 rounded font-display transition-colors ${
-                tag === t.id
+                tag === t.name
                   ? "bg-accent text-bg-primary"
                   : "border border-border text-text-secondary hover:text-text-primary hover:border-text-tertiary"
               }`}

@@ -17,6 +17,7 @@ import { api } from "@/lib/api-client";
 import { FileTreeViewer } from "@/components/file-tree-viewer";
 import { VariableEditor } from "@/components/variable-editor";
 import { TagBadge } from "@/components/tag-badge";
+import { ExportModal } from "@/components/export-modal";
 
 export const Route = createFileRoute("/_authenticated/dashboard/$snippetId")({
   component: SnippetDetailPage,
@@ -30,6 +31,7 @@ function SnippetDetailPage() {
     {}
   );
   const [showMenu, setShowMenu] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   // Fetch snippet
   const {
@@ -110,28 +112,7 @@ function SnippetDetailPage() {
   };
 
   const handleExport = () => {
-    if (!snippetData?.snippet) return;
-
-    const { snippet } = snippetData;
-    const exportData = {
-      title: snippet.title,
-      description: snippet.description,
-      language: snippet.language,
-      instructions: snippet.instructions,
-      files: snippet.files,
-      variables: snippet.variables,
-      tags: snippet.tags?.map((t) => t.name),
-    };
-
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${snippet.title.toLowerCase().replace(/\s+/g, "-")}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    setShowExportModal(true);
   };
 
   if (isLoading) {
@@ -340,6 +321,16 @@ function SnippetDetailPage() {
           </Link>
         </div>
       )}
+
+      {/* Export Modal */}
+      <ExportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        snippetTitle={snippet.title}
+        files={snippet.files || []}
+        variables={snippet.variables || []}
+        initialValues={variableValues}
+      />
     </div>
   );
 }

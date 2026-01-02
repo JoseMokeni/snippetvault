@@ -97,23 +97,21 @@ export function SyntaxHighlighter({
           style={{ ...style, margin: 0, padding: 0 }}
         >
           {tokens.map((line, i) => {
-            const lineProps = getLineProps({ line, key: i });
+            const { key: _, ...lineProps } = getLineProps({ line });
+            void _;
             return (
-              <div
-                key={i}
-                {...lineProps}
-                className="table-row"
-                style={lineProps.style}
-              >
+              <div key={i} {...lineProps} className="table-row">
                 {showLineNumbers && (
                   <span className="table-cell pr-4 text-text-tertiary select-none text-right w-[3ch] opacity-50">
                     {i + 1}
                   </span>
                 )}
                 <span className="table-cell">
-                  {line.map((token, key) => (
-                    <span key={key} {...getTokenProps({ token, key })} />
-                  ))}
+                  {line.map((token, tokenIndex) => {
+                    const { key: __, ...tokenProps } = getTokenProps({ token });
+                    void __;
+                    return <span key={tokenIndex} {...tokenProps} />;
+                  })}
                 </span>
               </div>
             );
