@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import Markdown from "react-markdown";
 import {
   ArrowLeft,
   Edit2,
@@ -296,10 +297,8 @@ function SnippetDetailPage() {
             <FileText size={16} className="text-accent" />
             <h2 className="font-display font-bold">Instructions</h2>
           </div>
-          <div className="prose prose-invert prose-sm max-w-none">
-            <pre className="whitespace-pre-wrap text-text-secondary font-body text-sm leading-relaxed">
-              {snippet.instructions}
-            </pre>
+          <div className="prose prose-invert prose-sm max-w-none prose-headings:text-text-primary prose-headings:font-display prose-p:text-text-secondary prose-a:text-accent prose-strong:text-text-primary prose-code:text-accent prose-code:bg-bg-code prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-pre:bg-bg-code prose-pre:border prose-pre:border-border prose-ul:text-text-secondary prose-ol:text-text-secondary prose-li:marker:text-accent">
+            <Markdown>{snippet.instructions}</Markdown>
           </div>
         </div>
       )}

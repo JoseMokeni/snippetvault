@@ -6,6 +6,7 @@ import { api } from "@/lib/api-client";
 import { FileTreeEditor } from "@/components/file-tree-editor";
 import { VariableForm } from "@/components/variable-editor";
 import { TagSelector } from "@/components/tag-badge";
+import { MarkdownEditor } from "@/components/markdown-editor";
 
 export const Route = createFileRoute(
   "/_authenticated/dashboard/$snippetId_/edit"
@@ -367,12 +368,10 @@ function SnippetForm({
             Add usage instructions, setup steps, or any notes for using this
             snippet.
           </p>
-          <textarea
+          <MarkdownEditor
             value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
-            placeholder="## How to use&#10;&#10;1. Copy the files to your project&#10;2. Install dependencies&#10;3. ..."
-            rows={6}
-            className="w-full bg-bg-secondary border border-border px-4 py-3 text-text-primary focus:border-accent focus:outline-none font-display resize-none text-sm"
+            onChange={setInstructions}
+            rows={8}
           />
         </div>
 
