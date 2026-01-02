@@ -1,14 +1,14 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Copy, Download, Folder, FileCode, Check } from 'lucide-react'
-import { useState } from 'react'
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Copy, Download, Folder, FileCode, Check } from "lucide-react";
+import { useState } from "react";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   component: LandingPage,
-})
+});
 
 function LandingPage() {
   return (
-    <div className="min-h-screen bg-bg-primary text-text-primary">
+    <div className="bg-bg-primary text-text-primary">
       <Navigation />
       <HeroSection />
       <BeforeAfterSection />
@@ -17,7 +17,7 @@ function LandingPage() {
       <FinalCTASection />
       <Footer />
     </div>
-  )
+  );
 }
 
 function Navigation() {
@@ -31,12 +31,15 @@ function Navigation() {
         </Link>
 
         <div className="flex items-center gap-8">
-          <a href="#features" className="text-text-secondary hover:text-text-primary transition-colors hidden sm:block">
+          <a
+            href="#features"
+            className="text-text-secondary hover:text-text-primary transition-colors hidden sm:block"
+          >
             Features
           </a>
           <Link
             to="/login"
-            search={{ redirect: '/dashboard' }}
+            search={{ redirect: "/dashboard" }}
             className="bg-accent text-bg-primary px-4 py-2 font-medium hover:bg-accent-hover transition-colors"
           >
             Get Started
@@ -44,39 +47,40 @@ function Navigation() {
         </div>
       </div>
     </nav>
-  )
+  );
 }
 
 function HeroSection() {
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(`FROM node:20-alpine
 WORKDIR /app/my-app
-EXPOSE 3000`)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+EXPOSE 3000`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
-    <section className="pt-32 pb-20 px-6 dot-grid">
+    <section className="pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 dot-grid">
       <div className="max-w-6xl mx-auto">
         {/* Tagline */}
-        <div className="text-center mb-12">
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-            Your code deserves a<br />
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 tracking-tight leading-tight">
+            Your code deserves a<br className="hidden sm:block" />
+            <span className="sm:hidden"> </span>
             <span className="text-accent">second life.</span>
           </h1>
-          <p className="text-text-secondary text-lg sm:text-xl max-w-2xl mx-auto font-body">
+          <p className="text-text-secondary text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-body px-4">
             Multi-file snippets. Variable templating. One-click export.
           </p>
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex justify-center gap-4 mb-16">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 px-4">
           <Link
             to="/signup"
-            className="bg-accent text-bg-primary px-6 py-3 font-medium hover:bg-accent-hover transition-colors text-lg"
+            className="bg-accent text-bg-primary px-6 py-3 font-medium hover:bg-accent-hover transition-colors text-base sm:text-lg text-center"
           >
             Get Started Free
           </Link>
@@ -84,48 +88,50 @@ EXPOSE 3000`)
             href="https://github.com/snippetvault"
             target="_blank"
             rel="noopener noreferrer"
-            className="border border-border px-6 py-3 font-medium hover:border-text-secondary transition-colors text-lg"
+            className="border border-border px-6 py-3 font-medium hover:border-text-secondary transition-colors text-base sm:text-lg text-center"
           >
             View on GitHub
           </a>
         </div>
 
         {/* Code Demo */}
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto px-2 sm:px-0">
           <div className="terminal-block rounded-lg overflow-hidden glow-green">
             {/* Terminal Header */}
             <div className="flex items-center gap-2 px-4 py-3 bg-bg-secondary border-b border-border">
               <div className="w-3 h-3 rounded-full bg-error" />
               <div className="w-3 h-3 rounded-full bg-warning" />
               <div className="w-3 h-3 rounded-full bg-success" />
-              <span className="ml-4 text-text-secondary text-sm font-display">demo.dockerfile</span>
+              <span className="ml-4 text-text-secondary text-sm font-display">
+                demo.dockerfile
+              </span>
             </div>
 
             {/* Code Content */}
-            <div className="p-6 font-display text-sm">
+            <div className="p-3 sm:p-6 font-display text-xs sm:text-sm">
               <div className="flex">
-                <div className="text-text-tertiary select-none pr-6 text-right">
+                <div className="text-text-tertiary select-none pr-2 sm:pr-6 text-right">
                   {[1, 2, 3, 4].map((n) => (
                     <div key={n}>{n}</div>
                   ))}
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div>
                     <span className="text-syntax-comment">{`// Your snippet with variables`}</span>
                   </div>
                   <div>
-                    <span className="text-syntax-keyword">FROM</span>{' '}
+                    <span className="text-syntax-keyword">FROM</span>{" "}
                     <span className="text-text-primary">node:</span>
                     <span className="text-accent">{`{{NODE_VERSION}}`}</span>
                     <span className="text-text-primary">-alpine</span>
                   </div>
                   <div>
-                    <span className="text-syntax-keyword">WORKDIR</span>{' '}
+                    <span className="text-syntax-keyword">WORKDIR</span>{" "}
                     <span className="text-text-primary">/app/</span>
                     <span className="text-accent">{`{{PROJECT_NAME}}`}</span>
                   </div>
                   <div>
-                    <span className="text-syntax-keyword">EXPOSE</span>{' '}
+                    <span className="text-syntax-keyword">EXPOSE</span>{" "}
                     <span className="text-accent">{`{{PORT}}`}</span>
                   </div>
                 </div>
@@ -136,22 +142,24 @@ EXPOSE 3000`)
 
               {/* Variables */}
               <div className="space-y-3">
-                <div className="text-text-secondary text-xs uppercase tracking-wider mb-4">Variables</div>
+                <div className="text-text-secondary text-xs uppercase tracking-wider mb-4">
+                  Variables
+                </div>
                 <VariableInput label="NODE_VERSION" defaultValue="20" />
                 <VariableInput label="PROJECT_NAME" defaultValue="my-app" />
                 <VariableInput label="PORT" defaultValue="3000" />
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 mt-6">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-6">
                 <button
                   onClick={handleCopy}
-                  className="flex items-center gap-2 bg-accent text-bg-primary px-4 py-2 font-medium hover:bg-accent-hover transition-colors"
+                  className="flex items-center justify-center gap-2 bg-accent text-bg-primary px-4 py-2 font-medium hover:bg-accent-hover transition-colors text-sm"
                 >
                   {copied ? <Check size={16} /> : <Copy size={16} />}
-                  {copied ? 'Copied!' : 'Copy Result'}
+                  {copied ? "Copied!" : "Copy Result"}
                 </button>
-                <button className="flex items-center gap-2 border border-border px-4 py-2 font-medium hover:border-text-secondary transition-colors">
+                <button className="flex items-center justify-center gap-2 border border-border px-4 py-2 font-medium hover:border-text-secondary transition-colors text-sm">
                   <Download size={16} />
                   Download ZIP
                 </button>
@@ -161,36 +169,47 @@ EXPOSE 3000`)
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-function VariableInput({ label, defaultValue }: { label: string; defaultValue: string }) {
+function VariableInput({
+  label,
+  defaultValue,
+}: {
+  label: string;
+  defaultValue: string;
+}) {
   return (
-    <div className="flex items-center gap-4">
-      <span className="text-syntax-variable w-32">{label}</span>
-      <span className="text-text-tertiary">=</span>
+    <div className="flex items-center gap-2 sm:gap-4">
+      <span className="text-syntax-variable w-24 sm:w-32 truncate text-xs sm:text-sm">
+        {label}
+      </span>
+      <span className="text-text-tertiary text-xs sm:text-sm">=</span>
       <input
         type="text"
         defaultValue={defaultValue}
-        className="bg-bg-secondary border border-border px-3 py-1.5 text-text-primary w-32 focus:border-accent focus:outline-none"
+        className="bg-bg-secondary border border-border px-2 sm:px-3 py-1 sm:py-1.5 text-text-primary w-20 sm:w-32 focus:border-accent focus:outline-none text-xs sm:text-sm"
       />
     </div>
-  )
+  );
 }
 
 function BeforeAfterSection() {
   return (
-    <section className="py-20 px-6 bg-bg-secondary">
+    <section className="py-12 sm:py-20 px-4 sm:px-6 bg-bg-secondary">
       <div className="max-w-6xl mx-auto">
-        <h2 className="font-display text-2xl sm:text-3xl font-bold text-center mb-12">
-          The old way vs. the <span className="text-accent">SnippetVault</span> way
+        <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-center mb-8 sm:mb-12 px-4">
+          The old way vs. the <span className="text-accent">SnippetVault</span>{" "}
+          way
         </h2>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
           {/* Before */}
-          <div className="terminal-block rounded-lg p-6 opacity-60">
-            <div className="text-error font-display text-lg mb-6">Before</div>
-            <ul className="space-y-3 text-text-secondary">
+          <div className="terminal-block rounded-lg p-4 sm:p-6 opacity-60">
+            <div className="text-error font-display text-base sm:text-lg mb-4 sm:mb-6">
+              Before
+            </div>
+            <ul className="space-y-2 sm:space-y-3 text-text-secondary text-sm sm:text-base">
               <li className="flex items-start gap-3">
                 <span className="text-error">✗</span>
                 <span>Scattered gists everywhere</span>
@@ -210,7 +229,9 @@ function BeforeAfterSection() {
             </ul>
 
             <div className="mt-8 font-display text-sm text-text-tertiary">
-              <div className="text-text-secondary mb-2"># Every. Single. Time.</div>
+              <div className="text-text-secondary mb-2">
+                # Every. Single. Time.
+              </div>
               <div>sed 's/old-name/new/g' file.js</div>
               <div>mv file1.js newproject/</div>
               <div>mv file2.js newproject/</div>
@@ -251,98 +272,121 @@ function BeforeAfterSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function FeaturesSection() {
   const features = [
     {
-      number: '01',
-      title: 'MULTI-FILE SNIPPETS',
-      description: 'Not just code. Entire project structures.',
+      number: "01",
+      title: "MULTI-FILE SNIPPETS",
+      description: "Not just code. Entire project structures.",
       visual: (
-        <div className="font-display text-sm mt-4 space-y-1">
+        <div className="font-display text-xs sm:text-sm mt-3 sm:mt-4 space-y-1 overflow-x-auto">
           <div className="flex items-center gap-2">
-            <Folder size={14} className="text-accent" />
-            <span>docker-setup/</span>
+            <Folder size={14} className="text-accent flex-shrink-0" />
+            <span className="whitespace-nowrap">docker-setup/</span>
           </div>
           <div className="flex items-center gap-2 ml-4">
-            <FileCode size={14} className="text-text-secondary" />
-            <span className="text-text-secondary">Dockerfile</span>
+            <FileCode size={14} className="text-text-secondary flex-shrink-0" />
+            <span className="text-text-secondary whitespace-nowrap">
+              Dockerfile
+            </span>
           </div>
           <div className="flex items-center gap-2 ml-4">
-            <FileCode size={14} className="text-text-secondary" />
-            <span className="text-text-secondary">docker-compose.yml</span>
+            <FileCode size={14} className="text-text-secondary flex-shrink-0" />
+            <span className="text-text-secondary whitespace-nowrap">
+              docker-compose.yml
+            </span>
           </div>
           <div className="flex items-center gap-2 ml-4">
-            <FileCode size={14} className="text-text-secondary" />
-            <span className="text-text-secondary">.dockerignore</span>
+            <FileCode size={14} className="text-text-secondary flex-shrink-0" />
+            <span className="text-text-secondary whitespace-nowrap">
+              .dockerignore
+            </span>
           </div>
           <div className="flex items-center gap-2 ml-4">
-            <Folder size={14} className="text-accent" />
-            <span>nginx/</span>
+            <Folder size={14} className="text-accent flex-shrink-0" />
+            <span className="whitespace-nowrap">nginx/</span>
           </div>
           <div className="flex items-center gap-2 ml-8">
-            <FileCode size={14} className="text-text-secondary" />
-            <span className="text-text-secondary">nginx.conf</span>
+            <FileCode size={14} className="text-text-secondary flex-shrink-0" />
+            <span className="text-text-secondary whitespace-nowrap">
+              nginx.conf
+            </span>
           </div>
         </div>
       ),
     },
     {
-      number: '02',
-      title: 'VARIABLE TEMPLATING',
-      description: 'Write once. Customize infinitely.',
+      number: "02",
+      title: "VARIABLE TEMPLATING",
+      description: "Write once. Customize infinitely.",
       visual: (
-        <div className="font-display text-sm mt-4 space-y-2">
-          <div className="flex items-center gap-3">
-            <span className="text-text-secondary">FROM node:</span>
-            <span className="text-accent">{`{{NODE_VERSION}}`}</span>
+        <div className="font-display text-xs sm:text-sm mt-3 sm:mt-4 space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-text-secondary whitespace-nowrap">
+              FROM node:
+            </span>
+            <span className="text-accent whitespace-nowrap">{`{{NODE_VERSION}}`}</span>
             <span className="text-text-tertiary">→</span>
-            <span className="text-success">FROM node:20</span>
+            <span className="text-success whitespace-nowrap">FROM node:20</span>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-text-secondary">WORKDIR /</span>
-            <span className="text-accent">{`{{PROJECT}}`}</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-text-secondary whitespace-nowrap">
+              WORKDIR /
+            </span>
+            <span className="text-accent whitespace-nowrap">{`{{PROJECT}}`}</span>
             <span className="text-text-tertiary">→</span>
-            <span className="text-success">WORKDIR /my-api</span>
+            <span className="text-success whitespace-nowrap">
+              WORKDIR /my-api
+            </span>
           </div>
         </div>
       ),
     },
     {
-      number: '03',
-      title: 'ONE-CLICK EXPORT',
-      description: 'Copy all. Download ZIP. Full folder structure preserved.',
+      number: "03",
+      title: "ONE-CLICK EXPORT",
+      description: "Copy all. Download ZIP. Full folder structure preserved.",
       visual: (
-        <div className="flex gap-3 mt-4">
-          <button className="flex items-center gap-2 bg-bg-secondary border border-border px-3 py-2 text-sm hover:border-text-secondary transition-colors">
-            <Copy size={14} />
-            Copy All
+        <div className="flex flex-wrap gap-2 sm:gap-3 mt-3 sm:mt-4">
+          <button className="flex items-center gap-1.5 sm:gap-2 bg-bg-secondary border border-border px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm hover:border-text-secondary transition-colors whitespace-nowrap">
+            <Copy size={14} className="flex-shrink-0" />
+            <span>Copy All</span>
           </button>
-          <button className="flex items-center gap-2 bg-bg-secondary border border-border px-3 py-2 text-sm hover:border-text-secondary transition-colors">
-            <Download size={14} />
-            Download .zip
+          <button className="flex items-center gap-1.5 sm:gap-2 bg-bg-secondary border border-border px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm hover:border-text-secondary transition-colors whitespace-nowrap">
+            <Download size={14} className="flex-shrink-0" />
+            <span>Download .zip</span>
           </button>
-          <button className="flex items-center gap-2 bg-bg-secondary border border-border px-3 py-2 text-sm hover:border-text-secondary transition-colors">
-            <FileCode size={14} />
-            Copy Single
+          <button className="flex items-center gap-1.5 sm:gap-2 bg-bg-secondary border border-border px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm hover:border-text-secondary transition-colors whitespace-nowrap">
+            <FileCode size={14} className="flex-shrink-0" />
+            <span>Copy Single</span>
           </button>
         </div>
       ),
     },
-  ]
+  ];
 
   return (
-    <section id="features" className="py-20 px-6">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <section id="features" className="py-12 sm:py-20 px-4 sm:px-6">
+      <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
         {features.map((feature) => (
-          <div key={feature.number} className="terminal-block rounded-lg p-6">
-            <div className="flex items-start gap-6">
-              <span className="text-accent font-display text-2xl font-bold">{feature.number}</span>
-              <div className="flex-1">
-                <h3 className="font-display text-xl font-bold mb-2">{feature.title}</h3>
-                <p className="text-text-secondary">{feature.description}</p>
+          <div
+            key={feature.number}
+            className="terminal-block rounded-lg p-4 sm:p-6"
+          >
+            <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-6">
+              <span className="text-accent font-display text-xl sm:text-2xl font-bold flex-shrink-0">
+                {feature.number}
+              </span>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-display text-lg sm:text-xl font-bold mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-text-secondary text-sm sm:text-base">
+                  {feature.description}
+                </p>
                 {feature.visual}
               </div>
             </div>
@@ -350,23 +394,41 @@ function FeaturesSection() {
         ))}
       </div>
     </section>
-  )
+  );
 }
 
 function UseCasesSection() {
   const useCases = [
-    { icon: '🐳', title: 'Docker Setups', items: ['Dockerfile', 'Compose', 'Nginx'] },
-    { icon: '⚛️', title: 'React Components', items: ['Component', 'Tests', 'Stories'] },
-    { icon: '🔧', title: 'Configs', items: ['ESLint', 'Prettier', 'TypeScript'] },
-    { icon: '🚀', title: 'API Boilerplates', items: ['Routes', 'Middleware', 'Types'] },
-  ]
+    {
+      icon: "🐳",
+      title: "Docker Setups",
+      items: ["Dockerfile", "Compose", "Nginx"],
+    },
+    {
+      icon: "⚛️",
+      title: "React Components",
+      items: ["Component", "Tests", "Stories"],
+    },
+    {
+      icon: "🔧",
+      title: "Configs",
+      items: ["ESLint", "Prettier", "TypeScript"],
+    },
+    {
+      icon: "🚀",
+      title: "API Boilerplates",
+      items: ["Routes", "Middleware", "Types"],
+    },
+  ];
 
   return (
-    <section className="py-20 px-6 bg-bg-secondary">
+    <section className="py-12 sm:py-20 px-4 sm:px-6 bg-bg-secondary">
       <div className="max-w-6xl mx-auto">
-        <h2 className="font-display text-xl text-text-secondary mb-8">Perfect for...</h2>
+        <h2 className="font-display text-lg sm:text-xl text-text-secondary mb-6 sm:mb-8">
+          Perfect for...
+        </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {useCases.map((useCase) => (
             <div
               key={useCase.title}
@@ -384,26 +446,27 @@ function UseCasesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function FinalCTASection() {
   return (
-    <section className="py-24 px-6">
+    <section className="py-16 sm:py-24 px-4 sm:px-6">
       <div className="max-w-2xl mx-auto text-center">
-        <div className="terminal-block rounded-lg p-8 glow-green">
-          <div className="font-display text-text-tertiary mb-6">
+        <div className="terminal-block rounded-lg p-6 sm:p-8 glow-green">
+          <div className="font-display text-text-tertiary mb-4 sm:mb-6 text-sm sm:text-base">
             $ npx create-snippet
           </div>
 
-          <h2 className="font-display text-2xl sm:text-3xl font-bold mb-4">
-            Stop drowning in gists.<br />
+          <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-4">
+            Stop drowning in gists.
+            <br />
             Start building your snippet library.
           </h2>
 
           <Link
             to="/signup"
-            className="inline-block bg-accent text-bg-primary px-8 py-4 font-display font-medium text-lg hover:bg-accent-hover transition-colors mt-6"
+            className="inline-block bg-accent text-bg-primary px-6 sm:px-8 py-3 sm:py-4 font-display font-medium text-base sm:text-lg hover:bg-accent-hover transition-colors mt-4 sm:mt-6"
           >
             Get Started — It's Free
           </Link>
@@ -414,54 +477,106 @@ function FinalCTASection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function Footer() {
   return (
-    <footer className="border-t border-border py-12 px-6">
+    <footer className="border-t border-border py-8 sm:py-12 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between gap-8">
-          <div>
-            <div className="font-display text-lg flex items-center gap-1 mb-2">
+        <div className="flex flex-col md:flex-row justify-between gap-8 sm:gap-12">
+          <div className="max-w-xs">
+            <div className="font-display text-base sm:text-lg flex items-center gap-1 mb-2">
               <span className="text-accent">{`>`}</span>
               <span>SnippetVault</span>
               <span className="animate-blink">_</span>
             </div>
-            <p className="text-text-secondary text-sm">
+            <p className="text-text-secondary text-xs sm:text-sm leading-relaxed">
               Built for developers who hate repeating themselves.
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-8 text-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 sm:gap-12 text-xs sm:text-sm">
             <div>
-              <div className="font-display text-text-secondary mb-3">Product</div>
+              <div className="font-display text-text-secondary mb-3 font-semibold">
+                Product
+              </div>
               <ul className="space-y-2">
-                <li><a href="#features" className="hover:text-accent transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Changelog</a></li>
+                <li>
+                  <a
+                    href="#features"
+                    className="hover:text-accent transition-colors block"
+                  >
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-accent transition-colors block"
+                  >
+                    Changelog
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
-              <div className="font-display text-text-secondary mb-3">Resources</div>
+              <div className="font-display text-text-secondary mb-3 font-semibold">
+                Resources
+              </div>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-accent transition-colors">Docs</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">API</a></li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-accent transition-colors block"
+                  >
+                    Docs
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-accent transition-colors block"
+                  >
+                    API
+                  </a>
+                </li>
               </ul>
             </div>
-            <div>
-              <div className="font-display text-text-secondary mb-3">Connect</div>
+            <div className="col-span-2 sm:col-span-1">
+              <div className="font-display text-text-secondary mb-3 font-semibold">
+                Connect
+              </div>
               <ul className="space-y-2">
-                <li><a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">GitHub</a></li>
-                <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">Twitter</a></li>
+                <li>
+                  <a
+                    href="https://github.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-accent transition-colors block"
+                  >
+                    GitHub
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://twitter.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-accent transition-colors block"
+                  >
+                    Twitter
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-border-muted mt-8 pt-8 text-text-tertiary text-sm">
+        <div className="border-t border-border-muted mt-8 pt-6 sm:pt-8 text-text-tertiary text-xs sm:text-sm text-center md:text-left">
           © 2026 SnippetVault. MIT Licensed.
         </div>
       </div>
     </footer>
-  )
+  );
 }
