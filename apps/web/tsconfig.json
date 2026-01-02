@@ -16,7 +16,7 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@snippetvault/api/*": ["../api/src/*"]
+      "@snippetvault/*": ["../*"]
     }
   },
   "include": ["src"],

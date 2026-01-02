@@ -101,12 +101,32 @@ NODE_ENV=development
 PORT=3000
 ```
 
-## Production Deployment
+## Docker Deployment
 
-See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed instructions on deploying to:
+Build and run with Docker:
+
+```bash
+# Build the image
+docker build -t snippetvault .
+
+# Run with docker-compose (includes PostgreSQL)
+# Uncomment the 'app' service in docker-compose.yml, then:
+docker compose up -d
+
+# Run migrations inside the container
+docker exec snippetvault-app bun run --filter @snippetvault/db migrate
+
+# Optional: seed the database
+docker exec snippetvault-app bun run --filter @snippetvault/db seed
+```
+
+The app will be available at http://localhost:3000
+
+See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed production deployment instructions:
 - Docker Swarm (Dokploy)
 - VPS with PostgreSQL
 - SSL configuration
+- Backup strategies
 
 ## Documentation
 

@@ -14,7 +14,13 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@snippetvault': path.resolve(__dirname, '..'),
     },
+  },
+  build: {
+    // Output to API's public directory for single-container deployment
+    outDir: path.resolve(__dirname, '../../apps/api/public'),
+    emptyOutDir: true,
   },
   server: {
     port: 5173,

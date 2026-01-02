@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { cors } from 'hono/cors'
+import { serveStatic } from 'hono/bun'
 import { app as apiRoutes } from './routes'
 
 const app = new Hono()
@@ -20,8 +21,13 @@ if (process.env.NODE_ENV === 'development') {
 app.route('/api', apiRoutes)
 
 // Serve static files (React build) in production
-// app.use('/*', serveStatic({ root: './public' }))
-// app.get('/*', serveStatic({ path: './public/index.html' }))
+if (process.env.NODE_ENV === 'production') {
+  // Serve static assets
+  app.use('/*', serveStatic({ root: './public' }))
+
+  // SPA fallback - serve index.html for client-side routing
+  app.get('*', serveStatic({ path: './public/index.html' }))
+}
 
 export default {
   port: process.env.PORT || 3000,

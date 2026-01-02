@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Search, Plus, Folder, FileCode, Star, MoreVertical } from 'lucide-react'
 import { useState } from 'react'
 
-export const Route = createFileRoute('/_authenticated/dashboard')({
+export const Route = createFileRoute('/_authenticated/dashboard/')({
   component: DashboardPage,
 })
 

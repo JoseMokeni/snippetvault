@@ -16,5 +16,20 @@ services:
       timeout: 5s
       retries: 5
 
+  # Uncomment to test production build
+  # app:
+  #   build: .
+  #   container_name: snippetvault-app
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     NODE_ENV: production
+  #     DATABASE_URL: postgres://snippetvault:snippetvault@db:5432/snippetvault
+  #     BETTER_AUTH_SECRET: dev-secret-change-in-production-use-openssl-rand-base64-32
+  #     BETTER_AUTH_URL: http://localhost:3000
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+
 volumes:
   postgres_data:

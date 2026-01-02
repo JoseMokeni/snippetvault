@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
 import { Loader2 } from 'lucide-react'
@@ -8,7 +8,6 @@ export const Route = createFileRoute('/signup')({
 })
 
 function SignupPage() {
-  const navigate = useNavigate()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -31,7 +30,9 @@ function SignupPage() {
         { name, email, password },
         {
           onSuccess: () => {
-            navigate({ to: '/dashboard' })
+            // Use window.location to force a full page reload
+            // This ensures the session state is fresh before navigation
+            window.location.href = '/dashboard'
           },
           onError: (ctx) => {
             setError(ctx.error.message || 'Failed to create account')
@@ -126,7 +127,7 @@ function SignupPage() {
 
           <div className="mt-8 text-center text-sm">
             <span className="text-text-secondary">Already have an account? </span>
-            <Link to="/login" className="text-accent hover:underline">
+            <Link to="/login" search={{ redirect: '/dashboard' }} className="text-accent hover:underline">
               Sign in
             </Link>
           </div>

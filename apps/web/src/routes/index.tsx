@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Copy, Download, Folder, FileCode, Tag, Search, Star, Check } from 'lucide-react'
+import { Copy, Download, Folder, FileCode, Check } from 'lucide-react'
 import { useState } from 'react'
 
 export const Route = createFileRoute('/')({
@@ -36,6 +36,7 @@ function Navigation() {
           </a>
           <Link
             to="/login"
+            search={{ redirect: '/dashboard' }}
             className="bg-accent text-bg-primary px-4 py-2 font-medium hover:bg-accent-hover transition-colors"
           >
             Get Started

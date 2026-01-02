@@ -1,14 +1,17 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
 import { Loader2 } from 'lucide-react'
 
 export const Route = createFileRoute('/login')({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: (search.redirect as string) || '/dashboard',
+  }),
   component: LoginPage,
 })
 
 function LoginPage() {
-  const navigate = useNavigate()
+  const { redirect } = Route.useSearch()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -24,7 +27,9 @@ function LoginPage() {
         { email, password },
         {
           onSuccess: () => {
-            navigate({ to: '/dashboard' })
+            // Use window.location to force a full page reload
+            // This ensures the session state is fresh before navigation
+            window.location.href = redirect
           },
           onError: (ctx) => {
             setError(ctx.error.message || 'Failed to sign in')

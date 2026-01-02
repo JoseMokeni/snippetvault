@@ -1,10 +1,8 @@
 import { hc } from 'hono/client'
-import type { AppType } from '../../../../api/src/routes'
+import type { AppType } from '@snippetvault/api/src/routes'
 
-const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-
-export const api = hc<AppType>(`${baseUrl}/api`, {
-  fetch: (input, init) =>
+export const api = hc<AppType>('/api', {
+  fetch: (input: RequestInfo | URL, init?: RequestInit) =>
     fetch(input, {
       ...init,
       credentials: 'include', // Include cookies for auth
