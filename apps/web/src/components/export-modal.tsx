@@ -8,6 +8,7 @@ import {
   substituteVariables,
 } from "@/lib/export";
 import { SyntaxHighlighter } from "./syntax-highlighter";
+import { showSuccess, showError } from "@/lib/toast";
 
 interface FileData {
   id?: string;
@@ -83,6 +84,9 @@ export function ExportModal({
       const blob = await exportAsZip(files, variables, values);
       const filename = `${snippetTitle.toLowerCase().replace(/\s+/g, "-")}.zip`;
       downloadBlob(blob, filename);
+      showSuccess(`Exported ${filename}`);
+    } catch {
+      showError("Failed to export ZIP file");
     } finally {
       setIsExporting(false);
     }
@@ -94,6 +98,9 @@ export function ExportModal({
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      showSuccess("Copied all files to clipboard");
+    } else {
+      showError("Failed to copy to clipboard");
     }
   };
 
@@ -104,6 +111,9 @@ export function ExportModal({
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      showSuccess(`Copied ${previewFile.filename} to clipboard`);
+    } else {
+      showError("Failed to copy to clipboard");
     }
   };
 

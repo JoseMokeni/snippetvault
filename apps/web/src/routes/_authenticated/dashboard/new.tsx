@@ -7,6 +7,7 @@ import { FileTreeEditor } from "@/components/file-tree-editor";
 import { VariableForm } from "@/components/variable-editor";
 import { TagSelector } from "@/components/tag-badge";
 import { MarkdownEditor } from "@/components/markdown-editor";
+import { showSuccess, showError, handleApiError } from "@/lib/toast";
 
 export const Route = createFileRoute("/_authenticated/dashboard/new")({
   component: NewSnippetPage,
@@ -58,16 +59,23 @@ function NewSnippetPage() {
         json: { name, color },
       });
       if (!res.ok) {
-        console.error("Failed to create tag");
+        const data = await res.json();
+        const errorMsg = (data as { error?: string }).error;
+        if (errorMsg?.includes("already exists")) {
+          showError(`Tag "${name}" already exists`);
+        } else {
+          showError("Failed to create tag");
+        }
         return null;
       }
       const data = await res.json();
       await refetchTags();
+      showSuccess(`Tag "${name}" created`);
       return (
         data as { tag: { id: string; name: string; color: string | null } }
       ).tag;
     } catch (err) {
-      console.error("Failed to create tag:", err);
+      handleApiError(err, "Failed to create tag");
       return null;
     }
   };
@@ -109,10 +117,12 @@ function NewSnippetPage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["snippets"] });
       const newId = (data as { snippet: { id: string } }).snippet.id;
+      showSuccess("Snippet created");
       navigate({ to: "/dashboard/$snippetId", params: { snippetId: newId } });
     },
     onError: (err) => {
       setError(err.message);
+      handleApiError(err, "Failed to create snippet");
     },
   });
 

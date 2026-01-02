@@ -18,6 +18,7 @@ import { FileTreeViewer } from "@/components/file-tree-viewer";
 import { VariableEditor } from "@/components/variable-editor";
 import { TagBadge } from "@/components/tag-badge";
 import { ExportModal } from "@/components/export-modal";
+import { showSuccess, handleApiError } from "@/lib/toast";
 
 export const Route = createFileRoute("/_authenticated/dashboard/$snippetId")({
   component: SnippetDetailPage,
@@ -61,9 +62,15 @@ function SnippetDetailPage() {
       if (!res.ok) throw new Error("Failed to toggle favorite");
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["snippet", snippetId] });
       queryClient.invalidateQueries({ queryKey: ["snippets"] });
+      showSuccess(
+        data.snippet.isFavorite ? "Added to favorites" : "Removed from favorites"
+      );
+    },
+    onError: (error) => {
+      handleApiError(error, "Failed to update favorite");
     },
   });
 
@@ -79,7 +86,11 @@ function SnippetDetailPage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["snippets"] });
       const newId = (data as { snippet: { id: string } }).snippet.id;
+      showSuccess("Snippet duplicated");
       navigate({ to: "/dashboard/$snippetId", params: { snippetId: newId } });
+    },
+    onError: (error) => {
+      handleApiError(error, "Failed to duplicate snippet");
     },
   });
 
@@ -94,10 +105,14 @@ function SnippetDetailPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["snippets"] });
+      showSuccess("Snippet deleted");
       navigate({
         to: "/dashboard",
         search: { filter: undefined, tag: undefined },
       });
+    },
+    onError: (error) => {
+      handleApiError(error, "Failed to delete snippet");
     },
   });
 

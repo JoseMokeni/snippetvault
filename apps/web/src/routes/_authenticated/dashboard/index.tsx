@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import { SnippetCard } from "@/components/snippet-card";
+import { showSuccess, handleApiError } from "@/lib/toast";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -60,8 +61,14 @@ function DashboardPage() {
       if (!res.ok) throw new Error("Failed to toggle favorite");
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["snippets"] });
+      showSuccess(
+        data.snippet.isFavorite ? "Added to favorites" : "Removed from favorites"
+      );
+    },
+    onError: (error) => {
+      handleApiError(error, "Failed to update favorite");
     },
   });
 
@@ -74,8 +81,12 @@ function DashboardPage() {
       if (!res.ok) throw new Error("Failed to duplicate snippet");
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["snippets"] });
+      showSuccess(`Duplicated as "${data.snippet.title}"`);
+    },
+    onError: (error) => {
+      handleApiError(error, "Failed to duplicate snippet");
     },
   });
 
@@ -90,6 +101,10 @@ function DashboardPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["snippets"] });
+      showSuccess("Snippet deleted");
+    },
+    onError: (error) => {
+      handleApiError(error, "Failed to delete snippet");
     },
   });
 
