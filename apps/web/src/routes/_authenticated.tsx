@@ -7,7 +7,17 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { api } from "@/lib/api-client";
-import { Folder, LogOut, Plus, Settings, Star, Tag } from "lucide-react";
+import {
+  Folder,
+  LogOut,
+  Plus,
+  Settings,
+  Star,
+  Tag,
+  Menu,
+  X,
+} from "lucide-react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ context, location }) => {
@@ -26,6 +36,7 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedLayout() {
   const { auth } = Route.useRouteContext();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Fetch tags for sidebar
   const { data: tagsData } = useQuery({
@@ -46,10 +57,29 @@ function AuthenticatedLayout() {
 
   return (
     <div className="h-screen bg-bg-primary flex overflow-hidden">
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-16 bg-bg-secondary border-b border-border flex items-center justify-between px-4">
+        <Link to="/" className="font-display text-base flex items-center gap-1">
+          <span className="text-accent">{`>`}</span>
+          <span>SnippetVault</span>
+          <span className="animate-blink">_</span>
+        </Link>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 text-text-secondary hover:text-text-primary transition-colors"
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
       {/* Sidebar */}
-      <aside className="w-64 border-r border-border bg-bg-secondary flex flex-col flex-shrink-0 h-full">
+      <aside
+        className={`w-64 border-r border-border bg-bg-secondary flex flex-col flex-shrink-0 h-full fixed lg:static inset-0 z-40 transition-transform lg:translate-x-0 pt-16 lg:pt-0 ${
+          mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         {/* Logo */}
-        <div className="p-4 border-b border-border flex-shrink-0">
+        <div className="p-4 border-b border-border flex-shrink-0 hidden lg:block">
           <Link to="/" className="font-display text-lg flex items-center gap-1">
             <span className="text-accent">{`>`}</span>
             <span>SnippetVault</span>
@@ -64,6 +94,7 @@ function AuthenticatedLayout() {
             search={{ filter: undefined, tag: undefined }}
             className="flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors [&.active]:bg-bg-elevated [&.active]:text-text-primary"
             activeOptions={{ exact: true }}
+            onClick={() => setMobileMenuOpen(false)}
           >
             <Folder size={18} />
             <span>All Snippets</span>
@@ -72,6 +103,7 @@ function AuthenticatedLayout() {
             to="/dashboard"
             search={{ filter: "favorites", tag: undefined }}
             className="flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors"
+            onClick={() => setMobileMenuOpen(false)}
           >
             <Star size={18} />
             <span>Favorites</span>
@@ -90,6 +122,7 @@ function AuthenticatedLayout() {
                   to="/dashboard"
                   search={{ tag: tag.name, filter: undefined }}
                   className="flex items-center justify-between px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors text-sm"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   <div className="flex items-center gap-2">
                     <span
@@ -112,6 +145,7 @@ function AuthenticatedLayout() {
           <Link
             to="/dashboard/new"
             className="flex items-center justify-center gap-2 w-full bg-accent text-bg-primary py-2 font-medium hover:bg-accent-hover transition-colors"
+            onClick={() => setMobileMenuOpen(false)}
           >
             <Plus size={18} />
             <span>New Snippet</span>
@@ -149,8 +183,16 @@ function AuthenticatedLayout() {
         </div>
       </aside>
 
+      {/* Mobile Overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto pt-16 lg:pt-0">
         <Outlet />
       </main>
     </div>

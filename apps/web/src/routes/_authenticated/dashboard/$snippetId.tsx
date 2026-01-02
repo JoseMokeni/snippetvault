@@ -170,34 +170,36 @@ function SnippetDetailPage() {
   if (!snippet) return null;
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <Link
           to="/dashboard"
           search={{ filter: undefined, tag: undefined }}
-          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm sm:text-base"
         >
           <ArrowLeft size={18} />
-          Back to Snippets
+          <span className="hidden sm:inline">Back to Snippets</span>
+          <span className="sm:hidden">Back</span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Link
             to="/dashboard/$snippetId/edit"
             params={{ snippetId }}
-            className="flex items-center gap-2 px-4 py-2 border border-border text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 border border-border text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors text-sm"
           >
             <Edit2 size={16} />
-            Edit
+            <span>Edit</span>
           </Link>
 
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 px-4 py-2 border border-border text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 border border-border text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors text-sm"
           >
             <Download size={16} />
-            Export
+            <span className="hidden sm:inline">Export</span>
+            <span className="sm:hidden">Export</span>
           </button>
 
           <div className="relative">
@@ -252,24 +254,26 @@ function SnippetDetailPage() {
       </div>
 
       {/* Title & Meta */}
-      <div className="mb-8">
-        <div className="flex items-start gap-3 mb-4">
-          <h1 className="font-display text-3xl font-bold">{snippet.title}</h1>
+      <div className="mb-6 sm:mb-8">
+        <div className="flex items-start gap-3 mb-3 sm:mb-4">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold break-words">
+            {snippet.title}
+          </h1>
           {snippet.isFavorite && (
             <Star
-              size={24}
-              className="text-warning fill-warning flex-shrink-0 mt-1"
+              size={20}
+              className="text-warning fill-warning flex-shrink-0 mt-0.5 sm:mt-1 sm:w-6 sm:h-6"
             />
           )}
         </div>
 
         {snippet.description && (
-          <p className="text-text-secondary text-lg mb-4">
+          <p className="text-text-secondary text-base sm:text-lg mb-3 sm:mb-4">
             {snippet.description}
           </p>
         )}
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <span className="text-xs uppercase tracking-wider text-text-tertiary bg-bg-secondary px-3 py-1 rounded font-display">
             {snippet.language}
           </span>
@@ -290,12 +294,14 @@ function SnippetDetailPage() {
 
       {/* Instructions */}
       {snippet.instructions && (
-        <div className="terminal-block rounded-lg p-6 mb-8">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="terminal-block rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="flex items-center gap-2 mb-3 sm:mb-4">
             <FileText size={16} className="text-accent" />
-            <h2 className="font-display font-bold">Instructions</h2>
+            <h2 className="font-display font-bold text-base sm:text-lg">
+              Instructions
+            </h2>
           </div>
-          <div className="prose prose-invert prose-sm max-w-none prose-headings:text-text-primary prose-headings:font-display prose-p:text-text-secondary prose-a:text-accent prose-strong:text-text-primary prose-code:text-accent prose-code:bg-bg-code prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-pre:bg-bg-code prose-pre:border prose-pre:border-border prose-ul:text-text-secondary prose-ol:text-text-secondary prose-li:marker:text-accent">
+          <div className="prose prose-invert prose-sm max-w-none prose-headings:text-text-primary prose-headings:font-display prose-p:text-text-secondary prose-a:text-accent prose-strong:text-text-primary prose-code:text-accent prose-code:bg-bg-code prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-pre:bg-bg-code prose-pre:border prose-pre:border-border prose-ul:text-text-secondary prose-ol:text-text-secondary prose-li:marker:text-accent overflow-x-auto">
             <Markdown>{snippet.instructions}</Markdown>
           </div>
         </div>
@@ -303,8 +309,10 @@ function SnippetDetailPage() {
 
       {/* Variables */}
       {snippet.variables && snippet.variables.length > 0 && (
-        <div className="mb-8">
-          <h2 className="font-display text-xl font-bold mb-4">Variables</h2>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="font-display text-lg sm:text-xl font-bold mb-3 sm:mb-4">
+            Variables
+          </h2>
           <VariableEditor
             variables={snippet.variables}
             values={variableValues}
@@ -316,7 +324,9 @@ function SnippetDetailPage() {
       {/* Files / Code */}
       {snippet.files && snippet.files.length > 0 && (
         <div>
-          <h2 className="font-display text-xl font-bold mb-4">Files</h2>
+          <h2 className="font-display text-lg sm:text-xl font-bold mb-3 sm:mb-4">
+            Files
+          </h2>
           <FileTreeViewer
             files={snippet.files}
             variables={snippet.variables || []}
@@ -327,7 +337,7 @@ function SnippetDetailPage() {
 
       {/* Empty files state */}
       {(!snippet.files || snippet.files.length === 0) && (
-        <div className="terminal-block rounded-lg p-8 text-center">
+        <div className="terminal-block rounded-lg p-6 sm:p-8 text-center">
           <p className="text-text-tertiary">No files in this snippet</p>
           <Link
             to="/dashboard/$snippetId/edit"

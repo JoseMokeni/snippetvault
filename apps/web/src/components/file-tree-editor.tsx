@@ -280,6 +280,7 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
   const [newItemName, setNewItemName] = useState("");
   const [renamingNode, setRenamingNode] = useState<TreeNode | null>(null);
   const [renameValue, setRenameValue] = useState("");
+  const [showFileTree, setShowFileTree] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Build tree from files
@@ -325,6 +326,7 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
   const handleSelectNode = (node: TreeNode) => {
     if (node.type === "file") {
       setSelectedPath(node.path);
+      setShowFileTree(false); // Close sidebar on mobile after selection
       expandParentFolders(node.path);
     }
   };
@@ -477,9 +479,142 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
 
   return (
     <div className="terminal-block rounded-lg overflow-hidden">
-      <div className="flex h-[500px]">
-        {/* File Tree Sidebar */}
-        <div className="w-64 border-r border-border bg-bg-secondary flex flex-col">
+      {/* Mobile file selector button */}
+      <div className="lg:hidden border-b border-border bg-bg-secondary">
+        <button
+          type="button"
+          onClick={() => setShowFileTree(!showFileTree)}
+          className="w-full flex items-center justify-between px-4 py-3 text-sm hover:bg-bg-elevated transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <span>
+              {selectedFile ? getFileIcon(selectedFile.filename) : "📁"}
+            </span>
+            <span className="font-mono text-text-primary truncate">
+              {selectedFile ? selectedFile.filename : "Select a file"}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsAddingFile(true);
+                setIsAddingFolder(false);
+                setShowFileTree(true);
+              }}
+              className="p-1.5 text-text-tertiary hover:text-accent transition-colors"
+              title="New File"
+            >
+              <FilePlus size={16} />
+            </button>
+            <ChevronDown
+              size={16}
+              className={`text-text-tertiary transition-transform ${
+                showFileTree ? "rotate-180" : ""
+              }`}
+            />
+          </div>
+        </button>
+
+        {/* Mobile file tree dropdown */}
+        {showFileTree && (
+          <div className="border-t border-border bg-bg-primary">
+            {/* Add/Rename inputs - Mobile */}
+            {(isAddingFile || isAddingFolder) && (
+              <div className="p-3 border-b border-border">
+                <div className="flex items-center gap-1">
+                  <span className="text-text-tertiary">
+                    {isAddingFile ? (
+                      <FileCode size={14} />
+                    ) : (
+                      <Folder size={14} />
+                    )}
+                  </span>
+                  <input
+                    type="text"
+                    value={newItemName}
+                    onChange={(e) => setNewItemName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        if (isAddingFile) {
+                          handleAddFile();
+                        } else {
+                          handleAddFolder();
+                        }
+                      }
+                      if (e.key === "Escape") {
+                        setIsAddingFile(false);
+                        setIsAddingFolder(false);
+                        setNewItemName("");
+                      }
+                    }}
+                    placeholder={
+                      isAddingFile ? "path/to/file.ts" : "folder/name"
+                    }
+                    className="flex-1 bg-bg-secondary border border-accent px-2 py-1.5 text-xs focus:outline-none text-text-primary"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={isAddingFile ? handleAddFile : handleAddFolder}
+                    className="p-1.5 text-success hover:opacity-80"
+                  >
+                    <Check size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAddingFile(false);
+                      setIsAddingFolder(false);
+                      setNewItemName("");
+                    }}
+                    className="p-1.5 text-error hover:opacity-80"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="max-h-[300px] overflow-y-auto py-2">
+              {tree.length === 0 ? (
+                <div className="p-4 text-center text-text-tertiary text-sm">
+                  <p>No files yet</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAddingFile(true);
+                      setShowFileTree(true);
+                    }}
+                    className="text-accent hover:text-accent-hover mt-2"
+                  >
+                    Add your first file
+                  </button>
+                </div>
+              ) : (
+                tree.map((node) => (
+                  <TreeNodeComponent
+                    key={node.path}
+                    node={node}
+                    level={0}
+                    selectedPath={selectedPath}
+                    expandedFolders={expandedFolders}
+                    onSelect={handleSelectNode}
+                    onToggleFolder={handleToggleFolder}
+                    onDelete={handleDeleteNode}
+                    onRename={handleStartRename}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="flex h-[400px] lg:h-[500px]">
+        {/* File Tree Sidebar - Desktop only */}
+        <div className="hidden lg:flex lg:w-64 border-r border-border bg-bg-secondary flex-col">
           {/* Tree Header */}
           <div className="p-2 border-b border-border flex items-center justify-between">
             <span className="text-xs font-display text-text-tertiary uppercase tracking-wider">
@@ -639,15 +774,17 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
           {selectedFile ? (
             <>
               {/* File Info Header */}
-              <div className="p-3 border-b border-border bg-bg-secondary flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm">
-                  <span>{getFileIcon(selectedFile.filename)}</span>
-                  <span className="font-display text-text-primary">
+              <div className="p-2 sm:p-3 border-b border-border bg-bg-secondary flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2 text-xs sm:text-sm min-w-0">
+                  <span className="flex-shrink-0">
+                    {getFileIcon(selectedFile.filename)}
+                  </span>
+                  <span className="font-display text-text-primary truncate">
                     {selectedFile.filename}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <label className="text-xs text-text-tertiary">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <label className="text-xs text-text-tertiary flex-shrink-0">
                     Language:
                   </label>
                   <select
@@ -655,7 +792,7 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
                     onChange={(e) =>
                       handleUpdateFile({ language: e.target.value })
                     }
-                    className="bg-bg-primary border border-border px-2 py-1 text-xs font-display text-text-primary focus:border-accent focus:outline-none"
+                    className="flex-1 sm:flex-none bg-bg-primary border border-border px-2 py-1 text-xs font-display text-text-primary focus:border-accent focus:outline-none"
                   >
                     <option value="plaintext">Plain Text</option>
                     <option value="javascript">JavaScript</option>
@@ -682,7 +819,7 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
               </div>
 
               {/* Code Editor */}
-              <div className="flex-1 overflow-auto p-4">
+              <div className="flex-1 overflow-auto p-2 sm:p-4">
                 <textarea
                   ref={textareaRef}
                   value={selectedFile.content}
@@ -692,6 +829,11 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
                   placeholder="// Paste or write your code here..."
                   className="w-full h-full min-h-[400px] bg-bg-code border border-border p-4 font-mono text-sm text-text-primary focus:border-accent focus:outline-none resize-none leading-relaxed"
                   spellCheck={false}
+                  style={{
+                    whiteSpace: "pre",
+                    overflowWrap: "normal",
+                    wordWrap: "normal",
+                  }}
                 />
               </div>
             </>

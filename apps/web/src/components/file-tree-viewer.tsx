@@ -230,6 +230,7 @@ export function FileTreeViewer({
   variableValues = {},
 }: FileTreeViewerProps) {
   const [copiedFile, setCopiedFile] = useState<string | null>(null);
+  const [showFileTree, setShowFileTree] = useState(false);
 
   // Build tree from files
   const tree = useMemo(() => buildFileTree(files), [files]);
@@ -265,6 +266,7 @@ export function FileTreeViewer({
   const handleSelect = (node: TreeNode) => {
     if (node.type === "file") {
       setSelectedPath(node.path);
+      setShowFileTree(false); // Close sidebar on mobile after selection
     }
   };
 
@@ -286,9 +288,49 @@ export function FileTreeViewer({
 
   return (
     <div className="terminal-block rounded-lg overflow-hidden border border-border">
-      <div className="flex h-[500px]">
-        {/* File tree sidebar */}
-        <div className="w-64 border-r border-border bg-bg-primary flex flex-col">
+      {/* Mobile file selector button */}
+      <div className="lg:hidden border-b border-border bg-bg-secondary">
+        <button
+          onClick={() => setShowFileTree(!showFileTree)}
+          className="w-full flex items-center justify-between px-4 py-3 text-sm hover:bg-bg-elevated transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <span>
+              {selectedFile ? getFileIcon(selectedFile.filename) : "📁"}
+            </span>
+            <span className="font-mono text-text-primary truncate">
+              {selectedFile ? selectedFile.filename : "Select a file"}
+            </span>
+          </div>
+          <ChevronDown
+            size={16}
+            className={`text-text-tertiary transition-transform ${
+              showFileTree ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+
+        {/* Mobile file tree dropdown */}
+        {showFileTree && (
+          <div className="border-t border-border bg-bg-primary max-h-[300px] overflow-y-auto">
+            {tree.map((node) => (
+              <TreeNodeComponent
+                key={node.path}
+                node={node}
+                level={0}
+                selectedPath={selectedPath}
+                expandedFolders={expandedFolders}
+                onSelect={handleSelect}
+                onToggleFolder={handleToggleFolder}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="flex h-[400px] lg:h-[500px]">
+        {/* File tree sidebar - Desktop only */}
+        <div className="hidden lg:flex lg:w-64 border-r border-border bg-bg-primary flex-col">
           <div className="px-3 py-2 border-b border-border bg-bg-secondary">
             <span className="text-xs font-display text-text-tertiary uppercase tracking-wider">
               Files
@@ -314,38 +356,40 @@ export function FileTreeViewer({
           {selectedFile ? (
             <>
               {/* File header */}
-              <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-bg-primary">
-                <div className="flex items-center gap-2">
-                  <span>{getFileIcon(selectedFile.filename)}</span>
-                  <span className="text-sm font-mono text-text-primary">
+              <div className="flex items-center justify-between px-3 sm:px-4 py-2 border-b border-border bg-bg-primary">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <span className="flex-shrink-0">
+                    {getFileIcon(selectedFile.filename)}
+                  </span>
+                  <span className="text-xs sm:text-sm font-mono text-text-primary truncate">
                     {selectedFile.filename}
                   </span>
                   {selectedFile.language && (
-                    <span className="text-xs text-text-tertiary bg-bg-elevated px-2 py-0.5 rounded">
+                    <span className="hidden sm:inline text-xs text-text-tertiary bg-bg-elevated px-2 py-0.5 rounded flex-shrink-0">
                       {selectedFile.language}
                     </span>
                   )}
                 </div>
                 <button
                   onClick={handleCopy}
-                  className="flex items-center gap-1.5 px-3 py-1 text-xs text-text-secondary hover:text-text-primary border border-border hover:border-text-tertiary transition-colors"
+                  className="flex items-center gap-1.5 px-2 sm:px-3 py-1 text-xs text-text-secondary hover:text-text-primary border border-border hover:border-text-tertiary transition-colors flex-shrink-0"
                 >
                   {copiedFile === selectedFile.filename ? (
                     <>
                       <Check size={12} className="text-success" />
-                      Copied!
+                      <span className="hidden sm:inline">Copied!</span>
                     </>
                   ) : (
                     <>
                       <Copy size={12} />
-                      Copy
+                      <span className="hidden sm:inline">Copy</span>
                     </>
                   )}
                 </button>
               </div>
 
               {/* Code content */}
-              <div className="flex-1 overflow-auto p-4 bg-bg-code">
+              <div className="flex-1 overflow-auto p-2 sm:p-4 bg-bg-code">
                 <SyntaxHighlighter
                   code={displayContent}
                   language={selectedFile.language || "plaintext"}

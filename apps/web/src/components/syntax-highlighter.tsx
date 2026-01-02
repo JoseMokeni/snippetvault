@@ -116,20 +116,30 @@ export function SyntaxHighlighter({
     <Highlight theme={terminalTheme} code={code} language={prismLanguage}>
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre
-          className={`${className} text-sm font-mono leading-relaxed overflow-x-auto`}
-          style={{ ...style, margin: 0, padding: 0 }}
+          className={`${className} text-sm font-mono leading-relaxed`}
+          style={{
+            ...style,
+            margin: 0,
+            padding: 0,
+            whiteSpace: "pre",
+            overflowWrap: "normal",
+            minWidth: "max-content",
+          }}
         >
           {tokens.map((line, i) => {
             const { key: _, ...lineProps } = getLineProps({ line });
             void _;
             return (
-              <div key={i} {...lineProps} className="table-row">
+              <div key={i} {...lineProps} className="flex">
                 {showLineNumbers && (
-                  <span className="table-cell pr-4 text-text-tertiary select-none text-right w-[3ch] opacity-50">
+                  <span
+                    className="pr-4 text-text-tertiary select-none text-right flex-shrink-0"
+                    style={{ minWidth: "3ch" }}
+                  >
                     {i + 1}
                   </span>
                 )}
-                <span className="table-cell">
+                <span className="flex-1">
                   {line.map((token, tokenIndex) => {
                     const { key: __, ...tokenProps } = getTokenProps({ token });
                     void __;

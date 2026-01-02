@@ -249,13 +249,13 @@ function SnippetForm({
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-6 sm:mb-8">
         <Link
           to="/dashboard/$snippetId"
           params={{ snippetId }}
-          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm sm:text-base"
         >
           <ArrowLeft size={18} />
           Cancel
@@ -264,7 +264,7 @@ function SnippetForm({
         <button
           onClick={handleSubmit}
           disabled={updateMutation.isPending || !title.trim()}
-          className="flex items-center gap-2 bg-accent text-bg-primary px-6 py-2 font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="hidden sm:flex items-center gap-2 bg-accent text-bg-primary px-6 py-2 font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {updateMutation.isPending ? (
             <Loader2 size={18} className="animate-spin" />
@@ -275,7 +275,9 @@ function SnippetForm({
         </button>
       </div>
 
-      <h1 className="font-display text-3xl font-bold mb-8">Edit Snippet</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">
+        Edit Snippet
+      </h1>
 
       {error && (
         <div className="bg-error/10 border border-error text-error px-4 py-3 mb-6 text-sm">
@@ -283,10 +285,12 @@ function SnippetForm({
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
         {/* Basic Info */}
-        <div className="terminal-block rounded-lg p-6 space-y-4">
-          <h2 className="font-display font-bold mb-4">Basic Info</h2>
+        <div className="terminal-block rounded-lg p-4 sm:p-6 space-y-4">
+          <h2 className="font-display font-bold mb-3 sm:mb-4 text-base sm:text-lg">
+            Basic Info
+          </h2>
 
           <div>
             <label className="block text-sm text-text-secondary mb-2 font-display">
@@ -362,9 +366,11 @@ function SnippetForm({
         </div>
 
         {/* Instructions */}
-        <div className="terminal-block rounded-lg p-6">
-          <h2 className="font-display font-bold mb-4">Instructions</h2>
-          <p className="text-sm text-text-tertiary mb-4">
+        <div className="terminal-block rounded-lg p-4 sm:p-6">
+          <h2 className="font-display font-bold mb-3 sm:mb-4 text-base sm:text-lg">
+            Instructions
+          </h2>
+          <p className="text-xs sm:text-sm text-text-tertiary mb-3 sm:mb-4">
             Add usage instructions, setup steps, or any notes for using this
             snippet.
           </p>
@@ -378,8 +384,10 @@ function SnippetForm({
         {/* Files */}
         {files.length > 0 && (
           <div>
-            <h2 className="font-display font-bold mb-4">File Structure</h2>
-            <p className="text-sm text-text-tertiary mb-4">
+            <h2 className="font-display font-bold mb-3 sm:mb-4 text-base sm:text-lg">
+              File Structure
+            </h2>
+            <p className="text-xs sm:text-sm text-text-tertiary mb-3 sm:mb-4">
               Manage your snippet files and folder structure.
             </p>
             <FileTreeEditor files={files} onChange={setFiles} />
@@ -388,7 +396,7 @@ function SnippetForm({
 
         {/* Variables - Read only for now */}
         {variables.length > 0 && (
-          <div className="terminal-block rounded-lg p-6">
+          <div className="terminal-block rounded-lg p-4 sm:p-6">
             <VariableForm variables={variables} onChange={setVariables} />
           </div>
         )}
@@ -476,18 +484,20 @@ function EditSnippetPage() {
 
   if (fetchError) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <Link
           to="/dashboard"
           search={{ filter: undefined, tag: undefined }}
-          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors mb-6 sm:mb-8 text-sm sm:text-base"
         >
           <ArrowLeft size={18} />
           Back to Snippets
         </Link>
 
-        <div className="text-center py-16">
-          <div className="text-error text-lg mb-4">{fetchError.message}</div>
+        <div className="text-center py-12 sm:py-16">
+          <div className="text-error text-base sm:text-lg mb-4">
+            {fetchError.message}
+          </div>
           <Link
             to="/dashboard"
             search={{ filter: undefined, tag: undefined }}

@@ -141,13 +141,13 @@ function NewSnippetPage() {
   const tags = tagsData?.tags || [];
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-6 sm:mb-8">
         <Link
           to="/dashboard"
           search={{ filter: undefined, tag: undefined }}
-          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm sm:text-base"
         >
           <ArrowLeft size={18} />
           Cancel
@@ -156,7 +156,7 @@ function NewSnippetPage() {
         <button
           onClick={handleSubmit}
           disabled={createMutation.isPending || !title.trim()}
-          className="flex items-center gap-2 bg-accent text-bg-primary px-6 py-2 font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="hidden sm:flex items-center gap-2 bg-accent text-bg-primary px-6 py-2 font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {createMutation.isPending ? (
             <Loader2 size={18} className="animate-spin" />
@@ -167,7 +167,7 @@ function NewSnippetPage() {
         </button>
       </div>
 
-      <h1 className="font-display text-3xl font-bold mb-8">
+      <h1 className="font-display text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">
         Create New Snippet
       </h1>
 
@@ -177,10 +177,12 @@ function NewSnippetPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
         {/* Basic Info */}
-        <div className="terminal-block rounded-lg p-6 space-y-4">
-          <h2 className="font-display font-bold mb-4">Basic Info</h2>
+        <div className="terminal-block rounded-lg p-4 sm:p-6 space-y-4">
+          <h2 className="font-display font-bold mb-3 sm:mb-4 text-base sm:text-lg">
+            Basic Info
+          </h2>
 
           <div>
             <label className="block text-sm text-text-secondary mb-2 font-display">
@@ -256,9 +258,11 @@ function NewSnippetPage() {
         </div>
 
         {/* Instructions */}
-        <div className="terminal-block rounded-lg p-6">
-          <h2 className="font-display font-bold mb-4">Instructions</h2>
-          <p className="text-sm text-text-tertiary mb-4">
+        <div className="terminal-block rounded-lg p-4 sm:p-6">
+          <h2 className="font-display font-bold mb-3 sm:mb-4 text-base sm:text-lg">
+            Instructions
+          </h2>
+          <p className="text-xs sm:text-sm text-text-tertiary mb-3 sm:mb-4">
             Add usage instructions, setup steps, or any notes for using this
             snippet.
           </p>
@@ -271,8 +275,10 @@ function NewSnippetPage() {
 
         {/* Files */}
         <div>
-          <h2 className="font-display font-bold mb-4">File Structure</h2>
-          <p className="text-sm text-text-tertiary mb-4">
+          <h2 className="font-display font-bold mb-3 sm:mb-4 text-base sm:text-lg">
+            File Structure
+          </h2>
+          <p className="text-xs sm:text-sm text-text-tertiary mb-3 sm:mb-4">
             Add files with full paths to create folder structure (e.g.,
             src/components/Button.tsx)
           </p>
@@ -280,7 +286,7 @@ function NewSnippetPage() {
         </div>
 
         {/* Variables */}
-        <div className="terminal-block rounded-lg p-6">
+        <div className="terminal-block rounded-lg p-4 sm:p-6">
           <VariableForm variables={variables} onChange={setVariables} />
         </div>
 

@@ -127,12 +127,14 @@ function DashboardPage() {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="font-display text-2xl font-bold">{getTitle()}</h1>
-          <p className="text-text-secondary mt-1">
+          <h1 className="font-display text-xl sm:text-2xl font-bold">
+            {getTitle()}
+          </h1>
+          <p className="text-text-secondary mt-1 text-sm sm:text-base">
             {snippets.length} {snippets.length === 1 ? "snippet" : "snippets"}
             {filter === "favorites" && " marked as favorite"}
             {selectedTag && ` with tag "${selectedTag.name}"`}
@@ -140,7 +142,7 @@ function DashboardPage() {
         </div>
         <Link
           to="/dashboard/new"
-          className="flex items-center gap-2 bg-accent text-bg-primary px-4 py-2 font-medium hover:bg-accent-hover transition-colors"
+          className="flex items-center justify-center sm:justify-start gap-2 bg-accent text-bg-primary px-4 py-2 font-medium hover:bg-accent-hover transition-colors text-sm sm:text-base whitespace-nowrap"
         >
           <Plus size={18} />
           <span>New Snippet</span>
@@ -148,17 +150,17 @@ function DashboardPage() {
       </div>
 
       {/* Search */}
-      <div className="relative mb-8">
+      <div className="relative mb-6 sm:mb-8">
         <Search
           size={18}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary"
+          className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-text-tertiary"
         />
         <input
           type="text"
           placeholder="Search snippets..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-bg-secondary border border-border pl-12 pr-4 py-3 text-text-primary focus:border-accent focus:outline-none font-display"
+          className="w-full bg-bg-secondary border border-border pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 text-text-primary focus:border-accent focus:outline-none font-display text-sm sm:text-base"
         />
       </div>
 
@@ -168,7 +170,7 @@ function DashboardPage() {
           <Link
             to="/dashboard"
             search={{ filter: undefined, tag: undefined }}
-            className={`text-sm px-3 py-1.5 rounded font-display transition-colors ${
+            className={`text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 rounded font-display transition-colors ${
               !tag
                 ? "bg-accent text-bg-primary"
                 : "bg-bg-secondary text-text-secondary hover:text-text-primary"
@@ -181,14 +183,14 @@ function DashboardPage() {
               key={t.id}
               to="/dashboard"
               search={{ tag: t.name, filter: undefined }}
-              className={`text-sm px-3 py-1.5 rounded font-display transition-colors ${
+              className={`text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 rounded font-display transition-colors whitespace-nowrap ${
                 tag === t.name
                   ? "bg-accent text-bg-primary"
                   : "border border-border text-text-secondary hover:text-text-primary hover:border-text-tertiary"
               }`}
             >
               <span
-                className="inline-block w-2 h-2 rounded-full mr-2"
+                className="inline-block w-2 h-2 rounded-full mr-1.5 sm:mr-2"
                 style={{ backgroundColor: t.color || "#6b7280" }}
               />
               {t.name} ({t.snippetCount})
