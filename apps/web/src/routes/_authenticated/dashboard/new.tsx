@@ -41,7 +41,7 @@ function NewSnippetPage() {
   const [error, setError] = useState("");
 
   // Fetch tags
-  const { data: tagsData } = useQuery({
+  const { data: tagsData, refetch: refetchTags } = useQuery({
     queryKey: ["tags"],
     queryFn: async () => {
       const res = await api.tags.$get();
@@ -49,6 +49,27 @@ function NewSnippetPage() {
       return res.json();
     },
   });
+
+  // Create tag handler
+  const handleCreateTag = async (name: string, color: string) => {
+    try {
+      const res = await api.tags.$post({
+        json: { name, color },
+      });
+      if (!res.ok) {
+        console.error("Failed to create tag");
+        return null;
+      }
+      const data = await res.json();
+      await refetchTags();
+      return (
+        data as { tag: { id: string; name: string; color: string | null } }
+      ).tag;
+    } catch (err) {
+      console.error("Failed to create tag:", err);
+      return null;
+    }
+  };
 
   // Create snippet mutation
   const createMutation = useMutation({
@@ -217,6 +238,7 @@ function NewSnippetPage() {
                 availableTags={tags}
                 selectedTagIds={selectedTagIds}
                 onChange={setSelectedTagIds}
+                onCreateTag={handleCreateTag}
               />
             </div>
           </div>

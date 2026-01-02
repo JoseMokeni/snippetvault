@@ -40,12 +40,17 @@ interface SnippetFormProps {
     tagIds: string[];
   };
   availableTags: { id: string; name: string; color: string | null }[];
+  onCreateTag: (
+    name: string,
+    color: string
+  ) => Promise<{ id: string; name: string; color: string | null } | null>;
 }
 
 function SnippetForm({
   snippetId,
   initialData,
   availableTags,
+  onCreateTag,
 }: SnippetFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -349,6 +354,7 @@ function SnippetForm({
                 availableTags={availableTags}
                 selectedTagIds={selectedTagIds}
                 onChange={setSelectedTagIds}
+                onCreateTag={onCreateTag}
               />
             </div>
           </div>
@@ -431,7 +437,7 @@ function EditSnippetPage() {
   });
 
   // Fetch tags
-  const { data: tagsData } = useQuery({
+  const { data: tagsData, refetch: refetchTags } = useQuery({
     queryKey: ["tags"],
     queryFn: async () => {
       const res = await api.tags.$get();
@@ -439,6 +445,27 @@ function EditSnippetPage() {
       return res.json();
     },
   });
+
+  // Create tag handler
+  const handleCreateTag = async (name: string, color: string) => {
+    try {
+      const res = await api.tags.$post({
+        json: { name, color },
+      });
+      if (!res.ok) {
+        console.error("Failed to create tag");
+        return null;
+      }
+      const data = await res.json();
+      await refetchTags();
+      return (
+        data as { tag: { id: string; name: string; color: string | null } }
+      ).tag;
+    } catch (err) {
+      console.error("Failed to create tag:", err);
+      return null;
+    }
+  };
 
   if (isLoading) {
     return (
@@ -508,6 +535,7 @@ function EditSnippetPage() {
       snippetId={snippetId}
       initialData={initialData}
       availableTags={availableTags}
+      onCreateTag={handleCreateTag}
     />
   );
 }
