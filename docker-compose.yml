@@ -16,6 +16,22 @@ services:
       timeout: 5s
       retries: 5
 
+  # Test database - separate from dev database
+  db-test:
+    image: postgres:16-alpine
+    container_name: snippetvault-db-test
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   # Uncomment to test production build
   # app:
   #   build: .

@@ -50,6 +50,7 @@ bun run dev
 ```
 
 Visit:
+
 - Frontend: http://localhost:5173
 - API: http://localhost:3000
 - Health check: http://localhost:3000/api/health
@@ -87,6 +88,23 @@ Husky is configured to automatically run quality checks:
 
 These hooks ensure code quality before committing and pushing changes.
 
+### Testing
+
+Tests use a dedicated PostgreSQL container via docker-compose for fast, isolated test execution.
+
+```bash
+# Start the test database (first time only, or after docker compose down)
+docker compose up db-test -d
+
+# Run tests
+bun run test
+
+# Run tests in watch mode
+cd apps/api && bun test --watch
+```
+
+The test database runs on port 5433 to avoid conflicts with the development database.
+
 ## Project Structure
 
 ```
@@ -118,6 +136,7 @@ This project uses GitHub Actions for continuous integration and deployment with 
 ### Workflow Overview
 
 The CI/CD pipeline runs on:
+
 - **Push to `main`**: Runs all checks and publishes Docker images
 - **Pull Requests**: Runs all checks without publishing
 - **Version Tags** (`v*.*.*`): Runs all checks and publishes with semantic versioning
@@ -125,6 +144,7 @@ The CI/CD pipeline runs on:
 ### Pipeline Stages
 
 1. **Quality Checks** (parallel execution):
+
    - **Lint**: ESLint code quality checks
    - **Type Check**: TypeScript type safety verification
    - **Test**: Full test suite with PostgreSQL service
@@ -138,6 +158,7 @@ The CI/CD pipeline runs on:
 ### Image Tagging Strategy
 
 Images are automatically tagged with:
+
 - `latest`: Latest build from main branch
 - `main-<sha>`: Main branch with commit SHA
 - `v1.2.3`: Semantic version tags (if tagged)
@@ -168,10 +189,12 @@ docker compose up -d
 ### Setup Requirements
 
 The workflow uses GitHub's automatic `GITHUB_TOKEN` - no manual secrets needed. The token automatically has permissions to:
+
 - Read repository contents
 - Write to GitHub Container Registry
 
 To enable GHCR package visibility:
+
 1. Go to your repository → Settings → Actions → General
 2. Under "Workflow permissions", ensure "Read and write permissions" is selected
 3. After first build, go to the package settings and make it public (optional)
@@ -220,6 +243,7 @@ The app will be available at http://localhost:3000
 ### Production Deployment
 
 See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed production deployment instructions:
+
 - Docker Swarm (Dokploy)
 - VPS with PostgreSQL
 - SSL configuration

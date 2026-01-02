@@ -1,0 +1,6 @@
+[test]
+# Preload global setup before running tests
+preload = ["./tests/preload.ts"]
+
+# Run tests sequentially to share the container
+coverage = false
