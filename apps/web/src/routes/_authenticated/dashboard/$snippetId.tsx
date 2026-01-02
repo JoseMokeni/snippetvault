@@ -13,7 +13,7 @@ import {
   FileText,
 } from "lucide-react";
 import { api } from "@/lib/api-client";
-import { CodeViewer } from "@/components/code-viewer";
+import { FileTreeViewer } from "@/components/file-tree-viewer";
 import { VariableEditor } from "@/components/variable-editor";
 import { TagBadge } from "@/components/tag-badge";
 
@@ -319,7 +319,7 @@ function SnippetDetailPage() {
       {snippet.files && snippet.files.length > 0 && (
         <div>
           <h2 className="font-display font-bold mb-4">Files</h2>
-          <CodeViewer
+          <FileTreeViewer
             files={snippet.files}
             variables={snippet.variables || []}
             variableValues={variableValues}

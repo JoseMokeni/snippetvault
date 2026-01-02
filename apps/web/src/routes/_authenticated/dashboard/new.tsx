@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { api } from "@/lib/api-client";
-import { FileEditor } from "@/components/file-editor";
+import { FileTreeEditor } from "@/components/file-tree-editor";
 import { VariableForm } from "@/components/variable-editor";
 import { TagSelector } from "@/components/tag-badge";
 
@@ -240,8 +240,12 @@ function NewSnippetPage() {
 
         {/* Files */}
         <div>
-          <h2 className="font-display font-bold mb-4">Files</h2>
-          <FileEditor files={files} onChange={setFiles} />
+          <h2 className="font-display font-bold mb-4">File Structure</h2>
+          <p className="text-sm text-text-tertiary mb-4">
+            Add files with full paths to create folder structure (e.g.,
+            src/components/Button.tsx)
+          </p>
+          <FileTreeEditor files={files} onChange={setFiles} />
         </div>
 
         {/* Variables */}

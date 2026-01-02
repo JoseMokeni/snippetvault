@@ -45,11 +45,11 @@ function AuthenticatedLayout() {
   const tags = tagsData?.tags || [];
 
   return (
-    <div className="min-h-screen bg-bg-primary flex">
+    <div className="h-screen bg-bg-primary flex overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-border bg-bg-secondary flex flex-col">
+      <aside className="w-64 border-r border-border bg-bg-secondary flex flex-col flex-shrink-0 h-full">
         {/* Logo */}
-        <div className="p-4 border-b border-border">
+        <div className="p-4 border-b border-border flex-shrink-0">
           <Link to="/" className="font-display text-lg flex items-center gap-1">
             <span className="text-accent">{`>`}</span>
             <span>SnippetVault</span>
@@ -58,7 +58,7 @@ function AuthenticatedLayout() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto min-h-0">
           <Link
             to="/dashboard"
             search={{ filter: undefined, tag: undefined }}
@@ -108,7 +108,7 @@ function AuthenticatedLayout() {
         </nav>
 
         {/* New Snippet Button */}
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-border flex-shrink-0">
           <Link
             to="/dashboard/new"
             className="flex items-center justify-center gap-2 w-full bg-accent text-bg-primary py-2 font-medium hover:bg-accent-hover transition-colors"
@@ -119,7 +119,7 @@ function AuthenticatedLayout() {
         </div>
 
         {/* User Menu */}
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-border flex-shrink-0">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-display font-bold">
               {auth.user?.name?.charAt(0).toUpperCase() || "U"}

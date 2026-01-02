@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { api } from "@/lib/api-client";
-import { FileEditor } from "@/components/file-editor";
+import { FileTreeEditor } from "@/components/file-tree-editor";
 import { VariableForm } from "@/components/variable-editor";
 import { TagSelector } from "@/components/tag-badge";
 
@@ -64,10 +64,11 @@ function SnippetForm({
   );
   const [error, setError] = useState("");
 
-  // Update snippet mutation
+  // Update snippet mutation - handles metadata, files, and variables
   const updateMutation = useMutation({
     mutationFn: async () => {
-      const res = await api.snippets[":id"].$put({
+      // 1. Update snippet metadata
+      const metadataRes = await api.snippets[":id"].$put({
         param: { id: snippetId },
         json: {
           title,
@@ -77,13 +78,147 @@ function SnippetForm({
           tagIds: selectedTagIds,
         },
       });
-      if (!res.ok) {
-        const data = await res.json();
+      if (!metadataRes.ok) {
+        const data = await metadataRes.json();
         throw new Error(
           (data as { error?: string }).error || "Failed to update snippet"
         );
       }
-      return res.json();
+
+      // 2. Handle file changes
+      const initialFileIds = new Set(
+        initialData.files.filter((f) => f.id).map((f) => f.id)
+      );
+      const currentFileIds = new Set(
+        files.filter((f) => f.id).map((f) => f.id)
+      );
+
+      // Find deleted files (in initial but not in current)
+      const deletedFileIds = [...initialFileIds].filter(
+        (id) => !currentFileIds.has(id)
+      );
+
+      // Delete removed files
+      for (const fileId of deletedFileIds) {
+        const deleteRes = await api.files[":id"].$delete({
+          param: { id: fileId! },
+        });
+        if (!deleteRes.ok) {
+          console.error(`Failed to delete file ${fileId}`);
+        }
+      }
+
+      // Update existing files and create new ones
+      for (const file of files) {
+        if (file.id && initialFileIds.has(file.id)) {
+          // Existing file - check if modified
+          const originalFile = initialData.files.find((f) => f.id === file.id);
+          if (
+            originalFile &&
+            (originalFile.filename !== file.filename ||
+              originalFile.content !== file.content ||
+              originalFile.language !== file.language ||
+              originalFile.order !== file.order)
+          ) {
+            // File was modified - update it
+            const updateRes = await api.files[":id"].$put({
+              param: { id: file.id },
+              json: {
+                filename: file.filename,
+                content: file.content,
+                language: file.language,
+                order: file.order,
+              },
+            });
+            if (!updateRes.ok) {
+              console.error(`Failed to update file ${file.id}`);
+            }
+          }
+        } else {
+          // New file - create it
+          const createRes = await api.files.snippets[":snippetId"].files.$post({
+            param: { snippetId },
+            json: {
+              filename: file.filename,
+              content: file.content,
+              language: file.language,
+              order: file.order,
+            },
+          });
+          if (!createRes.ok) {
+            console.error(`Failed to create file ${file.filename}`);
+          }
+        }
+      }
+
+      // 3. Handle variable changes
+      const initialVarIds = new Set(
+        initialData.variables.filter((v) => v.id).map((v) => v.id)
+      );
+      const currentVarIds = new Set(
+        variables.filter((v) => v.id).map((v) => v.id)
+      );
+
+      // Find deleted variables
+      const deletedVarIds = [...initialVarIds].filter(
+        (id) => !currentVarIds.has(id)
+      );
+
+      // Delete removed variables
+      for (const varId of deletedVarIds) {
+        const deleteRes = await api.variables[":id"].$delete({
+          param: { id: varId! },
+        });
+        if (!deleteRes.ok) {
+          console.error(`Failed to delete variable ${varId}`);
+        }
+      }
+
+      // Update existing variables and create new ones
+      for (const variable of variables) {
+        if (variable.id && initialVarIds.has(variable.id)) {
+          // Existing variable - check if modified
+          const originalVar = initialData.variables.find(
+            (v) => v.id === variable.id
+          );
+          if (
+            originalVar &&
+            (originalVar.name !== variable.name ||
+              originalVar.defaultValue !== variable.defaultValue ||
+              originalVar.description !== variable.description)
+          ) {
+            // Variable was modified - update it
+            const updateRes = await api.variables[":id"].$put({
+              param: { id: variable.id },
+              json: {
+                name: variable.name,
+                defaultValue: variable.defaultValue || undefined,
+                description: variable.description || undefined,
+              },
+            });
+            if (!updateRes.ok) {
+              console.error(`Failed to update variable ${variable.id}`);
+            }
+          }
+        } else {
+          // New variable - create it
+          const createRes = await api.variables.snippets[
+            ":snippetId"
+          ].variables.$post({
+            param: { snippetId },
+            json: {
+              name: variable.name,
+              defaultValue: variable.defaultValue || "",
+              description: variable.description || undefined,
+            },
+          });
+          if (!createRes.ok) {
+            console.error(`Failed to create variable ${variable.name}`);
+          }
+        }
+      }
+
+      return metadataRes.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["snippets"] });
@@ -235,15 +370,14 @@ function SnippetForm({
           />
         </div>
 
-        {/* Files - Read only for now */}
+        {/* Files */}
         {files.length > 0 && (
           <div>
-            <h2 className="font-display font-bold mb-4">Files</h2>
+            <h2 className="font-display font-bold mb-4">File Structure</h2>
             <p className="text-sm text-text-tertiary mb-4">
-              File editing coming soon. For now, you can only update snippet
-              metadata.
+              Manage your snippet files and folder structure.
             </p>
-            <FileEditor files={files} onChange={setFiles} />
+            <FileTreeEditor files={files} onChange={setFiles} />
           </div>
         )}
 
