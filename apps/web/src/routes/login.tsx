@@ -1,31 +1,34 @@
-import { createFileRoute, Link, redirect } from '@tanstack/react-router'
-import { useState } from 'react'
-import { authClient } from '@/lib/auth-client'
-import { Loader2 } from 'lucide-react'
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
+import { Loader2 } from "lucide-react";
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>) => ({
-    redirect: (search.redirect as string) || '/dashboard',
+    redirect: (search.redirect as string) || "/dashboard",
   }),
   beforeLoad: async ({ context }) => {
     if (context.auth.isAuthenticated) {
-      throw redirect({ to: '/dashboard', search: { filter: undefined, tag: undefined } })
+      throw redirect({
+        to: "/dashboard",
+        search: { filter: undefined, tag: undefined },
+      });
     }
   },
   component: LoginPage,
-})
+});
 
 function LoginPage() {
-  const { redirect } = Route.useSearch()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const { redirect } = Route.useSearch();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setIsLoading(true)
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
     try {
       await authClient.signIn.email(
@@ -34,25 +37,28 @@ function LoginPage() {
           onSuccess: () => {
             // Use window.location to force a full page reload
             // This ensures the session state is fresh before navigation
-            window.location.href = redirect
+            window.location.href = redirect;
           },
           onError: (ctx) => {
-            setError(ctx.error.message || 'Failed to sign in')
+            setError(ctx.error.message || "Failed to sign in");
           },
         }
-      )
+      );
     } catch {
-      setError('An unexpected error occurred')
+      setError("An unexpected error occurred");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-bg-primary flex items-center justify-center px-6 dot-grid">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <Link to="/" className="font-display text-2xl flex items-center justify-center gap-1 mb-12">
+        <Link
+          to="/"
+          className="font-display text-2xl flex items-center justify-center gap-1 mb-12"
+        >
           <span className="text-accent">{`>`}</span>
           <span>SnippetVault</span>
           <span className="animate-blink">_</span>
@@ -71,7 +77,10 @@ function LoginPage() {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm text-text-secondary mb-2 font-display">
+              <label
+                htmlFor="email"
+                className="block text-sm text-text-secondary mb-2 font-display"
+              >
                 Email
               </label>
               <input
@@ -86,7 +95,10 @@ function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm text-text-secondary mb-2 font-display">
+              <label
+                htmlFor="password"
+                className="block text-sm text-text-secondary mb-2 font-display"
+              >
                 Password
               </label>
               <input
@@ -106,7 +118,7 @@ function LoginPage() {
               className="w-full bg-accent text-bg-primary py-3 font-display font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading && <Loader2 size={18} className="animate-spin" />}
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
@@ -120,11 +132,14 @@ function LoginPage() {
 
         {/* Back to home */}
         <div className="mt-8 text-center">
-          <Link to="/" className="text-text-secondary hover:text-text-primary transition-colors text-sm">
+          <Link
+            to="/"
+            className="text-text-secondary hover:text-text-primary transition-colors text-sm"
+          >
             ← Back to home
           </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }

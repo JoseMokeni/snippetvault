@@ -9,8 +9,8 @@ COPY apps/api/package.json ./apps/api/
 COPY apps/web/package.json ./apps/web/
 COPY packages/db/package.json ./packages/db/
 
-# Install dependencies
-RUN bun install --frozen-lockfile
+# Install dependencies (--ignore-scripts to skip husky in Docker)
+RUN bun install --frozen-lockfile --ignore-scripts
 
 # Copy source files
 COPY . .
