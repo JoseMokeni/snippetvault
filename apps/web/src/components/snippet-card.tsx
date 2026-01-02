@@ -79,16 +79,19 @@ export function SnippetCard({
               {snippet.language}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            {snippet.isFavorite && (
-              <Star size={16} className="text-warning fill-warning" />
-            )}
-          </div>
         </div>
 
-        <h3 className="font-display font-bold mb-2 group-hover:text-accent transition-colors">
-          {snippet.title}
-        </h3>
+        <div className="flex items-center gap-2 mb-2">
+          <h3 className="font-display font-bold group-hover:text-accent transition-colors">
+            {snippet.title}
+          </h3>
+          {snippet.isFavorite && (
+            <Star
+              size={16}
+              className="text-warning fill-warning flex-shrink-0"
+            />
+          )}
+        </div>
         {snippet.description && (
           <p className="text-text-secondary text-sm mb-4 line-clamp-2">
             {snippet.description}

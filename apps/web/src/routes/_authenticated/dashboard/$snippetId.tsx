@@ -205,7 +205,7 @@ function SnippetDetailPage() {
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="p-2 border border-border text-text-secondary hover:text-text-primary hover:border-text-tertiary transition-colors"
+              className="p-2 border border-border text-text-primary hover:text-accent hover:border-accent transition-colors"
             >
               <MoreVertical size={16} />
             </button>
