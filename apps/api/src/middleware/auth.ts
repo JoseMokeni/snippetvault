@@ -10,20 +10,24 @@ type AuthVariables = {
 
 /**
  * Create auth middleware with injected database.
- * In tests, we bypass better-auth and validate sessions directly.
+ * In tests, we bypass better-auth and validate sessions directly using Bearer tokens.
+ * In production, we use better-auth with cookies.
+ *
+ * @param testDb - Only pass this in test mode to use direct DB session validation
  */
-export function createAuthMiddleware(db?: Database) {
+export function createAuthMiddleware(testDb?: Database) {
   return createMiddleware<{ Variables: AuthVariables }>(async (c, next) => {
-    // If db is provided (test mode), validate session directly
-    if (db) {
-      const authHeader = c.req.header("Authorization");
-      const token = authHeader?.replace("Bearer ", "");
+    // Test mode: validate session directly using Bearer token
+    // Only activated when testDb is provided AND there's an Authorization header
+    const authHeader = c.req.header("Authorization");
+    if (testDb && authHeader) {
+      const token = authHeader.replace("Bearer ", "");
 
       if (!token) {
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      const session = await db.query.sessions.findFirst({
+      const session = await testDb.query.sessions.findFirst({
         where: eq(sessions.token, token),
       });
 
@@ -37,7 +41,7 @@ export function createAuthMiddleware(db?: Database) {
       return;
     }
 
-    // Production mode: use better-auth
+    // Production mode: use better-auth with cookies
     const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
     if (!session) {

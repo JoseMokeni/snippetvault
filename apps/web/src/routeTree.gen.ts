@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedDashboardNewRouteImport } from './routes/_authenticated/dashboard/new'
 import { Route as AuthenticatedDashboardSnippetIdRouteImport } from './routes/_authenticated/dashboard/$snippetId'
+import { Route as AuthenticatedDashboardSnippetIdEditRouteImport } from './routes/_authenticated/dashboard/$snippetId_.edit'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -54,6 +55,12 @@ const AuthenticatedDashboardSnippetIdRoute =
     path: '/dashboard/$snippetId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedDashboardSnippetIdEditRoute =
+  AuthenticatedDashboardSnippetIdEditRouteImport.update({
+    id: '/dashboard/$snippetId_/edit',
+    path: '/dashboard/$snippetId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/$snippetId': typeof AuthenticatedDashboardSnippetIdRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/$snippetId/edit': typeof AuthenticatedDashboardSnippetIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +78,7 @@ export interface FileRoutesByTo {
   '/dashboard/$snippetId': typeof AuthenticatedDashboardSnippetIdRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/$snippetId/edit': typeof AuthenticatedDashboardSnippetIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +89,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/$snippetId': typeof AuthenticatedDashboardSnippetIdRoute
   '/_authenticated/dashboard/new': typeof AuthenticatedDashboardNewRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/dashboard/$snippetId_/edit': typeof AuthenticatedDashboardSnippetIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,6 +100,7 @@ export interface FileRouteTypes {
     | '/dashboard/$snippetId'
     | '/dashboard/new'
     | '/dashboard'
+    | '/dashboard/$snippetId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -98,6 +109,7 @@ export interface FileRouteTypes {
     | '/dashboard/$snippetId'
     | '/dashboard/new'
     | '/dashboard'
+    | '/dashboard/$snippetId/edit'
   id:
     | '__root__'
     | '/'
@@ -107,6 +119,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/$snippetId'
     | '/_authenticated/dashboard/new'
     | '/_authenticated/dashboard/'
+    | '/_authenticated/dashboard/$snippetId_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -167,6 +180,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardSnippetIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/dashboard/$snippetId_/edit': {
+      id: '/_authenticated/dashboard/$snippetId_/edit'
+      path: '/dashboard/$snippetId/edit'
+      fullPath: '/dashboard/$snippetId/edit'
+      preLoaderRoute: typeof AuthenticatedDashboardSnippetIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -174,12 +194,15 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardSnippetIdRoute: typeof AuthenticatedDashboardSnippetIdRoute
   AuthenticatedDashboardNewRoute: typeof AuthenticatedDashboardNewRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedDashboardSnippetIdEditRoute: typeof AuthenticatedDashboardSnippetIdEditRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardSnippetIdRoute: AuthenticatedDashboardSnippetIdRoute,
   AuthenticatedDashboardNewRoute: AuthenticatedDashboardNewRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  AuthenticatedDashboardSnippetIdEditRoute:
+    AuthenticatedDashboardSnippetIdEditRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

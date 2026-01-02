@@ -1,61 +1,125 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Search, Plus, Folder, FileCode, Star, MoreVertical } from 'lucide-react'
-import { useState } from 'react'
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Search, Plus, Folder, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api-client";
+import { SnippetCard } from "@/components/snippet-card";
 
-export const Route = createFileRoute('/_authenticated/dashboard/')({
+export const Route = createFileRoute("/_authenticated/dashboard/")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    filter: (search.filter as string) || undefined,
+    tag: (search.tag as string) || undefined,
+  }),
   component: DashboardPage,
-})
+});
 
 function DashboardPage() {
-  const [searchQuery, setSearchQuery] = useState('')
+  const { filter, tag } = Route.useSearch();
+  const [searchQuery, setSearchQuery] = useState("");
+  const queryClient = useQueryClient();
 
-  // Mock data for now - will be replaced with API calls
-  const snippets = [
-    {
-      id: '1',
-      title: 'Docker Node.js Setup',
-      description: 'Complete Docker configuration for Node.js projects',
-      language: 'dockerfile',
-      filesCount: 3,
-      isFavorite: true,
-      tags: [{ name: 'Docker', color: '#2496ed' }, { name: 'Node.js', color: '#339933' }],
-      updatedAt: new Date('2024-01-15'),
+  // Fetch snippets
+  const {
+    data: snippetsData,
+    isLoading: snippetsLoading,
+    error: snippetsError,
+  } = useQuery({
+    queryKey: [
+      "snippets",
+      { favorite: filter === "favorites", tag, search: searchQuery },
+    ],
+    queryFn: async () => {
+      const res = await api.snippets.$get({
+        query: {
+          favorite: filter === "favorites" ? "true" : undefined,
+          tag: tag || undefined,
+          search: searchQuery || undefined,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch snippets");
+      return res.json();
     },
-    {
-      id: '2',
-      title: 'React Component Template',
-      description: 'Reusable React component with TypeScript and tests',
-      language: 'typescript',
-      filesCount: 4,
-      isFavorite: false,
-      tags: [{ name: 'React', color: '#61dafb' }, { name: 'TypeScript', color: '#3178c6' }],
-      updatedAt: new Date('2024-01-14'),
-    },
-    {
-      id: '3',
-      title: 'ESLint + Prettier Config',
-      description: 'My preferred linting and formatting setup',
-      language: 'json',
-      filesCount: 2,
-      isFavorite: true,
-      tags: [{ name: 'Config', color: '#f59e0b' }],
-      updatedAt: new Date('2024-01-10'),
-    },
-  ]
+  });
 
-  const filteredSnippets = snippets.filter(
-    (snippet) =>
-      snippet.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      snippet.description.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  // Fetch tags
+  const { data: tagsData } = useQuery({
+    queryKey: ["tags"],
+    queryFn: async () => {
+      const res = await api.tags.$get();
+      if (!res.ok) throw new Error("Failed to fetch tags");
+      return res.json();
+    },
+  });
+
+  // Toggle favorite mutation
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: async (snippetId: string) => {
+      const res = await api.snippets[":id"].favorite.$patch({
+        param: { id: snippetId },
+      });
+      if (!res.ok) throw new Error("Failed to toggle favorite");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["snippets"] });
+    },
+  });
+
+  // Duplicate mutation
+  const duplicateMutation = useMutation({
+    mutationFn: async (snippetId: string) => {
+      const res = await api.snippets[":id"].duplicate.$post({
+        param: { id: snippetId },
+      });
+      if (!res.ok) throw new Error("Failed to duplicate snippet");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["snippets"] });
+    },
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (snippetId: string) => {
+      const res = await api.snippets[":id"].$delete({
+        param: { id: snippetId },
+      });
+      if (!res.ok) throw new Error("Failed to delete snippet");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["snippets"] });
+    },
+  });
+
+  const handleDelete = (snippetId: string) => {
+    if (confirm("Are you sure you want to delete this snippet?")) {
+      deleteMutation.mutate(snippetId);
+    }
+  };
+
+  const snippets = snippetsData?.snippets || [];
+  const tags = tagsData?.tags || [];
+  const selectedTag = tag ? tags.find((t) => t.id === tag) : null;
+
+  const getTitle = () => {
+    if (filter === "favorites") return "Favorites";
+    if (selectedTag) return `Tag: ${selectedTag.name}`;
+    return "All Snippets";
+  };
 
   return (
     <div className="p-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-display text-2xl font-bold">All Snippets</h1>
-          <p className="text-text-secondary mt-1">{snippets.length} snippets in your library</p>
+          <h1 className="font-display text-2xl font-bold">{getTitle()}</h1>
+          <p className="text-text-secondary mt-1">
+            {snippets.length} {snippets.length === 1 ? "snippet" : "snippets"}
+            {filter === "favorites" && " marked as favorite"}
+            {selectedTag && ` with tag "${selectedTag.name}"`}
+          </p>
         </div>
         <Link
           to="/dashboard/new"
@@ -68,7 +132,10 @@ function DashboardPage() {
 
       {/* Search */}
       <div className="relative mb-8">
-        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary" />
+        <Search
+          size={18}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary"
+        />
         <input
           type="text"
           placeholder="Search snippets..."
@@ -78,15 +145,78 @@ function DashboardPage() {
         />
       </div>
 
-      {/* Snippets Grid */}
-      {filteredSnippets.length === 0 ? (
+      {/* Tag filters */}
+      {tags.length > 0 && !filter && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          <Link
+            to="/dashboard"
+            search={{ filter: undefined, tag: undefined }}
+            className={`text-sm px-3 py-1.5 rounded font-display transition-colors ${
+              !tag
+                ? "bg-accent text-bg-primary"
+                : "bg-bg-secondary text-text-secondary hover:text-text-primary"
+            }`}
+          >
+            All
+          </Link>
+          {tags.map((t) => (
+            <Link
+              key={t.id}
+              to="/dashboard"
+              search={{ tag: t.id, filter: undefined }}
+              className={`text-sm px-3 py-1.5 rounded font-display transition-colors ${
+                tag === t.id
+                  ? "bg-accent text-bg-primary"
+                  : "border border-border text-text-secondary hover:text-text-primary hover:border-text-tertiary"
+              }`}
+            >
+              <span
+                className="inline-block w-2 h-2 rounded-full mr-2"
+                style={{ backgroundColor: t.color || "#6b7280" }}
+              />
+              {t.name} ({t.snippetCount})
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* Loading state */}
+      {snippetsLoading && (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 size={32} className="animate-spin text-accent" />
+        </div>
+      )}
+
+      {/* Error state */}
+      {snippetsError && (
+        <div className="text-center py-16">
+          <div className="text-error mb-4">Failed to load snippets</div>
+          <button
+            onClick={() =>
+              queryClient.invalidateQueries({ queryKey: ["snippets"] })
+            }
+            className="text-accent hover:text-accent-hover transition-colors"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!snippetsLoading && !snippetsError && snippets.length === 0 && (
         <div className="text-center py-16">
           <Folder size={48} className="mx-auto text-text-tertiary mb-4" />
-          <h2 className="font-display text-xl font-bold mb-2">No snippets found</h2>
+          <h2 className="font-display text-xl font-bold mb-2">
+            No snippets found
+          </h2>
           <p className="text-text-secondary mb-6">
-            {searchQuery ? 'Try a different search term' : 'Create your first snippet to get started'}
+            {searchQuery
+              ? "Try a different search term"
+              : filter === "favorites"
+              ? "Mark snippets as favorite to see them here"
+              : "Create your first snippet to get started"}
           </p>
-          {!searchQuery && (
+          {!searchQuery && !filter && (
             <Link
               to="/dashboard/new"
               className="inline-flex items-center gap-2 bg-accent text-bg-primary px-6 py-3 font-medium hover:bg-accent-hover transition-colors"
@@ -96,85 +226,23 @@ function DashboardPage() {
             </Link>
           )}
         </div>
-      ) : (
+      )}
+
+      {/* Snippets Grid */}
+      {!snippetsLoading && !snippetsError && snippets.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredSnippets.map((snippet) => (
-            <SnippetCard key={snippet.id} snippet={snippet} />
+          {snippets.map((snippet) => (
+            <SnippetCard
+              key={snippet.id}
+              snippet={snippet}
+              filesCount={0} // We don't have this in list view, could add if needed
+              onToggleFavorite={(id) => toggleFavoriteMutation.mutate(id)}
+              onDuplicate={(id) => duplicateMutation.mutate(id)}
+              onDelete={handleDelete}
+            />
           ))}
         </div>
       )}
     </div>
-  )
-}
-
-interface SnippetCardProps {
-  snippet: {
-    id: string
-    title: string
-    description: string
-    language: string
-    filesCount: number
-    isFavorite: boolean
-    tags: { name: string; color: string }[]
-    updatedAt: Date
-  }
-}
-
-function SnippetCard({ snippet }: SnippetCardProps) {
-  return (
-    <Link
-      to="/dashboard/$snippetId"
-      params={{ snippetId: snippet.id }}
-      className="terminal-block rounded-lg p-5 hover:border-accent transition-colors group"
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <FileCode size={18} className="text-accent" />
-          <span className="font-display text-xs uppercase tracking-wider text-text-tertiary">
-            {snippet.language}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          {snippet.isFavorite && <Star size={16} className="text-warning fill-warning" />}
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              // Handle menu
-            }}
-            className="text-text-tertiary hover:text-text-primary opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <MoreVertical size={16} />
-          </button>
-        </div>
-      </div>
-
-      <h3 className="font-display font-bold mb-2 group-hover:text-accent transition-colors">
-        {snippet.title}
-      </h3>
-      <p className="text-text-secondary text-sm mb-4 line-clamp-2">{snippet.description}</p>
-
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Folder size={14} className="text-text-tertiary" />
-          <span className="text-xs text-text-tertiary">{snippet.filesCount} files</span>
-        </div>
-        <div className="flex gap-1">
-          {snippet.tags.slice(0, 2).map((tag) => (
-            <span
-              key={tag.name}
-              className="text-xs px-2 py-0.5 rounded"
-              style={{ backgroundColor: `${tag.color}20`, color: tag.color }}
-            >
-              {tag.name}
-            </span>
-          ))}
-          {snippet.tags.length > 2 && (
-            <span className="text-xs px-2 py-0.5 rounded bg-bg-elevated text-text-tertiary">
-              +{snippet.tags.length - 2}
-            </span>
-          )}
-        </div>
-      </div>
-    </Link>
-  )
+  );
 }
