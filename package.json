@@ -20,11 +20,14 @@
     "db:studio": "bun run --filter @snippetvault/db studio",
     "typecheck": "bun run --filter '*' typecheck",
     "lint": "bun run --filter '*' lint",
+    "test": "bun run --filter '*' test",
     "docker:build": "docker build -t snippetvault .",
-    "docker:run": "docker run -p 3000:3000 --env-file .env.prod snippetvault"
+    "docker:run": "docker run -p 3000:3000 --env-file .env.prod snippetvault",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "husky": "^9.1.7",
     "typescript": "^5.0.0"
   }
 }

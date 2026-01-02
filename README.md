@@ -73,9 +73,19 @@ bun run db:studio    # Open Drizzle Studio
 # Build for production
 bun run build
 
-# Type checking
-bun run typecheck
+# Code quality
+bun run typecheck    # Type checking
+bun run lint         # ESLint
 ```
+
+### Git Hooks
+
+Husky is configured to automatically run quality checks:
+
+- **pre-commit**: Runs `bun lint && bun typecheck` to check code style and types
+- **pre-push**: Runs `bun test` to verify all tests pass
+
+These hooks ensure code quality before committing and pushing changes.
 
 ## Project Structure
 
