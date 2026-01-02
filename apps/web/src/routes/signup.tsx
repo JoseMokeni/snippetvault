@@ -1,9 +1,14 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
 import { Loader2 } from 'lucide-react'
 
 export const Route = createFileRoute('/signup')({
+  beforeLoad: async ({ context }) => {
+    if (context.auth.isAuthenticated) {
+      throw redirect({ to: '/dashboard', search: { filter: undefined, tag: undefined } })
+    }
+  },
   component: SignupPage,
 })
 
