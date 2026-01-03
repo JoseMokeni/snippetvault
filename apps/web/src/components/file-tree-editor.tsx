@@ -12,6 +12,7 @@ import {
   FolderPlus,
   FilePlus,
 } from "lucide-react";
+import { showError } from "@/lib/toast";
 
 interface FileData {
   id?: string;
@@ -335,6 +336,13 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
     if (!newItemName.trim()) return;
 
     const filename = newItemName.trim();
+
+    // Check if file already exists
+    if (files.some((f) => f.filename === filename)) {
+      showError(`File "${filename}" already exists`);
+      return;
+    }
+
     const newFile: FileData = {
       filename,
       content: "",
@@ -429,6 +437,12 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
     const parts = oldPath.split("/");
     parts[parts.length - 1] = renameValue.trim();
     const newPath = parts.join("/");
+
+    // Check if new name already exists (and it's not the same file)
+    if (oldPath !== newPath && files.some((f) => f.filename === newPath)) {
+      showError(`A file named "${newPath}" already exists`);
+      return;
+    }
 
     if (renamingNode.type === "file") {
       const updated = files.map((f) =>
