@@ -21,6 +21,21 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: false, // MVP: disable email verification
   },
+  socialProviders: {
+    github: {
+      clientId: env.GITHUB_CLIENT_ID || "",
+      clientSecret: env.GITHUB_CLIENT_SECRET || "",
+      enabled: !!(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET),
+    },
+  },
+  account: {
+    accountLinking: {
+      enabled: false, // Disable account linking - each auth method creates separate account
+    },
+  },
+  onAPIError: {
+    errorURL: `${env.BETTER_AUTH_URL}/auth/error`,
+  },
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day

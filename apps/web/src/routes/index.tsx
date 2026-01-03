@@ -96,7 +96,7 @@ EXPOSE 3000`);
             Get Started Free
           </Link>
           <a
-            href="https://github.com/snippetvault"
+            href="https://github.com/JoseMokeni/snippetvault"
             target="_blank"
             rel="noopener noreferrer"
             className="border border-border px-6 py-3 font-medium hover:border-text-secondary transition-colors text-base sm:text-lg text-center"

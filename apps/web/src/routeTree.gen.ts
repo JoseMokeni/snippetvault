@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SSlugRouteImport } from './routes/s.$slug'
+import { Route as AuthErrorRouteImport } from './routes/auth.error'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedDashboardNewRouteImport } from './routes/_authenticated/dashboard/new'
 import { Route as AuthenticatedDashboardSnippetIdRouteImport } from './routes/_authenticated/dashboard/$snippetId'
@@ -41,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
 const SSlugRoute = SSlugRouteImport.update({
   id: '/s/$slug',
   path: '/s/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthErrorRoute = AuthErrorRouteImport.update({
+  id: '/auth/error',
+  path: '/auth/error',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardIndexRoute =
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/auth/error': typeof AuthErrorRoute
   '/s/$slug': typeof SSlugRoute
   '/dashboard/$snippetId': typeof AuthenticatedDashboardSnippetIdRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/auth/error': typeof AuthErrorRoute
   '/s/$slug': typeof SSlugRoute
   '/dashboard/$snippetId': typeof AuthenticatedDashboardSnippetIdRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/auth/error': typeof AuthErrorRoute
   '/s/$slug': typeof SSlugRoute
   '/_authenticated/dashboard/$snippetId': typeof AuthenticatedDashboardSnippetIdRoute
   '/_authenticated/dashboard/new': typeof AuthenticatedDashboardNewRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/signup'
+    | '/auth/error'
     | '/s/$slug'
     | '/dashboard/$snippetId'
     | '/dashboard/new'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/signup'
+    | '/auth/error'
     | '/s/$slug'
     | '/dashboard/$snippetId'
     | '/dashboard/new'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/signup'
+    | '/auth/error'
     | '/s/$slug'
     | '/_authenticated/dashboard/$snippetId'
     | '/_authenticated/dashboard/new'
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  AuthErrorRoute: typeof AuthErrorRoute
   SSlugRoute: typeof SSlugRoute
 }
 
@@ -177,6 +190,13 @@ declare module '@tanstack/react-router' {
       path: '/s/$slug'
       fullPath: '/s/$slug'
       preLoaderRoute: typeof SSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/error': {
+      id: '/auth/error'
+      path: '/auth/error'
+      fullPath: '/auth/error'
+      preLoaderRoute: typeof AuthErrorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard/': {
@@ -234,6 +254,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  AuthErrorRoute: AuthErrorRoute,
   SSlugRoute: SSlugRoute,
 }
 export const routeTree = rootRouteImport

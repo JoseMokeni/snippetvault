@@ -22,6 +22,7 @@ SnippetVault allows you to save, organize, and export reusable code snippets as 
 - **Frontend**: React + Vite + TanStack (Router, Query, Form)
 - **Database**: PostgreSQL
 - **UI**: shadcn/ui + Tailwind CSS
+- **Authentication**: Better Auth with email/password and GitHub OAuth
 
 ## Quick Start
 
@@ -123,12 +124,30 @@ snippetvault/
 Create a `.env` file in the root:
 
 ```env
+# Database
 DATABASE_URL=postgresql://snippetvault:snippetvault@localhost:5432/snippetvault
-BETTER_AUTH_SECRET=your-secret-min-32-chars
-BETTER_AUTH_URL=http://localhost:3000
+
+# Authentication
+BETTER_AUTH_SECRET=your-secret-min-32-chars  # Generate: openssl rand -base64 32
+BETTER_AUTH_URL=http://localhost:5173       # Frontend URL for OAuth redirects
+
+# GitHub OAuth (optional)
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+
+# Server
 NODE_ENV=development
 PORT=3000
 ```
+
+### Setting Up GitHub OAuth
+
+1. Create a GitHub OAuth App at https://github.com/settings/developers
+2. Set **Authorization callback URL** to: `http://localhost:5173/api/auth/callback/github`
+3. Copy the Client ID and Client Secret to your `.env` file
+4. Restart the dev server
+
+For production, update the callback URL to your production domain.
 
 ## CI/CD Pipeline
 
@@ -256,6 +275,15 @@ See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed production deployment instr
 - [Project Description](docs/PROJECT_DESCRIPTION.md) - Full feature specification
 - [Implementation Plan](docs/IMPLEMENTATION_PLAN.md) - Development roadmap
 - [Deployment Guide](docs/DEPLOYMENT.md) - Production deployment
+- [Demo Snippets](docs/DEMO_SNIPPETS.md) - Example snippets for showcase
+
+## Recent Updates
+
+- ✨ **Public Sharing**: Generate shareable links for snippets (read-only, no login required)
+- 🔐 **GitHub OAuth**: Sign in with GitHub alongside email/password authentication
+- 🎨 **Landing Page**: New "Share Anywhere" feature showcase and creator section
+- 🚨 **Error Handling**: Comprehensive auth error pages with user-friendly messages
+- 🛠️ **Better Auth**: Configured with account linking prevention for separate auth methods
 
 ## Contributing
 

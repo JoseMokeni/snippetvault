@@ -1,14 +1,20 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { Loader2 } from "lucide-react";
+import { Loader2, Github } from "lucide-react";
 
 export const Route = createFileRoute("/signup")({
   beforeLoad: async ({ context }) => {
     if (context.auth.isAuthenticated) {
       throw redirect({
         to: "/dashboard",
-        search: { filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined },
+        search: {
+          filter: undefined,
+          tag: undefined,
+          sortBy: undefined,
+          sortOrder: undefined,
+          language: undefined,
+        },
       });
     }
   },
@@ -82,6 +88,32 @@ function SignupPage() {
                 {error}
               </div>
             )}
+
+            {/* GitHub OAuth Button */}
+            <button
+              type="button"
+              onClick={() =>
+                authClient.signIn.social({
+                  provider: "github",
+                  callbackURL: "/dashboard",
+                })
+              }
+              className="w-full bg-bg-secondary border-2 border-border text-text-primary py-3 font-display font-medium hover:border-accent transition-colors flex items-center justify-center gap-2"
+            >
+              <Github size={18} />
+              Continue with GitHub
+            </button>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border"></div>
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-bg-primary px-2 text-text-tertiary">
+                  OR
+                </span>
+              </div>
+            </div>
 
             <div>
               <label
