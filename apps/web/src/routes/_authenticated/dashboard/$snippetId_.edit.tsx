@@ -487,7 +487,7 @@ function EditSnippetPage() {
       <div className="p-4 sm:p-6 lg:p-8">
         <Link
           to="/dashboard"
-          search={{ filter: undefined, tag: undefined }}
+          search={{ filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
           className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors mb-6 sm:mb-8 text-sm sm:text-base"
         >
           <ArrowLeft size={18} />
@@ -500,7 +500,7 @@ function EditSnippetPage() {
           </div>
           <Link
             to="/dashboard"
-            search={{ filter: undefined, tag: undefined }}
+            search={{ filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
             className="text-accent hover:text-accent-hover transition-colors"
           >
             Go back to dashboard

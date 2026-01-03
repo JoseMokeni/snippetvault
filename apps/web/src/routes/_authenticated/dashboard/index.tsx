@@ -4,18 +4,27 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import { SnippetCard } from "@/components/snippet-card";
+import { SortDropdown } from "@/components/sort-dropdown";
+import { LanguageFilter } from "@/components/language-filter";
 import { showSuccess, handleApiError } from "@/lib/toast";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
   validateSearch: (search: Record<string, unknown>) => ({
     filter: (search.filter as string) || undefined,
     tag: (search.tag as string) || undefined,
+    sortBy: (search.sortBy as "updatedAt" | "createdAt" | "title" | undefined) || undefined,
+    sortOrder: (search.sortOrder as "asc" | "desc" | undefined) || undefined,
+    language: (search.language as string) || undefined,
   }),
   component: DashboardPage,
 });
 
 function DashboardPage() {
-  const { filter, tag } = Route.useSearch();
+  const searchParams = Route.useSearch();
+  const { filter, tag, language } = searchParams;
+  // Default to updatedAt-desc if not specified
+  const sortBy = searchParams.sortBy || "updatedAt";
+  const sortOrder = searchParams.sortOrder || "desc";
   const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
 
@@ -27,7 +36,7 @@ function DashboardPage() {
   } = useQuery({
     queryKey: [
       "snippets",
-      { favorite: filter === "favorites", tag, search: searchQuery },
+      { favorite: filter === "favorites", tag, search: searchQuery, sortBy, sortOrder, language },
     ],
     queryFn: async () => {
       const res = await api.snippets.$get({
@@ -35,6 +44,9 @@ function DashboardPage() {
           favorite: filter === "favorites" ? "true" : undefined,
           tag: tag || undefined,
           search: searchQuery || undefined,
+          sortBy: sortBy || undefined,
+          sortOrder: sortOrder || undefined,
+          language: language || undefined,
         },
       });
       if (!res.ok) throw new Error("Failed to fetch snippets");
@@ -149,19 +161,23 @@ function DashboardPage() {
         </Link>
       </div>
 
-      {/* Search */}
-      <div className="relative mb-6 sm:mb-8">
-        <Search
-          size={18}
-          className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-text-tertiary"
-        />
-        <input
-          type="text"
-          placeholder="Search snippets..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-bg-secondary border border-border pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 text-text-primary focus:border-accent focus:outline-none font-display text-sm sm:text-base"
-        />
+      {/* Search, Language Filter, and Sort */}
+      <div className="flex gap-3 mb-6 sm:mb-8">
+        <div className="relative flex-1">
+          <Search
+            size={18}
+            className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-text-tertiary"
+          />
+          <input
+            type="text"
+            placeholder="Search snippets..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-bg-secondary border border-border pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 text-text-primary focus:border-accent focus:outline-none font-display text-sm sm:text-base"
+          />
+        </div>
+        <LanguageFilter snippets={snippets} />
+        <SortDropdown />
       </div>
 
       {/* Tag filters */}
@@ -169,7 +185,13 @@ function DashboardPage() {
         <div className="flex flex-wrap gap-2 mb-6">
           <Link
             to="/dashboard"
-            search={{ filter: undefined, tag: undefined }}
+            search={{
+              filter: undefined,
+              tag: undefined,
+              sortBy: searchParams.sortBy,
+              sortOrder: searchParams.sortOrder,
+              language: searchParams.language,
+            }}
             className={`text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 rounded font-display transition-colors ${
               !tag
                 ? "bg-accent text-bg-primary"
@@ -182,7 +204,13 @@ function DashboardPage() {
             <Link
               key={t.id}
               to="/dashboard"
-              search={{ tag: t.name, filter: undefined }}
+              search={{
+                tag: t.name,
+                filter: undefined,
+                sortBy: searchParams.sortBy,
+                sortOrder: searchParams.sortOrder,
+                language: searchParams.language,
+              }}
               className={`text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 rounded font-display transition-colors whitespace-nowrap ${
                 tag === t.name
                   ? "bg-accent text-bg-primary"

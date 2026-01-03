@@ -11,7 +11,7 @@ export const Route = createFileRoute("/login")({
     if (context.auth.isAuthenticated) {
       throw redirect({
         to: "/dashboard",
-        search: { filter: undefined, tag: undefined },
+        search: { filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined },
       });
     }
   },

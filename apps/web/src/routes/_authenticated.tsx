@@ -91,7 +91,7 @@ function AuthenticatedLayout() {
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto min-h-0">
           <Link
             to="/dashboard"
-            search={{ filter: undefined, tag: undefined }}
+            search={{ filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
             className="flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors [&.active]:bg-bg-elevated [&.active]:text-text-primary"
             activeOptions={{ exact: true }}
             onClick={() => setMobileMenuOpen(false)}
@@ -101,7 +101,7 @@ function AuthenticatedLayout() {
           </Link>
           <Link
             to="/dashboard"
-            search={{ filter: "favorites", tag: undefined }}
+            search={{ filter: "favorites", tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
             className="flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors"
             onClick={() => setMobileMenuOpen(false)}
           >
@@ -120,7 +120,7 @@ function AuthenticatedLayout() {
                 <Link
                   key={tag.id}
                   to="/dashboard"
-                  search={{ tag: tag.name, filter: undefined }}
+                  search={{ tag: tag.name, filter: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
                   className="flex items-center justify-between px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors text-sm"
                   onClick={() => setMobileMenuOpen(false)}
                 >

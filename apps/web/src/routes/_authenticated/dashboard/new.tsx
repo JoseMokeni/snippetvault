@@ -146,7 +146,7 @@ function NewSnippetPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-6 sm:mb-8">
         <Link
           to="/dashboard"
-          search={{ filter: undefined, tag: undefined }}
+          search={{ filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
           className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm sm:text-base"
         >
           <ArrowLeft size={18} />
