@@ -25,9 +25,6 @@ app.route("/api", apiRoutes);
 
 // Serve static files (React build) in production
 if (process.env.NODE_ENV === "production") {
-  // Serve favicon explicitly
-  app.get("/favicon.svg", serveStatic({ path: "./public/favicon.svg" }));
-
   // Serve static assets
   app.use("/*", serveStatic({ root: "./public" }));
 
