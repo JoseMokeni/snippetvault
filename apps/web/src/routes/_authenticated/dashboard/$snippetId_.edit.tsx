@@ -415,8 +415,7 @@ function SnippetForm({
               type="checkbox"
               checked={isPublic}
               onChange={(e) => setIsPublic(e.target.checked)}
-              disabled={initialData.isPublic}
-              className="mt-1 w-4 h-4 border border-border bg-bg-secondary checked:bg-accent checked:border-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-1 w-4 h-4 border border-border bg-bg-secondary checked:bg-accent checked:border-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg-primary cursor-pointer"
             />
             <div className="flex-1">
               <div className="flex items-center gap-2 font-medium text-text-primary group-hover:text-accent transition-colors">
@@ -431,29 +430,21 @@ function SnippetForm({
             </div>
           </label>
 
-          {initialData.isPublic && (
-            <div className="mt-4 p-3 bg-accent/5 border border-accent/30 rounded">
-              <div className="flex items-center gap-2 text-xs text-accent font-mono mb-2">
-                <Lock size={12} />
-                <span>ALREADY PUBLIC</span>
-              </div>
-              <div className="text-sm text-text-secondary">
-                This snippet is already public and cannot be changed back to private. Public snippets are permanently shareable.
-              </div>
-            </div>
-          )}
-
-          {isPublic && !initialData.isPublic && (
+          {isPublic && (
             <div className="mt-4 p-3 bg-accent/5 border border-accent/30 rounded">
               <div className="flex items-center gap-2 text-xs text-accent font-mono mb-2">
                 <Globe size={12} />
-                <span>MAKING PUBLIC</span>
+                <span>{initialData.isPublic ? "PUBLIC SNIPPET" : "MAKING PUBLIC"}</span>
               </div>
               <div className="text-sm text-text-secondary">
-                <p className="mb-2">A shareable link will be generated when you save.</p>
+                <p className="mb-2">
+                  {initialData.isPublic
+                    ? "This snippet has a public link. You can change it back to private at any time."
+                    : "A shareable link will be generated when you save."}
+                </p>
                 <ul className="list-disc list-inside space-y-1 text-xs">
                   <li>Anyone with the link can view (read-only)</li>
-                  <li>Cannot be changed back to private once shared</li>
+                  <li>Link remains accessible even if changed to private later</li>
                   <li>Great for sharing code examples, tutorials, and documentation</li>
                 </ul>
               </div>

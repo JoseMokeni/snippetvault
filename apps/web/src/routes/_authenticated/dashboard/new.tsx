@@ -322,13 +322,13 @@ function NewSnippetPage() {
             <div className="mt-4 p-3 bg-accent/5 border border-accent/30 rounded">
               <div className="flex items-center gap-2 text-xs text-accent font-mono mb-2">
                 <Globe size={12} />
-                <span>PUBLIC SNIPPET</span>
+                <span>MAKING PUBLIC</span>
               </div>
               <div className="text-sm text-text-secondary">
                 <p className="mb-2">A shareable link will be generated when you save.</p>
                 <ul className="list-disc list-inside space-y-1 text-xs">
                   <li>Anyone with the link can view (read-only)</li>
-                  <li>Cannot be changed back to private once shared</li>
+                  <li>You can change visibility back to private anytime</li>
                   <li>Great for sharing code examples, tutorials, and documentation</li>
                 </ul>
               </div>
