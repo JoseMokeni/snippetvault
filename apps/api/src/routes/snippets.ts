@@ -8,7 +8,7 @@ import {
   snippetsTags,
   type Database,
 } from "@snippetvault/db";
-import { eq, and, desc, asc, like, or, inArray } from "drizzle-orm";
+import { eq, and, desc, asc, or, inArray, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { createAuthMiddleware } from "../middleware/auth";
 import {
@@ -45,13 +45,13 @@ export function createSnippetsRoute(db: Database) {
           conditions.push(eq(snippets.isFavorite, true));
         }
 
-        // Search by title or description
+        // Search by title or description (case-insensitive)
         if (query.search) {
-          const searchPattern = `%${query.search}%`;
+          const searchPattern = `%${query.search.toLowerCase()}%`;
           conditions.push(
             or(
-              like(snippets.title, searchPattern),
-              like(snippets.description, searchPattern)
+              sql`LOWER(${snippets.title}) LIKE ${searchPattern}`,
+              sql`LOWER(${snippets.description}) LIKE ${searchPattern}`
             )!
           );
         }
