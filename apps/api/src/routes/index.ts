@@ -5,6 +5,7 @@ import { createSnippetsRoute } from "./snippets";
 import { createFilesRoute } from "./files";
 import { createVariablesRoute } from "./variables";
 import { createTagsRoute } from "./tags";
+import { createPublicRoute } from "./public";
 
 /**
  * Create the main app with all routes.
@@ -20,6 +21,7 @@ export function createApp(database: Database = db) {
       });
     })
     .route("/auth", authRoute)
+    .route("/public", createPublicRoute(database))
     .route("/snippets", createSnippetsRoute(database))
     .route("/files", createFilesRoute(database))
     .route("/variables", createVariablesRoute(database))

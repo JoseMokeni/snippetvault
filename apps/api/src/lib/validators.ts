@@ -39,6 +39,7 @@ export const snippetQuerySchema = z.object({
   language: z.string().optional(),
   tag: z.string().optional(),
   favorite: z.string().optional().transform(val => val === 'true'),
+  public: z.string().optional().transform(val => val === 'true'),
   search: z.string().optional(),
   sortBy: z.enum(['createdAt', 'updatedAt', 'title']).optional().default('updatedAt'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),

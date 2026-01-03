@@ -12,6 +12,8 @@ import {
   Download,
   MoreVertical,
   FileText,
+  Share2,
+  Globe,
 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { FileTreeViewer } from "@/components/file-tree-viewer";
@@ -132,6 +134,16 @@ function SnippetDetailPage() {
     setShowExportModal(true);
   };
 
+  const handleShare = () => {
+    if (snippet?.slug) {
+      const url = `${window.location.origin}/s/${snippet.slug}`;
+      navigator.clipboard.writeText(url).catch(() => {
+        // Clipboard permission denied, but URL is still shown in the UI
+      });
+      showSuccess("Public link copied to clipboard");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -192,6 +204,17 @@ function SnippetDetailPage() {
             <Edit2 size={16} />
             <span>Edit</span>
           </Link>
+
+          {snippet.isPublic && snippet.slug && (
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 border border-accent bg-accent/5 text-accent hover:bg-accent/10 hover:border-accent transition-colors text-sm"
+            >
+              <Share2 size={16} />
+              <span className="hidden sm:inline">Share</span>
+              <span className="sm:hidden">Share</span>
+            </button>
+          )}
 
           <button
             onClick={handleExport}
@@ -259,6 +282,12 @@ function SnippetDetailPage() {
           <h1 className="font-display text-2xl sm:text-3xl font-bold break-words">
             {snippet.title}
           </h1>
+          {snippet.isPublic && (
+            <Globe
+              size={20}
+              className="text-accent flex-shrink-0 mt-0.5 sm:mt-1 sm:w-6 sm:h-6"
+            />
+          )}
           {snippet.isFavorite && (
             <Star
               size={20}
@@ -291,6 +320,37 @@ function SnippetDetailPage() {
           </span>
         </div>
       </div>
+
+      {/* Public Link */}
+      {snippet.isPublic && snippet.slug && (
+        <div className="terminal-block rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 border-2 border-accent/30">
+          <div className="flex items-center gap-2 mb-3">
+            <Globe size={16} className="text-accent" />
+            <h2 className="font-display font-bold text-base sm:text-lg">
+              Public Link
+            </h2>
+          </div>
+          <p className="text-xs sm:text-sm text-text-secondary mb-3">
+            Share this link with anyone. They can view this snippet without signing in.
+          </p>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              readOnly
+              value={`${window.location.origin}/s/${snippet.slug}`}
+              className="flex-1 bg-bg-secondary border border-border px-3 py-2 text-text-primary font-mono text-xs sm:text-sm focus:outline-none focus:border-accent"
+              onClick={(e) => e.currentTarget.select()}
+            />
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 border border-accent bg-accent/5 text-accent hover:bg-accent/10 hover:border-accent transition-colors text-sm whitespace-nowrap"
+            >
+              <Copy size={14} />
+              <span className="hidden sm:inline">Copy</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Instructions */}
       {snippet.instructions && (

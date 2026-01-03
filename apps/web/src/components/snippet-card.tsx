@@ -6,8 +6,11 @@ import {
   Star,
   Copy,
   Trash2,
+  Globe,
+  Share2,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { showSuccess } from "@/lib/toast";
 
 interface Tag {
   id: string;
@@ -22,6 +25,8 @@ interface SnippetCardProps {
     description: string | null;
     language: string;
     isFavorite: boolean;
+    isPublic: boolean;
+    slug: string | null;
     tags: Tag[];
     createdAt: string;
     updatedAt: string;
@@ -66,18 +71,24 @@ export function SnippetCard({
   };
 
   return (
-    <div className="terminal-block rounded-lg p-5 hover:border-accent transition-colors group relative">
+    <div className={`terminal-block rounded-lg p-5 hover:border-accent transition-colors group relative ${snippet.isPublic ? 'border-2 border-accent/30' : ''}`}>
       <Link
         to="/dashboard/$snippetId"
         params={{ snippetId: snippet.id }}
         className="block"
       >
         <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <FileCode size={18} className="text-accent" />
             <span className="font-display text-xs uppercase tracking-wider text-text-tertiary">
               {snippet.language}
             </span>
+            {snippet.isPublic && (
+              <span className="flex items-center gap-1 font-mono text-[10px] px-1.5 py-0.5 bg-accent/10 text-accent border border-accent/30 rounded">
+                <Globe size={10} />
+                PUBLIC
+              </span>
+            )}
           </div>
         </div>
 
@@ -147,6 +158,22 @@ export function SnippetCard({
 
         {menuOpen && (
           <div className="absolute right-0 top-8 z-10 w-40 bg-bg-elevated border border-border rounded shadow-lg">
+            {snippet.isPublic && snippet.slug && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const url = `${window.location.origin}/s/${snippet.slug}`;
+                  navigator.clipboard.writeText(url);
+                  showSuccess("Public link copied to clipboard");
+                  setMenuOpen(false);
+                }}
+                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-accent hover:bg-accent/10 transition-colors border-b border-border"
+              >
+                <Share2 size={14} />
+                Share Link
+              </button>
+            )}
             <button
               onClick={(e) => {
                 e.preventDefault();

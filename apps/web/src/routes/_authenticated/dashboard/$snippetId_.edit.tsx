@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Loader2, Save, Globe, Lock } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { FileTreeEditor } from "@/components/file-tree-editor";
 import { VariableForm } from "@/components/variable-editor";
@@ -39,6 +39,7 @@ interface SnippetFormProps {
     files: FileData[];
     variables: VariableData[];
     tagIds: string[];
+    isPublic: boolean;
   };
   availableTags: { id: string; name: string; color: string | null }[];
   onCreateTag: (
@@ -68,6 +69,7 @@ function SnippetForm({
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
     initialData.tagIds
   );
+  const [isPublic, setIsPublic] = useState(initialData.isPublic);
   const [error, setError] = useState("");
 
   // Update snippet mutation - handles metadata, files, and variables
@@ -81,6 +83,7 @@ function SnippetForm({
           description: description || undefined,
           language,
           instructions: instructions || undefined,
+          isPublic,
           tagIds: selectedTagIds,
         },
       });
@@ -401,6 +404,63 @@ function SnippetForm({
           </div>
         )}
 
+        {/* Visibility Settings */}
+        <div className="terminal-block rounded-lg p-4 sm:p-6">
+          <h2 className="font-display font-bold mb-3 sm:mb-4 text-base sm:text-lg">
+            Visibility Settings
+          </h2>
+
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={isPublic}
+              onChange={(e) => setIsPublic(e.target.checked)}
+              disabled={initialData.isPublic}
+              className="mt-1 w-4 h-4 border border-border bg-bg-secondary checked:bg-accent checked:border-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            <div className="flex-1">
+              <div className="flex items-center gap-2 font-medium text-text-primary group-hover:text-accent transition-colors">
+                {isPublic ? <Globe size={16} /> : <Lock size={16} />}
+                <span>Make this snippet public</span>
+              </div>
+              <div className="text-sm text-text-secondary mt-1">
+                {isPublic
+                  ? "Anyone with the link can view this snippet (read-only)"
+                  : "Only you can view this snippet"}
+              </div>
+            </div>
+          </label>
+
+          {initialData.isPublic && (
+            <div className="mt-4 p-3 bg-accent/5 border border-accent/30 rounded">
+              <div className="flex items-center gap-2 text-xs text-accent font-mono mb-2">
+                <Lock size={12} />
+                <span>ALREADY PUBLIC</span>
+              </div>
+              <div className="text-sm text-text-secondary">
+                This snippet is already public and cannot be changed back to private. Public snippets are permanently shareable.
+              </div>
+            </div>
+          )}
+
+          {isPublic && !initialData.isPublic && (
+            <div className="mt-4 p-3 bg-accent/5 border border-accent/30 rounded">
+              <div className="flex items-center gap-2 text-xs text-accent font-mono mb-2">
+                <Globe size={12} />
+                <span>MAKING PUBLIC</span>
+              </div>
+              <div className="text-sm text-text-secondary">
+                <p className="mb-2">A shareable link will be generated when you save.</p>
+                <ul className="list-disc list-inside space-y-1 text-xs">
+                  <li>Anyone with the link can view (read-only)</li>
+                  <li>Cannot be changed back to private once shared</li>
+                  <li>Great for sharing code examples, tutorials, and documentation</li>
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Submit button (mobile) */}
         <div className="sm:hidden">
           <button
@@ -534,6 +594,7 @@ function EditSnippetPage() {
         description: v.description || "",
       })) || [],
     tagIds: snippet.tags?.map((t) => t.id) || [],
+    isPublic: snippet.isPublic || false,
   };
 
   const availableTags = tagsData?.tags || [];

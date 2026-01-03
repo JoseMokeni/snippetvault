@@ -1,7 +1,8 @@
 # SnippetVault - Next Features Implementation Plan
 
-> **Status**: Ready for implementation
+> **Status**: In Progress
 > **Created**: 2026-01-03
+> **Updated**: 2026-01-03
 > **All features are MAKABLE** - This document provides a structured roadmap
 
 ## Overview
@@ -10,91 +11,53 @@ This document outlines the implementation plan for the next phase of SnippetVaul
 
 ---
 
+## Progress Tracker
+
+**Completed Features** ✅:
+1. Sort Options UI Dropdown
+2. Language Filter UI Dropdown
+
+**In Progress** 🚧:
+3. Public Snippets & Sharing (Phase 1)
+
+**Next Up** 📋:
+4. Basic Keyboard Shortcuts
+5. Empty States & Onboarding
+6. Snippet Templates
+
+---
+
 ## Table of Contents
 
-1. [Quick Wins (Start Here)](#quick-wins)
+1. [Quick Wins (In Progress)](#quick-wins)
 2. [Public Sharing & Discovery](#public-sharing--discovery)
 3. [User Experience Enhancements](#user-experience-enhancements)
 4. [Advanced Features](#advanced-features)
 5. [Import/Export System](#importexport-system)
-6. [Implementation Order](#recommended-implementation-order)
+6. [Future Improvements](#future-improvements)
 
 ---
 
 ## Quick Wins
 
-### 1.1 Sort Options UI Dropdown
-**Complexity**: Easy | **Time**: 1-2 hours | **Priority**: High
+### ✅ 1.1 Sort Options UI Dropdown - COMPLETED
+- Added dropdown with 6 sort options
+- Persists across filters and navigation
+- Responsive design (mobile: "Sort", desktop: full label)
 
-**Current State**:
-- ✅ Backend sorting implemented (`sortBy`, `sortOrder` in API)
-- ❌ No UI controls - users can't change sort order
+### ✅ 1.2 Language Filter UI Dropdown - COMPLETED
+- Dynamic language extraction from snippets
+- Shows snippet counts per language
+- Smart sorting by usage frequency
 
-**Implementation**:
+### 🚧 1.3 Public Snippets Toggle - IN PROGRESS
+**Complexity**: Easy | **Time**: 2-3 hours | **Priority**: High
 
-**Step 1**: Create SortDropdown component
-```tsx
-// apps/web/src/components/sort-dropdown.tsx
-- Dropdown with options: "Recently Updated", "Recently Created", "Title (A-Z)", "Title (Z-A)"
-- Use shadcn/ui DropdownMenu component
-- Icons from lucide-react: ArrowUpDown, Calendar, AlphabeticalVariant
-```
-
-**Step 2**: Integrate in dashboard
-```tsx
-// apps/web/src/routes/_authenticated/dashboard/index.tsx
-- Add sort state to URL search params (e.g., ?sort=updatedAt-desc)
-- Pass to API query
-- Position next to search bar
-```
-
-**Files to modify**:
-- `apps/web/src/components/sort-dropdown.tsx` (new)
-- `apps/web/src/routes/_authenticated/dashboard/index.tsx`
+See [Public Sharing & Discovery](#public-sharing--discovery) section for full implementation details.
 
 ---
 
-### 1.2 Language Filter UI Dropdown
-**Complexity**: Easy | **Time**: 1-2 hours | **Priority**: High
-
-**Current State**:
-- ✅ Backend language filtering implemented
-- ✅ Language field indexed in DB
-- ❌ No UI dropdown
-
-**Implementation**:
-
-**Step 1**: Create LanguageFilter component
-```tsx
-// apps/web/src/components/language-filter.tsx
-- Dropdown/combobox with common languages
-- Show count of snippets per language
-- "All Languages" option to clear filter
-```
-
-**Step 2**: Fetch available languages
-```typescript
-// Option A: Add new endpoint
-GET /api/snippets/languages
-// Returns list of languages with counts
-
-// Option B: Compute from snippets data (simpler, start here)
-- Extract unique languages from fetched snippets
-- Show in dropdown
-```
-
-**Step 3**: Integrate in dashboard
-- Add to filter row alongside tags
-- Update URL search params (?language=javascript)
-
-**Files to modify**:
-- `apps/web/src/components/language-filter.tsx` (new)
-- `apps/web/src/routes/_authenticated/dashboard/index.tsx`
-- Optionally: `apps/api/src/routes/snippets.ts` (for languages endpoint)
-
----
-
-### 1.3 Basic Keyboard Shortcuts
+### 1.4 Basic Keyboard Shortcuts
 **Complexity**: Easy | **Time**: 2-3 hours | **Priority**: High
 
 **Shortcuts to implement**:
@@ -136,21 +99,6 @@ export function useKeyboardShortcuts() {
   }, [])
 }
 ```
-
-**Step 2**: Add to dashboard layout
-```tsx
-// apps/web/src/routes/_authenticated/dashboard/index.tsx
-import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
-
-function DashboardPage() {
-  useKeyboardShortcuts()
-  // ... rest of component
-}
-```
-
-**Step 3**: Add visual hints
-- Small badge on search input: "Press / to search"
-- Show keyboard shortcuts in help modal/tooltip
 
 **Files to modify**:
 - `apps/web/src/hooks/use-keyboard-shortcuts.ts` (new)
@@ -1569,3 +1517,341 @@ Before starting implementation, decide:
 **Timeline**: 5-6 weeks for complete implementation
 
 Let's build this! 🚀
+
+## Public Sharing & Discovery
+
+### Phase 1: Basic Public Sharing (IN PROGRESS) 🚧
+
+**UX Philosophy**: Privacy-first with intentional sharing. Public snippets are **opt-in** and **link-only**. No algorithmic discovery, no feed, no social features. Just clean, direct sharing when YOU choose.
+
+**Design Aesthetic**: Terminal brutalism - functional, explicit, no-nonsense.
+
+#### Three Snippet States
+
+1. 🔒 **Private** (default) - Only visible to you
+2. 🌍 **Public** - Shareable via link, read-only for others  
+3. ⭐ **Favorite** - Personal marker (works with both private/public)
+
+####  Visual Design Spec
+
+**Public Snippet Indicator**:
+- **Double border** (`border: 2px solid var(--accent)`) 
+- **[PUBLIC]** ASCII-style badge
+- **Share link** visible on card
+- **Accent color** (terminal green) for borders
+
+**Example Card**:
+```
+┌═════════════════════════════════╗  ← Double border (public)
+║ [PUBLIC] My Docker Setup        ║
+║ Production-ready compose file   ║
+║ 2 files • yaml                  ║
+║ 🔗 snippetvault.app/s/docker-... ║
+╚═════════════════════════════════╝
+```
+
+#### Implementation Steps
+
+**Step 1**: Add public toggle to snippet forms ✅
+```tsx
+// apps/web/src/routes/_authenticated/dashboard/new.tsx
+// apps/web/src/routes/_authenticated/dashboard/$id/edit.tsx
+
+<div className="border border-border p-4">
+  <label className="flex items-center gap-3 cursor-pointer">
+    <input 
+      type="checkbox" 
+      checked={isPublic}
+      onChange={(e) => setIsPublic(e.target.checked)}
+    />
+    <div>
+      <div className="font-medium">Make this snippet public</div>
+      <div className="text-sm text-text-secondary">
+        Anyone with the link can view (read-only)
+      </div>
+    </div>
+  </label>
+  
+  {isPublic && (
+    <div className="mt-4 p-3 bg-bg-elevated border border-accent/30">
+      <div className="text-xs text-text-tertiary mb-2">Share URL:</div>
+      <div className="font-mono text-sm">
+        https://snippetvault.app/s/{slug || 'auto-generated'}
+      </div>
+    </div>
+  )}
+</div>
+```
+
+**Step 2**: Update snippet card component ✅
+```tsx
+// apps/web/src/components/snippet-card.tsx
+
+// Add public indicator
+{snippet.isPublic && (
+  <div className="absolute top-2 right-2 px-2 py-1 bg-accent/10 border border-accent text-accent text-xs font-mono">
+    [PUBLIC]
+  </div>
+)}
+
+// Different border for public snippets
+className={`border-2 ${
+  snippet.isPublic 
+    ? 'border-accent' 
+    : 'border-border'
+}`}
+
+// Show share button on public snippets
+{snippet.isPublic && snippet.slug && (
+  <button 
+    onClick={() => copyShareLink(snippet.slug)}
+    className="flex items-center gap-2 text-accent hover:text-accent-hover"
+  >
+    <Share2 size={14} />
+    Copy Link
+  </button>
+)}
+```
+
+**Step 3**: Add "Public" filter to dashboard ✅
+```tsx
+// Update filter bar
+<Link to="/dashboard" search={{ filter: "public" }}>
+  Public
+</Link>
+```
+
+**Step 4**: Create public snippet view page ✅
+```tsx
+// apps/web/src/routes/s/$slug.tsx
+
+export const Route = createFileRoute('/s/$slug')({
+  // No auth required!
+  loader: async ({ params }) => {
+    const res = await fetch(`/api/public/snippets/${params.slug}`)
+    if (!res.ok) throw new Error('Snippet not found')
+    return res.json()
+  },
+  component: PublicSnippetPage,
+})
+
+function PublicSnippetPage() {
+  const snippet = Route.useLoaderData()
+  
+  return (
+    <div className="min-h-screen bg-bg-primary">
+      {/* Minimal header with branding */}
+      <header className="border-b border-border p-4">
+        <Link to="/" className="font-display text-lg">
+          &gt; SnippetVault_
+        </Link>
+      </header>
+
+      {/* Read-only snippet view */}
+      <main className="container mx-auto p-8 max-w-4xl">
+        <div className="border-2 border-accent p-6">
+          <div className="text-xs text-accent font-mono mb-2">[PUBLIC SNIPPET]</div>
+          <h1 className="text-2xl font-bold mb-2">{snippet.title}</h1>
+          <div className="text-text-secondary mb-4">by @{snippet.user.name}</div>
+          <p className="text-text-secondary">{snippet.description}</p>
+        </div>
+
+        {/* Files viewer */}
+        {snippet.files.map(file => (
+          <CodeViewer key={file.id} file={file} readOnly />
+        ))}
+
+        {/* CTA */}
+        <div className="mt-12 text-center border border-border p-8">
+          <h2 className="text-xl font-bold mb-4">
+            Want to create your own snippet vault?
+          </h2>
+          <Link 
+            to="/signup" 
+            className="inline-block bg-accent text-bg-primary px-6 py-3 font-medium hover:bg-accent-hover"
+          >
+            Sign Up Free
+          </Link>
+        </div>
+      </main>
+    </div>
+  )
+}
+```
+
+**Step 5**: Add public endpoint (no auth) ✅
+```typescript
+// apps/api/src/routes/public.ts (new file)
+
+export function createPublicRoute(db: Database) {
+  return new Hono()
+    .get('/snippets/:slug', async (c) => {
+      const slug = c.req.param('slug')
+
+      const snippet = await db.query.snippets.findFirst({
+        where: and(
+          eq(snippets.slug, slug),
+          eq(snippets.isPublic, true)
+        ),
+        with: {
+          files: { orderBy: (files, { asc }) => [asc(files.order)] },
+          variables: true,
+          user: {
+            columns: { id: true, name: true }
+          }
+        }
+      })
+
+      if (!snippet) {
+        return c.json({ error: 'Snippet not found' }, 404)
+      }
+
+      return c.json({ snippet })
+    })
+}
+```
+
+#### Files to Create/Modify
+
+**New Files**:
+- `apps/api/src/routes/public.ts`
+- `apps/web/src/routes/s/$slug.tsx`
+
+**Modified Files**:
+- `apps/web/src/routes/_authenticated/dashboard/new.tsx` (add toggle)
+- `apps/web/src/routes/_authenticated/dashboard/$id/edit.tsx` (add toggle)
+- `apps/web/src/components/snippet-card.tsx` (public indicator)
+- `apps/web/src/routes/_authenticated/dashboard/index.tsx` (public filter)
+- `apps/api/src/routes/index.ts` (register public routes)
+- `packages/db/src/schema/snippets.ts` (add unique slug index)
+
+#### Database Changes
+
+```sql
+-- Add unique index on slug (if not exists)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_snippets_slug 
+ON snippets(slug) 
+WHERE slug IS NOT NULL;
+```
+
+---
+
+### Phase 2: Enhanced Sharing (Future)
+
+**Features to add later**:
+- QR code generation for mobile sharing
+- Embed code for blogs (`<iframe>` or `<script>` tag)
+- Syntax theme selector on public view
+- Print-friendly view with better formatting
+- SEO meta tags (og:image, twitter:card)
+- Download as ZIP from public view
+
+---
+
+### Phase 3: Discovery & Exploration (Optional Future)
+
+**IF we decide to add social features**:
+
+```tsx
+// apps/web/src/routes/explore/index.tsx
+
+- Public snippets feed
+- Search by language, tags, keywords
+- Sort by: Recent, Popular (view count), Trending
+- Filter by verified users, staff picks
+- Like/bookmark public snippets (requires auth)
+```
+
+**Key decisions**:
+- Keep `/dashboard` = YOUR snippets (private workspace)
+- `/explore` = PUBLIC snippets (discovery)
+- Clear separation between personal and social
+
+**Moderation considerations**:
+- Report button on public snippets
+- Admin dashboard for reviewing reports
+- Auto-flag based on keywords
+- Rate limiting on public snippet creation
+
+---
+
+## Future Improvements
+
+### Command Palette (Cmd/Ctrl+K)
+See [User Experience Enhancements](#user-experience-enhancements) section.
+
+### Snippet Templates  
+See detailed implementation in original plan.
+
+### Export as GitHub Gist
+OAuth integration + API calls to create gists from snippets.
+
+### Advanced Multi-Tag Filtering
+AND/OR logic for complex queries.
+
+### Date Range Filtering
+Calendar picker for created/updated date ranges.
+
+### Import from URL/File
+Parse and create snippets from external sources.
+
+---
+
+## Design Principles for Future Features
+
+**Terminal Brutalism Aesthetic**:
+- Monospace fonts (JetBrains Mono, Fira Code)
+- Bold borders and ASCII-like elements
+- Limited color palette (black, white, green accent)
+- Functional, no-nonsense UI
+- Command-line inspired interactions
+
+**Privacy & Control**:
+- Explicit opt-in for public features
+- User owns their data
+- No dark patterns or hidden sharing
+- Clear visual indicators for public/private state
+
+**Performance**:
+- Fast page loads (< 1s)
+- Minimal JavaScript for public pages
+- Progressive enhancement
+- Responsive design (mobile-first)
+
+---
+
+## Success Metrics
+
+Track these to measure feature impact:
+
+**Public Sharing (Phase 1)**:
+- % of snippets made public
+- Number of public views (unique visitors)
+- Share link copies
+- Conversion rate (public view → signup)
+
+**Keyboard Shortcuts**:
+- Usage frequency per shortcut
+- Time saved in navigation
+
+**Templates**:
+- Template usage rate vs. blank snippets
+- Most popular templates
+
+---
+
+## Questions & Decisions Log
+
+**Decided**:
+- ✅ Public snippets = link-only (no discovery in Phase 1)
+- ✅ Terminal brutalism aesthetic with double borders for public
+- ✅ No social features in Phase 1 (can add later)
+- ✅ Slug is immutable once created (prevent broken links)
+- ✅ Public snippets cannot be changed back to private
+
+**To Decide Later**:
+- Should we track view counts on public snippets?
+- Do we want user profiles (view all public snippets by user)?
+- Should public snippets be indexed by search engines?
+- Rate limiting strategy for public snippet creation?
+

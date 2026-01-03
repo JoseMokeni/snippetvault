@@ -36,12 +36,13 @@ function DashboardPage() {
   } = useQuery({
     queryKey: [
       "snippets",
-      { favorite: filter === "favorites", tag, search: searchQuery, sortBy, sortOrder, language },
+      { favorite: filter === "favorites", public: filter === "public", tag, search: searchQuery, sortBy, sortOrder, language },
     ],
     queryFn: async () => {
       const res = await api.snippets.$get({
         query: {
           favorite: filter === "favorites" ? "true" : undefined,
+          public: filter === "public" ? "true" : undefined,
           tag: tag || undefined,
           search: searchQuery || undefined,
           sortBy: sortBy || undefined,
@@ -134,6 +135,7 @@ function DashboardPage() {
 
   const getTitle = () => {
     if (filter === "favorites") return "Favorites";
+    if (filter === "public") return "Public Snippets";
     if (selectedTag) return `Tag: ${selectedTag.name}`;
     return "All Snippets";
   };
@@ -149,6 +151,7 @@ function DashboardPage() {
           <p className="text-text-secondary mt-1 text-sm sm:text-base">
             {snippets.length} {snippets.length === 1 ? "snippet" : "snippets"}
             {filter === "favorites" && " marked as favorite"}
+            {filter === "public" && " shared publicly"}
             {selectedTag && ` with tag "${selectedTag.name}"`}
           </p>
         </div>

@@ -45,6 +45,11 @@ export function createSnippetsRoute(db: Database) {
           conditions.push(eq(snippets.isFavorite, true));
         }
 
+        // Filter by public
+        if (query.public) {
+          conditions.push(eq(snippets.isPublic, true));
+        }
+
         // Search by title or description (case-insensitive)
         if (query.search) {
           const searchPattern = `%${query.search.toLowerCase()}%`;
@@ -168,6 +173,9 @@ export function createSnippetsRoute(db: Database) {
 
         const snippetId = nanoid();
 
+        // Generate slug if public
+        const slug = data.isPublic ? nanoid(10) : null;
+
         // Create snippet
         await db.insert(snippets).values({
           id: snippetId,
@@ -177,6 +185,7 @@ export function createSnippetsRoute(db: Database) {
           instructions: data.instructions,
           language: data.language,
           isPublic: data.isPublic ?? false,
+          slug,
         });
 
         // Create files if provided
@@ -267,6 +276,12 @@ export function createSnippetsRoute(db: Database) {
           return c.json({ error: "Snippet not found" }, 404);
         }
 
+        // Generate slug if making public and doesn't have one
+        let slug = existingSnippet.slug;
+        if (data.isPublic && !existingSnippet.slug) {
+          slug = nanoid(10);
+        }
+
         // Update snippet
         await db
           .update(snippets)
@@ -283,6 +298,7 @@ export function createSnippetsRoute(db: Database) {
             ...(data.isFavorite !== undefined && {
               isFavorite: data.isFavorite,
             }),
+            ...(slug !== existingSnippet.slug && { slug }),
             updatedAt: new Date(),
           })
           .where(eq(snippets.id, snippetId));

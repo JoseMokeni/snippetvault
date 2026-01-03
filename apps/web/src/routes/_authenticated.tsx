@@ -16,6 +16,7 @@ import {
   Tag,
   Menu,
   X,
+  Globe,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -107,6 +108,15 @@ function AuthenticatedLayout() {
           >
             <Star size={18} />
             <span>Favorites</span>
+          </Link>
+          <Link
+            to="/dashboard"
+            search={{ filter: "public", tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
+            className="flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <Globe size={18} />
+            <span>Public</span>
           </Link>
 
           {/* Tags Section */}
