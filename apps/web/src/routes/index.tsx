@@ -1,5 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Copy, Download, Folder, FileCode, Check } from "lucide-react";
+import {
+  Copy,
+  Download,
+  Folder,
+  FileCode,
+  Check,
+  Globe,
+  Mail,
+  Github,
+  Linkedin,
+} from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -15,6 +25,7 @@ function LandingPage() {
       <FeaturesSection />
       <UseCasesSection />
       <FinalCTASection />
+      <BuiltBySection />
       <Footer />
     </div>
   );
@@ -366,6 +377,28 @@ function FeaturesSection() {
         </div>
       ),
     },
+    {
+      number: "04",
+      title: "SHARE ANYWHERE",
+      description: "Generate shareable links. No login required.",
+      visual: (
+        <div className="font-display text-xs sm:text-sm mt-3 sm:mt-4">
+          <div className="flex items-center gap-2 p-3 bg-bg-secondary border border-accent/30 rounded">
+            <Globe size={14} className="text-accent flex-shrink-0" />
+            <span className="text-text-tertiary font-mono truncate flex-1">
+              snippetvault.app/s/abc123xyz
+            </span>
+            <button className="flex items-center gap-1.5 px-2 py-1 bg-accent/10 border border-accent/30 text-accent hover:bg-accent/20 transition-colors whitespace-nowrap text-xs">
+              <Copy size={12} className="flex-shrink-0" />
+              <span>Copy</span>
+            </button>
+          </div>
+          <div className="mt-2 text-text-tertiary text-xs">
+            → Read-only access for anyone with the link
+          </div>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -496,7 +529,7 @@ function Footer() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 sm:gap-12 text-xs sm:text-sm">
+          <div className="grid grid-cols-2 gap-8 sm:gap-12 text-xs sm:text-sm">
             <div>
               <div className="font-display text-text-secondary mb-3 font-semibold">
                 Product
@@ -510,47 +543,16 @@ function Footer() {
                     Features
                   </a>
                 </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-accent transition-colors block"
-                  >
-                    Changelog
-                  </a>
-                </li>
               </ul>
             </div>
-            <div>
-              <div className="font-display text-text-secondary mb-3 font-semibold">
-                Resources
-              </div>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-accent transition-colors block"
-                  >
-                    Docs
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-accent transition-colors block"
-                  >
-                    API
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="col-span-2 sm:col-span-1">
+            <div className="col-span-1">
               <div className="font-display text-text-secondary mb-3 font-semibold">
                 Connect
               </div>
               <ul className="space-y-2">
                 <li>
                   <a
-                    href="https://github.com"
+                    href="https://github.com/JoseMokeni/snippetvault"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-accent transition-colors block"
@@ -560,7 +562,7 @@ function Footer() {
                 </li>
                 <li>
                   <a
-                    href="https://twitter.com"
+                    href="https://twitter.com/josemokeni"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-accent transition-colors block"
@@ -578,5 +580,53 @@ function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+// Built By Section
+function BuiltBySection() {
+  return (
+    <section className="border-t-4 border-border py-16 px-4 bg-bg-secondary">
+      <div className="container mx-auto max-w-2xl text-center">
+        <div className="mb-4 font-display text-sm text-text-secondary">
+          BUILT BY
+        </div>
+        <h3 className="mb-2 text-2xl font-bold">José Mokeni</h3>
+        <p className="mb-1 font-display text-sm text-text-secondary">
+          Fullstack Software Engineer
+        </p>
+        <p className="mx-auto mb-6 max-w-md text-text-secondary">
+          Built by an engineer who was tired of scattered gists and repetitive
+          setup tasks.
+        </p>
+        <div className="flex flex-wrap justify-center gap-4">
+          <a
+            href="https://github.com/JoseMokeni"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 terminal-button px-4 py-2 font-display text-sm"
+          >
+            <Github className="h-4 w-4" />
+            GitHub
+          </a>
+          <a
+            href="https://www.linkedin.com/in/jos%C3%A9-marie-mokeni-203b67226/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 terminal-button px-4 py-2 font-display text-sm"
+          >
+            <Linkedin className="h-4 w-4" />
+            LinkedIn
+          </a>
+          <a
+            href="mailto:jmmokeni@gmail.com"
+            className="inline-flex items-center gap-2 terminal-button px-4 py-2 font-display text-sm"
+          >
+            <Mail className="h-4 w-4" />
+            Email
+          </a>
+        </div>
+      </div>
+    </section>
   );
 }

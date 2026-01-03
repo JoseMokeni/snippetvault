@@ -10,6 +10,7 @@ SnippetVault allows you to save, organize, and export reusable code snippets as 
 
 - **Multi-file snippets**: Group related files together (Dockerfile + docker-compose + .dockerignore)
 - **Variable templating**: Use `{{PROJECT_NAME}}` syntax with customizable defaults
+- **Public sharing**: Generate shareable links for read-only snippet access (no login required)
 - **Smart organization**: Tags, favorites, and full-text search
 - **Export anywhere**: Copy to clipboard or download as ZIP
 - **Type-safe API**: Full TypeScript support with Hono RPC
