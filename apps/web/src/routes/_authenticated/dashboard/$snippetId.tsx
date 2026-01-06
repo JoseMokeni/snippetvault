@@ -361,7 +361,7 @@ function SnippetDetailPage() {
               Instructions
             </h2>
           </div>
-          <div className="prose prose-invert prose-sm max-w-none prose-headings:text-text-primary prose-headings:font-display prose-p:text-text-secondary prose-a:text-accent prose-strong:text-text-primary prose-code:text-accent prose-code:bg-bg-code prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-pre:bg-bg-code prose-pre:border prose-pre:border-border prose-ul:text-text-secondary prose-ol:text-text-secondary prose-li:marker:text-accent overflow-x-auto">
+          <div className="prose prose-invert prose-sm max-w-none prose-headings:text-text-primary prose-headings:font-display prose-p:text-text-secondary prose-a:text-accent prose-strong:text-text-primary prose-code:text-accent prose-code:bg-bg-code prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-pre:bg-bg-code prose-pre:border prose-pre:border-border prose-ul:text-text-secondary prose-ul:list-inside prose-ol:text-text-secondary prose-ol:list-inside prose-li:marker:text-accent overflow-x-auto">
             <Markdown>{snippet.instructions}</Markdown>
           </div>
         </div>
