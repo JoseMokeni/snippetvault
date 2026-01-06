@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_snippets_user_title_unique" ON "snippets" USING btree ("user_id","title");

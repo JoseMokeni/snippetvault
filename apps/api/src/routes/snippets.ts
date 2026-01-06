@@ -171,6 +171,15 @@ export function createSnippetsRoute(db: Database) {
         const userId = c.get("userId");
         const data = c.req.valid("json");
 
+        // Check for duplicate title
+        const existingSnippet = await db.query.snippets.findFirst({
+          where: and(eq(snippets.userId, userId), eq(snippets.title, data.title)),
+        });
+
+        if (existingSnippet) {
+          return c.json({ error: "A snippet with this title already exists" }, 409);
+        }
+
         const snippetId = nanoid();
 
         // Generate slug if public
@@ -274,6 +283,17 @@ export function createSnippetsRoute(db: Database) {
 
         if (!existingSnippet) {
           return c.json({ error: "Snippet not found" }, 404);
+        }
+
+        // Check for duplicate title if title is being changed
+        if (data.title && data.title !== existingSnippet.title) {
+          const duplicateSnippet = await db.query.snippets.findFirst({
+            where: and(eq(snippets.userId, userId), eq(snippets.title, data.title)),
+          });
+
+          if (duplicateSnippet) {
+            return c.json({ error: "A snippet with this title already exists" }, 409);
+          }
         }
 
         // Generate slug if making public and doesn't have one
@@ -423,13 +443,28 @@ export function createSnippetsRoute(db: Database) {
           return c.json({ error: "Snippet not found" }, 404);
         }
 
+        // Generate unique title for the copy
+        let copyTitle = `${originalSnippet.title} (Copy)`;
+        let counter = 1;
+
+        while (true) {
+          const existingWithTitle = await db.query.snippets.findFirst({
+            where: and(eq(snippets.userId, userId), eq(snippets.title, copyTitle)),
+          });
+
+          if (!existingWithTitle) break;
+
+          counter++;
+          copyTitle = `${originalSnippet.title} (Copy ${counter})`;
+        }
+
         const newSnippetId = nanoid();
 
         // Create new snippet
         await db.insert(snippets).values({
           id: newSnippetId,
           userId,
-          title: `${originalSnippet.title} (Copy)`,
+          title: copyTitle,
           description: originalSnippet.description,
           instructions: originalSnippet.instructions,
           language: originalSnippet.language,

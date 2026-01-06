@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, index } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, index, uniqueIndex } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 import { users } from './users'
 import { files } from './files'
@@ -24,6 +24,7 @@ export const snippets = pgTable('snippets', {
   languageIdx: index('idx_snippets_language').on(table.language),
   createdAtIdx: index('idx_snippets_created_at').on(table.createdAt),
   updatedAtIdx: index('idx_snippets_updated_at').on(table.updatedAt),
+  uniqueUserTitle: uniqueIndex('idx_snippets_user_title_unique').on(table.userId, table.title),
 }))
 
 export const snippetsRelations = relations(snippets, ({ one, many }) => ({
