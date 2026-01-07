@@ -707,7 +707,7 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
         {/* File Tree Sidebar - Desktop only */}
         <div className="hidden lg:flex lg:w-56 border-r border-border bg-bg-secondary flex-col">
           {/* Tree Header */}
-          <div className="p-2 border-b border-border flex items-center justify-between">
+          <div className="px-2 h-10 border-b border-border flex items-center justify-between">
             <span className="text-xs font-display text-text-tertiary uppercase tracking-wider">
               Explorer
             </span>
@@ -864,7 +864,7 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
         <div className="flex-1 flex flex-col min-w-0 min-h-0">
           {/* Tabs Bar */}
           {openTabs.length > 0 && (
-            <div className="flex items-center border-b border-border bg-bg-secondary overflow-x-auto scrollbar-thin">
+            <div className="flex items-center h-10 border-b border-border bg-bg-secondary overflow-x-auto scrollbar-thin">
               {openTabs.map((tabPath) => (
                 <Tab
                   key={tabPath}
@@ -881,7 +881,7 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
           {selectedFile ? (
             <>
               {/* File Info Header */}
-              <div className="p-2 border-b border-border bg-bg-secondary/50 flex items-center justify-between gap-2">
+              <div className="px-2 h-10 border-b border-border bg-bg-secondary/50 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 text-xs min-w-0">
                   <span className="text-text-tertiary truncate font-mono">
                     {selectedFile.filename}
