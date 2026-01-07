@@ -171,3 +171,34 @@ jobs:
             BUILD_DATE=${{ github.event.head_commit.timestamp }}
             VCS_REF=${{ github.sha }}
             VERSION=${{ steps.meta.outputs.version }}
+
+  notify:
+    name: Discord Notification
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, test, build]
+    if: always()
+    steps:
+      - name: Determine overall status
+        id: status
+        run: |
+          if [[ "${{ needs.lint.result }}" == "success" && \
+                "${{ needs.typecheck.result }}" == "success" && \
+                "${{ needs.test.result }}" == "success" && \
+                "${{ needs.build.result }}" == "success" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Discord notification
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ steps.status.outputs.status }}
+          title: CI/CD Pipeline
+          description: |
+            **Lint:** `${{ needs.lint.result }}`
+            **Typecheck:** `${{ needs.typecheck.result }}`
+            **Test:** `${{ needs.test.result }}`
+            **Build:** `${{ needs.build.result }}`
+          url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
