@@ -166,7 +166,9 @@ The CI/CD pipeline runs on:
 - **Concurrency Control**: Automatically cancels in-progress runs when new commits are pushed
 - **Dependency Caching**: Bun dependencies are cached for 30-50% faster builds
 - **Pinned Runtime**: Bun version is pinned (1.3.3) for reproducible builds
+- **Security Scanning**: Trivy vulnerability scanner with GitHub Security integration
 - **Discord Notifications**: Real-time pipeline status notifications to Discord
+- **Reusable Actions**: DRY workflow with composite actions for Bun setup
 
 ### Pipeline Stages
 
@@ -175,8 +177,9 @@ The CI/CD pipeline runs on:
    - **Lint**: ESLint code quality checks
    - **Type Check**: TypeScript type safety verification
    - **Test**: Full test suite with PostgreSQL service
+   - **Security**: Trivy vulnerability scan (CRITICAL/HIGH severity)
 
-2. **Build & Push** (runs after quality checks pass):
+2. **Build & Push** (runs after all checks pass):
    - Multi-platform Docker builds (amd64, arm64)
    - Layer caching for faster builds
    - Automated tagging strategy
@@ -184,7 +187,7 @@ The CI/CD pipeline runs on:
 
 3. **Notify** (runs always):
    - Sends Discord notification with pipeline results
-   - Includes status of all jobs (lint, typecheck, test, build)
+   - Includes status of all jobs (lint, typecheck, test, security, build)
 
 ### Image Tagging Strategy
 
