@@ -330,7 +330,7 @@ export function FileTreeViewer({
 
       <div className="flex h-[400px] lg:h-[500px]">
         {/* File tree sidebar - Desktop only */}
-        <div className="hidden lg:flex lg:w-64 border-r border-border bg-bg-primary flex-col">
+        <div className="hidden lg:flex w-64 border-r border-border bg-bg-primary flex-col">
           <div className="px-3 py-2 border-b border-border bg-bg-secondary">
             <span className="text-xs font-display text-text-tertiary uppercase tracking-wider">
               Files

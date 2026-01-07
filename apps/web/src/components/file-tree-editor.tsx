@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   FileCode,
   Folder,
@@ -13,6 +13,7 @@ import {
   FilePlus,
 } from "lucide-react";
 import { showError } from "@/lib/toast";
+import { CodeEditor } from "./code-editor";
 
 interface FileData {
   id?: string;
@@ -269,9 +270,57 @@ function TreeNodeComponent({
   );
 }
 
+// Tab component for open files
+interface TabProps {
+  filename: string;
+  isActive: boolean;
+  onSelect: () => void;
+  onClose: () => void;
+  showClose: boolean;
+}
+
+function Tab({ filename, isActive, onSelect, onClose, showClose }: TabProps) {
+  const name = filename.split("/").pop() || filename;
+
+  return (
+    <div
+      className={`group flex items-center gap-2 px-3 py-2 text-sm cursor-pointer border-r border-border transition-all ${
+        isActive
+          ? "bg-bg-primary text-text-primary border-b-2 border-b-accent"
+          : "bg-bg-secondary text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
+      }`}
+      onClick={onSelect}
+    >
+      <span className="flex-shrink-0">{getFileIcon(filename)}</span>
+      <span className="truncate max-w-[120px]" title={filename}>
+        {name}
+      </span>
+      {showClose && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className={`flex-shrink-0 p-0.5 rounded transition-colors ${
+            isActive
+              ? "text-text-tertiary hover:text-error hover:bg-error/10"
+              : "opacity-0 group-hover:opacity-100 text-text-tertiary hover:text-error"
+          }`}
+        >
+          <X size={14} />
+        </button>
+      )}
+    </div>
+  );
+}
+
 export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
   const [selectedPath, setSelectedPath] = useState<string | null>(
     files[0]?.filename || null
+  );
+  const [openTabs, setOpenTabs] = useState<string[]>(
+    files[0]?.filename ? [files[0].filename] : []
   );
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
     new Set()
@@ -282,7 +331,6 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
   const [renamingNode, setRenamingNode] = useState<TreeNode | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [showFileTree, setShowFileTree] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Build tree from files
   const tree = useMemo(() => buildFileTree(files), [files]);
@@ -290,17 +338,6 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
   // Find selected file
   const selectedFileIndex = files.findIndex((f) => f.filename === selectedPath);
   const selectedFile = selectedFileIndex >= 0 ? files[selectedFileIndex] : null;
-
-  // Auto-resize textarea
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${Math.max(
-        300,
-        textareaRef.current.scrollHeight
-      )}px`;
-    }
-  }, [selectedFile?.content]);
 
   // Helper to expand parent folders for a path
   const expandParentFolders = (path: string) => {
@@ -327,8 +364,24 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
   const handleSelectNode = (node: TreeNode) => {
     if (node.type === "file") {
       setSelectedPath(node.path);
+      // Add to open tabs if not already open
+      if (!openTabs.includes(node.path)) {
+        setOpenTabs([...openTabs, node.path]);
+      }
       setShowFileTree(false); // Close sidebar on mobile after selection
       expandParentFolders(node.path);
+    }
+  };
+
+  const handleCloseTab = (path: string) => {
+    const newTabs = openTabs.filter((t) => t !== path);
+    setOpenTabs(newTabs);
+
+    // If closing the active tab, switch to another
+    if (selectedPath === path) {
+      const closingIndex = openTabs.indexOf(path);
+      const newSelectedIndex = Math.min(closingIndex, newTabs.length - 1);
+      setSelectedPath(newTabs[newSelectedIndex] || null);
     }
   };
 
@@ -351,6 +404,7 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
     };
     onChange([...files, newFile]);
     setSelectedPath(filename);
+    setOpenTabs([...openTabs, filename]);
     setIsAddingFile(false);
     setNewItemName("");
 
@@ -390,8 +444,13 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
       }
       const updated = files.filter((f) => f.filename !== node.path);
       onChange(updated.map((f, i) => ({ ...f, order: i })));
+
+      // Remove from open tabs
+      setOpenTabs(openTabs.filter((t) => t !== node.path));
+
       if (selectedPath === node.path) {
-        setSelectedPath(updated[0]?.filename || null);
+        const remainingTabs = openTabs.filter((t) => t !== node.path);
+        setSelectedPath(remainingTabs[0] || updated[0]?.filename || null);
       }
     } else {
       // Delete all files in folder
@@ -416,8 +475,14 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
         return;
       }
       onChange(updated.map((f, i) => ({ ...f, order: i })));
+
+      // Remove deleted files from tabs
+      const deletedPaths = filesToDelete.map((f) => f.filename);
+      const newTabs = openTabs.filter((t) => !deletedPaths.includes(t));
+      setOpenTabs(newTabs);
+
       if (selectedPath?.startsWith(folderPath)) {
-        setSelectedPath(updated[0]?.filename || null);
+        setSelectedPath(newTabs[0] || updated[0]?.filename || null);
       }
     }
   };
@@ -451,6 +516,10 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
           : f
       );
       onChange(updated);
+
+      // Update tabs
+      setOpenTabs(openTabs.map((t) => (t === oldPath ? newPath : t)));
+
       if (selectedPath === oldPath) {
         setSelectedPath(newPath);
       }
@@ -464,6 +533,14 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
         return f;
       });
       onChange(updated);
+
+      // Update tabs
+      setOpenTabs(
+        openTabs.map((t) =>
+          t.startsWith(oldFolderPath) ? t.replace(oldPath, newPath) : t
+        )
+      );
+
       if (selectedPath?.startsWith(oldFolderPath)) {
         setSelectedPath(selectedPath.replace(oldPath, newPath));
       }
@@ -626,13 +703,13 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
         )}
       </div>
 
-      <div className="flex h-[400px] lg:h-[500px]">
+      <div className="flex h-[500px] lg:h-[600px]">
         {/* File Tree Sidebar - Desktop only */}
-        <div className="hidden lg:flex lg:w-64 border-r border-border bg-bg-secondary flex-col">
+        <div className="hidden lg:flex lg:w-56 border-r border-border bg-bg-secondary flex-col">
           {/* Tree Header */}
           <div className="p-2 border-b border-border flex items-center justify-between">
             <span className="text-xs font-display text-text-tertiary uppercase tracking-wider">
-              Files
+              Explorer
             </span>
             <div className="flex items-center gap-1">
               <button
@@ -784,29 +861,40 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
         </div>
 
         {/* Editor Panel */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0 min-h-0">
+          {/* Tabs Bar */}
+          {openTabs.length > 0 && (
+            <div className="flex items-center border-b border-border bg-bg-secondary overflow-x-auto scrollbar-thin">
+              {openTabs.map((tabPath) => (
+                <Tab
+                  key={tabPath}
+                  filename={tabPath}
+                  isActive={selectedPath === tabPath}
+                  onSelect={() => setSelectedPath(tabPath)}
+                  onClose={() => handleCloseTab(tabPath)}
+                  showClose={openTabs.length > 1}
+                />
+              ))}
+            </div>
+          )}
+
           {selectedFile ? (
             <>
               {/* File Info Header */}
-              <div className="p-2 sm:p-3 border-b border-border bg-bg-secondary flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-2 text-xs sm:text-sm min-w-0">
-                  <span className="flex-shrink-0">
-                    {getFileIcon(selectedFile.filename)}
-                  </span>
-                  <span className="font-display text-text-primary truncate">
+              <div className="p-2 border-b border-border bg-bg-secondary/50 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 text-xs min-w-0">
+                  <span className="text-text-tertiary truncate font-mono">
                     {selectedFile.filename}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <label className="text-xs text-text-tertiary flex-shrink-0">
-                    Language:
-                  </label>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <label className="text-xs text-text-tertiary">Lang:</label>
                   <select
                     value={selectedFile.language}
                     onChange={(e) =>
                       handleUpdateFile({ language: e.target.value })
                     }
-                    className="flex-1 sm:flex-none bg-bg-primary border border-border px-2 py-1 text-xs font-display text-text-primary focus:border-accent focus:outline-none"
+                    className="bg-bg-primary border border-border px-2 py-1 text-xs font-display text-text-primary focus:border-accent focus:outline-none rounded"
                   >
                     <option value="plaintext">Plain Text</option>
                     <option value="javascript">JavaScript</option>
@@ -833,21 +921,12 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
               </div>
 
               {/* Code Editor */}
-              <div className="flex-1 overflow-auto p-2 sm:p-4">
-                <textarea
-                  ref={textareaRef}
+              <div className="flex-1 overflow-hidden min-h-0">
+                <CodeEditor
                   value={selectedFile.content}
-                  onChange={(e) =>
-                    handleUpdateFile({ content: e.target.value })
-                  }
-                  placeholder="// Paste or write your code here..."
-                  className="w-full h-full min-h-[400px] bg-bg-code border border-border p-4 font-mono text-sm text-text-primary focus:border-accent focus:outline-none resize-none leading-relaxed"
-                  spellCheck={false}
-                  style={{
-                    whiteSpace: "pre",
-                    overflowWrap: "normal",
-                    wordWrap: "normal",
-                  }}
+                  onChange={(content) => handleUpdateFile({ content })}
+                  language={selectedFile.language}
+                  placeholder="// Write your code here..."
                 />
               </div>
             </>
