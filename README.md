@@ -161,6 +161,13 @@ The CI/CD pipeline runs on:
 - **Pull Requests**: Runs all checks without publishing
 - **Version Tags** (`v*.*.*`): Runs all checks and publishes with semantic versioning
 
+### Pipeline Features
+
+- **Concurrency Control**: Automatically cancels in-progress runs when new commits are pushed
+- **Dependency Caching**: Bun dependencies are cached for 30-50% faster builds
+- **Pinned Runtime**: Bun version is pinned (1.3.3) for reproducible builds
+- **Discord Notifications**: Real-time pipeline status notifications to Discord
+
 ### Pipeline Stages
 
 1. **Quality Checks** (parallel execution):
@@ -174,6 +181,10 @@ The CI/CD pipeline runs on:
    - Layer caching for faster builds
    - Automated tagging strategy
    - Push to GitHub Container Registry (GHCR)
+
+3. **Notify** (runs always):
+   - Sends Discord notification with pipeline results
+   - Includes status of all jobs (lint, typecheck, test, build)
 
 ### Image Tagging Strategy
 
@@ -218,6 +229,17 @@ To enable GHCR package visibility:
 1. Go to your repository → Settings → Actions → General
 2. Under "Workflow permissions", ensure "Read and write permissions" is selected
 3. After first build, go to the package settings and make it public (optional)
+
+### Discord Notifications Setup
+
+To enable Discord notifications for pipeline status:
+
+1. Create a Discord webhook in your server:
+   - Go to Server Settings → Integrations → Webhooks
+   - Click "New Webhook" and copy the URL
+2. Add the webhook URL as a repository secret:
+   - Go to your repository → Settings → Secrets and variables → Actions
+   - Create a new secret named `DISCORD_WEBHOOK` with the webhook URL
 
 ### Local Development Testing
 
