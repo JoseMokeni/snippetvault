@@ -149,6 +149,14 @@ export function createSnippetsRoute(db: Database) {
                 tag: true,
               },
             },
+            forkedFrom: {
+              columns: { id: true, title: true, slug: true },
+              with: {
+                user: {
+                  columns: { username: true },
+                },
+              },
+            },
           },
         });
 
@@ -173,11 +181,17 @@ export function createSnippetsRoute(db: Database) {
 
         // Check for duplicate title
         const existingSnippet = await db.query.snippets.findFirst({
-          where: and(eq(snippets.userId, userId), eq(snippets.title, data.title)),
+          where: and(
+            eq(snippets.userId, userId),
+            eq(snippets.title, data.title)
+          ),
         });
 
         if (existingSnippet) {
-          return c.json({ error: "A snippet with this title already exists" }, 409);
+          return c.json(
+            { error: "A snippet with this title already exists" },
+            409
+          );
         }
 
         const snippetId = nanoid();
@@ -288,11 +302,17 @@ export function createSnippetsRoute(db: Database) {
         // Check for duplicate title if title is being changed
         if (data.title && data.title !== existingSnippet.title) {
           const duplicateSnippet = await db.query.snippets.findFirst({
-            where: and(eq(snippets.userId, userId), eq(snippets.title, data.title)),
+            where: and(
+              eq(snippets.userId, userId),
+              eq(snippets.title, data.title)
+            ),
           });
 
           if (duplicateSnippet) {
-            return c.json({ error: "A snippet with this title already exists" }, 409);
+            return c.json(
+              { error: "A snippet with this title already exists" },
+              409
+            );
           }
         }
 
@@ -449,7 +469,10 @@ export function createSnippetsRoute(db: Database) {
 
         while (true) {
           const existingWithTitle = await db.query.snippets.findFirst({
-            where: and(eq(snippets.userId, userId), eq(snippets.title, copyTitle)),
+            where: and(
+              eq(snippets.userId, userId),
+              eq(snippets.title, copyTitle)
+            ),
           });
 
           if (!existingWithTitle) break;
@@ -575,7 +598,9 @@ export function createSnippetsRoute(db: Database) {
           if (!existingWithTitle) break;
 
           counter++;
-          forkTitle = `${originalSnippet.title} (Fork${counter > 1 ? ` ${counter}` : ""})`;
+          forkTitle = `${originalSnippet.title} (Fork${
+            counter > 1 ? ` ${counter}` : ""
+          })`;
         }
 
         const newSnippetId = nanoid();

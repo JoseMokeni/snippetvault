@@ -10,6 +10,8 @@ SnippetVault allows you to save, organize, and export reusable code snippets as 
 
 - **Multi-file snippets**: Group related files together (Dockerfile + docker-compose + .dockerignore)
 - **Variable templating**: Use `{{PROJECT_NAME}}` syntax with customizable defaults
+- **Social Discovery**: Explore public snippets, star your favorites, and fork to customize
+- **User Profiles**: Public profile pages showcasing shared snippets and stats
 - **Public sharing**: Generate shareable links for read-only snippet access (no login required)
 - **Smart organization**: Tags, favorites, and full-text search
 - **Export anywhere**: Copy to clipboard or download as ZIP
@@ -180,6 +182,7 @@ The CI/CD pipeline runs on:
    - **Security**: Trivy vulnerability scan (CRITICAL/HIGH severity)
 
 2. **Build & Push** (runs after all checks pass):
+
    - Multi-platform Docker builds (amd64, arm64)
    - Layer caching for faster builds
    - Automated tagging strategy
@@ -304,10 +307,15 @@ See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed production deployment instr
 
 ## Recent Updates
 
+- 🌐 **Social Discovery**: Explore page with public snippets, star/fork functionality, and user profiles
+- 🍴 **Forking**: Fork any public snippet to create your own copy with "Forked from" attribution
+- ⭐ **Stars**: Star snippets you like and view them in your starred collection
+- 👤 **User Profiles**: Public profile pages at `/u/username` showing user's public snippets
+- 🔍 **Search & Filter**: Search snippets and users, filter by language, sort by stars/date/forks
+- 🌱 **Database Seeding**: `bun run db:seed` to populate with sample data for development
 - ✨ **Public Sharing**: Generate shareable links for snippets (read-only, no login required)
 - 🔐 **GitHub OAuth**: Sign in with GitHub alongside email/password authentication
 - 🎨 **Landing Page**: New "Share Anywhere" feature showcase and creator section
-- 🚨 **Error Handling**: Comprehensive auth error pages with user-friendly messages
 - 🛠️ **Better Auth**: Configured with account linking prevention for separate auth methods
 
 ## Contributing

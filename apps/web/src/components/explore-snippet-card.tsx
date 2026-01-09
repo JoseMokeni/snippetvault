@@ -23,6 +23,14 @@ interface ExploreSnippetCardProps {
       image: string | null;
     } | null;
     createdAt: string;
+    forkedFrom?: {
+      id: string;
+      title: string;
+      slug: string | null;
+      user?: {
+        username: string;
+      } | null;
+    } | null;
   };
   isStarred?: boolean;
   onStar?: (id: string) => void;
@@ -59,10 +67,19 @@ export function ExploreSnippetCard({
           <span className="font-display text-xs uppercase tracking-wider text-text-secondary">
             {snippet.language}
           </span>
+          {snippet.forkedFrom && (
+            <span className="text-xs text-text-tertiary flex items-center gap-1">
+              <GitFork size={10} />
+              forked
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-3 text-text-tertiary">
           <span className="flex items-center gap-1 text-xs font-display">
-            <Star size={12} className={isStarred ? "fill-warning text-warning" : ""} />
+            <Star
+              size={12}
+              className={isStarred ? "fill-warning text-warning" : ""}
+            />
             {snippet.starCount}
           </span>
           <span className="flex items-center gap-1 text-xs font-display">
@@ -138,7 +155,9 @@ export function ExploreSnippetCard({
                   <User size={12} className="text-accent" />
                 </div>
               )}
-              <span className="text-xs font-display">@{snippet.user.username}</span>
+              <span className="text-xs font-display">
+                @{snippet.user.username}
+              </span>
             </Link>
           ) : (
             <span className="text-xs text-text-tertiary">Anonymous</span>
@@ -147,7 +166,9 @@ export function ExploreSnippetCard({
           {/* Date */}
           <div className="flex items-center gap-1.5 text-text-tertiary">
             <Clock size={12} />
-            <span className="text-xs font-display">{formatDate(snippet.createdAt)}</span>
+            <span className="text-xs font-display">
+              {formatDate(snippet.createdAt)}
+            </span>
           </div>
         </div>
       </Link>
