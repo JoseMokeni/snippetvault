@@ -36,7 +36,7 @@ jobs:
 
       - name: Send Discord notification
         uses: sarisia/actions-status-discord@v1
-        if: ${{ secrets.DISCORD_WEBHOOK != '' }}
+        continue-on-error: true
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ steps.status.outputs.status }}
@@ -44,9 +44,7 @@ jobs:
           description: |
             **Author:** ${{ github.event.pull_request.user.login }}
             **Branch:** `${{ github.head_ref }}` → `${{ github.base_ref }}`
-            
+
             **Quality Checks:** ${{ needs.quality.result == 'success' && '✅' || '❌' }}
           color: ${{ steps.status.outputs.color }}
           url: ${{ github.event.pull_request.html_url }}
-
-

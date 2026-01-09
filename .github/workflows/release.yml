@@ -110,7 +110,7 @@ jobs:
 
             - name: Send Discord notification
               uses: sarisia/actions-status-discord@v1
-              if: ${{ secrets.DISCORD_WEBHOOK != '' }}
+              continue-on-error: true
               with:
                   webhook: ${{ secrets.DISCORD_WEBHOOK }}
                   status: ${{ steps.status.outputs.status }}
