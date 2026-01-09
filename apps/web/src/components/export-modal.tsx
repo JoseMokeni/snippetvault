@@ -7,7 +7,13 @@ import {
   exportAsText,
   substituteVariables,
 } from "@/lib/export";
-import { SyntaxHighlighter } from "./syntax-highlighter";
+import CodeMirror, { EditorView } from "@uiw/react-codemirror";
+import { vscodeDark } from "@uiw/codemirror-theme-vscode";
+import {
+  getLanguageExtension,
+  codeViewerTheme,
+  codeViewerBasicSetup,
+} from "@/lib/codemirror";
 import { showSuccess, showError } from "@/lib/toast";
 
 interface FileData {
@@ -32,6 +38,38 @@ interface ExportModalProps {
   files: FileData[];
   variables: Variable[];
   initialValues?: Record<string, string>;
+}
+
+// Internal code viewer component for the preview
+function PreviewCodeViewer({
+  code,
+  language,
+}: {
+  code: string;
+  language: string;
+}) {
+  const extensions = useMemo(() => {
+    const langExt = getLanguageExtension(language);
+    return [
+      codeViewerTheme,
+      EditorView.editable.of(false),
+      EditorView.lineWrapping,
+      ...(Array.isArray(langExt) ? langExt : [langExt]),
+    ];
+  }, [language]);
+
+  return (
+    <CodeMirror
+      value={code}
+      theme={vscodeDark}
+      extensions={extensions}
+      readOnly={true}
+      editable={false}
+      height="400px"
+      basicSetup={codeViewerBasicSetup}
+      className="[&_.cm-editor]:h-full [&_.cm-scroller]:!overflow-auto"
+    />
+  );
 }
 
 export function ExportModal({
@@ -242,8 +280,8 @@ export function ExportModal({
                       {copied ? <Check size={14} /> : <Copy size={14} />}
                     </button>
                   </div>
-                  <div className="max-h-[400px] overflow-auto">
-                    <SyntaxHighlighter
+                  <div className="max-h-[400px] overflow-hidden">
+                    <PreviewCodeViewer
                       code={previewContent}
                       language={previewFile.language || "plaintext"}
                     />
