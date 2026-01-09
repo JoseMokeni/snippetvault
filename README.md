@@ -76,7 +76,7 @@ You've been here:
 
 ### ⚡ How It Works
 
-**SnippetVault** stores **complete packages** of related files with smart variable templating:
+**SnippetVault** stores complete packages of related files so you can reuse proven setups instead of rebuilding them:
 
 - 📦 Save entire project setups (Docker + CI/CD + configs) as a single snippet
 - 🔧 Use `{{PROJECT_NAME}}` variables with customizable defaults
@@ -84,6 +84,7 @@ You've been here:
 - 🔗 Share with your team via read-only links (no login required)
 
 Not just code. **Reusable setups that save hours every time you start something new.**
+This helps reduce setup time, onboarding friction, and long-term technical debt.
 
 ## ✨ Features
 
@@ -142,7 +143,8 @@ Download as ZIP, copy to clipboard, or generate shareable links.
 
 ## 🎬 Demo
 
-> **Coming soon**: Live demo instance and walkthrough video
+**Production app**: https://snippetvault.app
+Try SnippetVault now - fully deployed and ready to use.
 
 **Quick Example Use Cases:**
 
@@ -362,7 +364,7 @@ See [.github/CI_CD.md](.github/CI_CD.md) for CI/CD pipeline documentation.
 ## 🚀 Roadmap
 
 - [ ] **CLI Tool** - Install snippets directly from terminal
-- [ ] **VS Code Extension** - Browse and insert snippets in your editor
+- [ ] **VS Code Extension** - Use your SnippetVault setups directly from your editor
 - [ ] **Snippet Versioning** - Track changes and roll back
 - [ ] **Collections** - Group related snippets together
 - [ ] **API Keys** - Programmatic access to snippets
