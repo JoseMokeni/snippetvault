@@ -41,13 +41,20 @@ function Navigation() {
           <span className="animate-blink">_</span>
         </Link>
 
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-6 sm:gap-8">
           <a
             href="#features"
             className="text-text-secondary hover:text-text-primary transition-colors hidden sm:block"
           >
             Features
           </a>
+          <Link
+            to="/explore"
+            search={{ language: undefined, sortBy: undefined, sortOrder: undefined }}
+            className="text-text-secondary hover:text-accent transition-colors hidden sm:block"
+          >
+            Explore
+          </Link>
           <Link
             to="/login"
             search={{ redirect: "/dashboard" }}

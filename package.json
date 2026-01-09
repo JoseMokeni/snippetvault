@@ -16,7 +16,7 @@
     "db:generate": "bun run --filter @snippetvault/db generate",
     "db:migrate": "bun run --filter @snippetvault/db migrate",
     "db:push": "bun run --filter @snippetvault/db push",
-    "db:seed": "bun run --filter @snippetvault/db seed",
+    "db:seed": "bun run --filter @snippetvault/api seed",
     "db:studio": "bun run --filter @snippetvault/db studio",
     "typecheck": "bun run --filter '*' typecheck",
     "lint": "bun run --filter '*' lint",

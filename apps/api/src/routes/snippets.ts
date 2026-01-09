@@ -536,5 +536,125 @@ export function createSnippetsRoute(db: Database) {
 
         return c.json({ snippet: transformedSnippet }, 201);
       })
+
+      // POST /api/snippets/:id/fork - Fork a public snippet
+      .post("/:id/fork", async (c) => {
+        const userId = c.get("userId");
+        const snippetId = c.req.param("id");
+
+        // Fetch original snippet - must be public
+        const originalSnippet = await db.query.snippets.findFirst({
+          where: and(eq(snippets.id, snippetId), eq(snippets.isPublic, true)),
+          with: {
+            files: true,
+            variables: true,
+          },
+        });
+
+        if (!originalSnippet) {
+          return c.json({ error: "Snippet not found or not public" }, 404);
+        }
+
+        // Can't fork your own snippet
+        if (originalSnippet.userId === userId) {
+          return c.json({ error: "Cannot fork your own snippet" }, 400);
+        }
+
+        // Generate unique title for the fork
+        let forkTitle = originalSnippet.title;
+        let counter = 0;
+
+        while (true) {
+          const existingWithTitle = await db.query.snippets.findFirst({
+            where: and(
+              eq(snippets.userId, userId),
+              eq(snippets.title, forkTitle)
+            ),
+          });
+
+          if (!existingWithTitle) break;
+
+          counter++;
+          forkTitle = `${originalSnippet.title} (Fork${counter > 1 ? ` ${counter}` : ""})`;
+        }
+
+        const newSnippetId = nanoid();
+
+        // Create forked snippet - private by default
+        await db.insert(snippets).values({
+          id: newSnippetId,
+          userId,
+          title: forkTitle,
+          description: originalSnippet.description,
+          instructions: originalSnippet.instructions,
+          language: originalSnippet.language,
+          isPublic: false,
+          isFavorite: false,
+          forkedFromId: originalSnippet.id,
+        });
+
+        // Copy files
+        if (originalSnippet.files.length > 0) {
+          await db.insert(files).values(
+            originalSnippet.files.map((file) => ({
+              id: nanoid(),
+              snippetId: newSnippetId,
+              filename: file.filename,
+              content: file.content,
+              language: file.language,
+              order: file.order,
+            }))
+          );
+        }
+
+        // Copy variables
+        if (originalSnippet.variables.length > 0) {
+          await db.insert(variables).values(
+            originalSnippet.variables.map((variable) => ({
+              id: nanoid(),
+              snippetId: newSnippetId,
+              name: variable.name,
+              defaultValue: variable.defaultValue,
+              description: variable.description,
+              order: variable.order,
+            }))
+          );
+        }
+
+        // Increment fork count on original snippet
+        await db
+          .update(snippets)
+          .set({ forkCount: originalSnippet.forkCount + 1 })
+          .where(eq(snippets.id, originalSnippet.id));
+
+        // Fetch complete forked snippet
+        const completeSnippet = await db.query.snippets.findFirst({
+          where: eq(snippets.id, newSnippetId),
+          with: {
+            files: {
+              orderBy: (files, { asc }) => [asc(files.order)],
+            },
+            variables: {
+              orderBy: (variables, { asc }) => [asc(variables.order)],
+            },
+            snippetsTags: {
+              with: {
+                tag: true,
+              },
+            },
+            forkedFrom: {
+              columns: { id: true, title: true, slug: true },
+            },
+          },
+        });
+
+        const transformedSnippet = {
+          ...completeSnippet,
+          tags: completeSnippet?.snippetsTags.map((st) => st.tag) ?? [],
+          snippetsTags: undefined,
+        };
+
+        return c.json({ snippet: transformedSnippet }, 201);
+      })
   );
 }

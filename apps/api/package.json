@@ -8,7 +8,8 @@
     "start": "bun run dist/index.js",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "seed": "bun --env-file=../../.env scripts/seed.ts"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.6",

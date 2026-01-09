@@ -6,6 +6,8 @@ import { createFilesRoute } from "./files";
 import { createVariablesRoute } from "./variables";
 import { createTagsRoute } from "./tags";
 import { createPublicRoute } from "./public";
+import { createStarsRoute } from "./stars";
+import { createUsersRoute } from "./users";
 
 /**
  * Create the main app with all routes.
@@ -25,7 +27,9 @@ export function createApp(database: Database = db) {
     .route("/snippets", createSnippetsRoute(database))
     .route("/files", createFilesRoute(database))
     .route("/variables", createVariablesRoute(database))
-    .route("/tags", createTagsRoute(database));
+    .route("/tags", createTagsRoute(database))
+    .route("/stars", createStarsRoute(database))
+    .route("/users", createUsersRoute(database));
 }
 
 // Default export with production db

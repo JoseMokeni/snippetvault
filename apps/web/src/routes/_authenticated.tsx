@@ -3,6 +3,7 @@ import {
   redirect,
   Outlet,
   Link,
+  useLocation,
 } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
@@ -18,6 +19,8 @@ import {
   X,
   Globe,
   PanelLeftClose,
+  Compass,
+  BookMarked,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -38,6 +41,7 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedLayout() {
   const { auth } = Route.useRouteContext();
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     // Persist collapsed state in localStorage
@@ -68,6 +72,21 @@ function AuthenticatedLayout() {
   };
 
   const tags = tagsData?.tags || [];
+
+  // Helper to check if a nav item is active
+  const isNavActive = (path: string, filter?: string) => {
+    const currentPath = location.pathname;
+    const searchParams = new URLSearchParams(location.search);
+    const currentFilter = searchParams.get("filter");
+
+    if (path === "/dashboard" && !filter) {
+      return currentPath === "/dashboard" && !currentFilter;
+    }
+    if (path === "/dashboard" && filter) {
+      return currentPath === "/dashboard" && currentFilter === filter;
+    }
+    return currentPath === path || currentPath.startsWith(path + "/");
+  };
 
   return (
     <div className="h-screen bg-bg-primary flex overflow-hidden">
@@ -140,8 +159,11 @@ function AuthenticatedLayout() {
           <Link
             to="/dashboard"
             search={{ filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
-            className={`flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors [&.active]:bg-bg-elevated [&.active]:text-text-primary ${sidebarCollapsed ? "justify-center cursor-pointer" : ""}`}
-            activeOptions={{ exact: true }}
+            className={`flex items-center gap-3 px-3 py-2 rounded transition-colors ${sidebarCollapsed ? "justify-center cursor-pointer" : ""} ${
+              isNavActive("/dashboard")
+                ? "bg-bg-elevated text-text-primary"
+                : "text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
+            }`}
             onClick={(e) => { e.stopPropagation(); setMobileMenuOpen(false); }}
             title={sidebarCollapsed ? "All Snippets" : undefined}
           >
@@ -151,7 +173,11 @@ function AuthenticatedLayout() {
           <Link
             to="/dashboard"
             search={{ filter: "favorites", tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
-            className={`flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors ${sidebarCollapsed ? "justify-center cursor-pointer" : ""}`}
+            className={`flex items-center gap-3 px-3 py-2 rounded transition-colors ${sidebarCollapsed ? "justify-center cursor-pointer" : ""} ${
+              isNavActive("/dashboard", "favorites")
+                ? "bg-bg-elevated text-text-primary"
+                : "text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
+            }`}
             onClick={(e) => { e.stopPropagation(); setMobileMenuOpen(false); }}
             title={sidebarCollapsed ? "Favorites" : undefined}
           >
@@ -161,12 +187,47 @@ function AuthenticatedLayout() {
           <Link
             to="/dashboard"
             search={{ filter: "public", tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
-            className={`flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors ${sidebarCollapsed ? "justify-center cursor-pointer" : ""}`}
+            className={`flex items-center gap-3 px-3 py-2 rounded transition-colors ${sidebarCollapsed ? "justify-center cursor-pointer" : ""} ${
+              isNavActive("/dashboard", "public")
+                ? "bg-bg-elevated text-text-primary"
+                : "text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
+            }`}
             onClick={(e) => { e.stopPropagation(); setMobileMenuOpen(false); }}
             title={sidebarCollapsed ? "Public" : undefined}
           >
             <Globe size={18} />
             {!sidebarCollapsed && <span>Public</span>}
+          </Link>
+
+          {/* Starred (from other users) */}
+          <Link
+            to="/dashboard/starred"
+            className={`flex items-center gap-3 px-3 py-2 rounded transition-colors ${sidebarCollapsed ? "justify-center cursor-pointer" : ""} ${
+              isNavActive("/dashboard/starred")
+                ? "bg-bg-elevated text-text-primary"
+                : "text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
+            }`}
+            onClick={(e) => { e.stopPropagation(); setMobileMenuOpen(false); }}
+            title={sidebarCollapsed ? "Starred" : undefined}
+          >
+            <BookMarked size={18} />
+            {!sidebarCollapsed && <span>Starred</span>}
+          </Link>
+
+          {/* Explore */}
+          <Link
+            to="/explore"
+            search={{ language: undefined, sortBy: undefined, sortOrder: undefined }}
+            className={`flex items-center gap-3 px-3 py-2 rounded transition-colors ${sidebarCollapsed ? "justify-center cursor-pointer" : ""} ${
+              isNavActive("/explore")
+                ? "bg-bg-elevated text-text-primary"
+                : "text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
+            }`}
+            onClick={(e) => { e.stopPropagation(); setMobileMenuOpen(false); }}
+            title={sidebarCollapsed ? "Explore" : undefined}
+          >
+            <Compass size={18} />
+            {!sidebarCollapsed && <span>Explore</span>}
           </Link>
 
           {/* Tags Section */}
@@ -238,13 +299,14 @@ function AuthenticatedLayout() {
               >
                 {auth.user?.name?.charAt(0).toUpperCase() || "U"}
               </div>
-              <button
+              <Link
+                to="/settings"
                 className="p-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors cursor-pointer"
                 title="Settings"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Settings size={16} />
-              </button>
+              </Link>
               <button
                 onClick={(e) => { e.stopPropagation(); handleSignOut(); }}
                 className="p-2 text-text-secondary hover:text-error hover:bg-error/10 rounded transition-colors cursor-pointer"
@@ -270,10 +332,13 @@ function AuthenticatedLayout() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors text-sm">
+                <Link
+                  to="/settings"
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded transition-colors text-sm"
+                >
                   <Settings size={14} />
                   <span>Settings</span>
-                </button>
+                </Link>
                 <button
                   onClick={handleSignOut}
                   className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-text-secondary hover:text-error hover:bg-error/10 rounded transition-colors text-sm"

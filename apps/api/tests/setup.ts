@@ -78,6 +78,7 @@ export async function clearTestData(): Promise<void> {
   }
 
   // Delete in order respecting foreign keys
+  await testDb.delete(schema.stars);
   await testDb.delete(schema.snippetsTags);
   await testDb.delete(schema.files);
   await testDb.delete(schema.variables);
