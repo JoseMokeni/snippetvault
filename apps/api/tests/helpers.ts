@@ -32,7 +32,8 @@ export async function createTestUser(
   const userId = nanoid()
   const sessionId = nanoid()
   const sessionToken = `test-token-${nanoid()}`
-  const username = overrides.username ?? `testuser_${nanoid().slice(0, 8).toLowerCase()}`
+  // Generate username-safe ID: remove dashes (nanoid can include - which is invalid for usernames)
+  const username = overrides.username ?? `testuser_${nanoid().slice(0, 8).toLowerCase().replace(/-/g, '')}`
 
   const userData = {
     id: userId,
