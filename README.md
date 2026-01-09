@@ -2,7 +2,15 @@
   <img src="docs/assets/banner.svg" alt="SnippetVault Banner" width="100%">
   
   <p align="center">
-    <strong>Multi-file code snippets with variable templating</strong>
+    <strong>Reusable code setups, not just snippets.</strong>
+  </p>
+  
+  <p align="center">
+    Multi-file snippets. Variable templating. One-click export.
+  </p>
+  
+  <p align="center">
+    <em>Built for developers who hate repeating themselves.</em>
   </p>
 
   <p align="center">
@@ -33,22 +41,49 @@
 
 ## 🎯 Why SnippetVault?
 
-Traditional snippet managers store **single files**. SnippetVault stores **complete packages** of related files with smart variable templating - perfect for Docker stacks, React component libraries, API boilerplates, and any reusable code that spans multiple files.
+**Your project setups are assets.** SnippetVault helps you reuse them instead of rebuilding them.
 
-### The Problem
+---
 
-You need to share a Docker setup with your team. That's not just a `Dockerfile` - it's:
+### 📖 A Real-World Problem
 
-- `Dockerfile`
-- `docker-compose.yml`
-- `.dockerignore`
-- `README.md` with setup instructions
+```javascript
+const firstProject = {
+  setup: "perfect", // Docker, CI/CD, ESLint, Prettier, Husky, TypeScript
+  status: "✓ Everything works",
+};
 
-Copy-pasting 4+ files manually? Tedious. Storing them separately? Unorganized.
+// A few months later...
 
-### The Solution
+const newProject = {
+  stack: "same",
+  requirements: "same",
+  setup: "rebuilding from scratch", // ❌ Why?
+};
+```
 
-**SnippetVault** lets you save all those files as a single snippet with variables like `{{PROJECT_NAME}}`, share it with your team, and export it as a complete package with one click.
+You've been here:
+
+1. **Month 1** - You spend hours configuring the perfect development environment
+2. **Month 3** - New project. Same stack. Same requirements.
+3. **Reality** - You're copying files, find-replacing project names, and rebuilding what you already built
+
+**The cycle repeats. Every. Single. Time.**
+
+> 💡 **SnippetVault exists to stop that.**
+
+---
+
+### ⚡ How It Works
+
+**SnippetVault** stores **complete packages** of related files with smart variable templating:
+
+- 📦 Save entire project setups (Docker + CI/CD + configs) as a single snippet
+- 🔧 Use `{{PROJECT_NAME}}` variables with customizable defaults
+- 📤 Export as ZIP or copy to clipboard with one click
+- 🔗 Share with your team via read-only links (no login required)
+
+Not just code. **Reusable setups that save hours every time you start something new.**
 
 ## ✨ Features
 
@@ -127,7 +162,7 @@ Built with modern, performant technologies:
 | **Backend**  | [Hono](https://hono.dev) + [Better Auth](https://better-auth.com) + [Drizzle ORM](https://orm.drizzle.team)      |
 | **Frontend** | [React](https://react.dev) + [Vite](https://vitejs.dev) + [TanStack](https://tanstack.com) (Router, Query, Form) |
 | **Database** | [PostgreSQL](https://postgresql.org)                                                                             |
-| **UI**       | [Tailwind CSS](https://tailwindcss.com)                                     |
+| **UI**       | [Tailwind CSS](https://tailwindcss.com)                                                                          |
 | **Auth**     | Email/Password + GitHub OAuth                                                                                    |
 
 ## 🚀 Quick Start

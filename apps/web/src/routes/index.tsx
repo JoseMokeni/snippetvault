@@ -50,7 +50,11 @@ function Navigation() {
           </a>
           <Link
             to="/explore"
-            search={{ language: undefined, sortBy: undefined, sortOrder: undefined }}
+            search={{
+              language: undefined,
+              sortBy: undefined,
+              sortOrder: undefined,
+            }}
             className="text-text-secondary hover:text-accent transition-colors hidden sm:block"
           >
             Explore
@@ -85,12 +89,16 @@ EXPOSE 3000`);
         {/* Tagline */}
         <div className="text-center mb-8 sm:mb-12">
           <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 tracking-tight leading-tight">
-            Your code deserves a<br className="hidden sm:block" />
+            Reusable code setups,
+            <br className="hidden sm:block" />
             <span className="sm:hidden"> </span>
-            <span className="text-accent">second life.</span>
+            <span className="text-accent">not just snippets.</span>
           </h1>
-          <p className="text-text-secondary text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-body px-4">
+          <p className="text-text-secondary text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-body px-4 mb-3">
             Multi-file snippets. Variable templating. One-click export.
+          </p>
+          <p className="text-text-tertiary text-sm sm:text-base max-w-2xl mx-auto font-body px-4">
+            Built for developers who hate repeating themselves.
           </p>
         </div>
 
@@ -220,6 +228,116 @@ function BeforeAfterSection() {
           The old way vs. the <span className="text-accent">SnippetVault</span>{" "}
           way
         </h2>
+
+        {/* Real-world problem section */}
+        <div className="max-w-3xl mx-auto mb-16 sm:mb-20">
+          <div className="terminal-block rounded-lg p-6 sm:p-8 border border-accent/20">
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                <h3 className="font-display text-lg sm:text-xl font-bold text-accent">
+                  A real-world problem
+                </h3>
+              </div>
+              <div className="text-text-tertiary text-xs font-display">
+                // THE CYCLE REPEATS
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {/* Act 1 */}
+              <div>
+                <div className="font-display text-sm mb-2">
+                  <span className="text-syntax-keyword">const</span>{" "}
+                  <span className="text-syntax-variable">firstProject</span>{" "}
+                  <span className="text-text-tertiary">=</span>
+                </div>
+                <p className="text-text-primary text-base sm:text-lg ml-6">
+                  You set up a project{" "}
+                  <span className="text-accent font-medium">once</span>.
+                </p>
+              </div>
+
+              {/* Tech stack */}
+              <div className="bg-bg-elevated border border-border rounded p-4 ml-6">
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <span className="px-2 py-1 bg-accent/10 text-accent border border-accent/20 rounded text-xs font-display">
+                    Docker
+                  </span>
+                  <span className="px-2 py-1 bg-accent/10 text-accent border border-accent/20 rounded text-xs font-display">
+                    CI/CD
+                  </span>
+                  <span className="px-2 py-1 bg-accent/10 text-accent border border-accent/20 rounded text-xs font-display">
+                    ESLint
+                  </span>
+                  <span className="px-2 py-1 bg-accent/10 text-accent border border-accent/20 rounded text-xs font-display">
+                    Prettier
+                  </span>
+                  <span className="px-2 py-1 bg-accent/10 text-accent border border-accent/20 rounded text-xs font-display">
+                    Husky
+                  </span>
+                  <span className="px-2 py-1 bg-accent/10 text-accent border border-accent/20 rounded text-xs font-display">
+                    TypeScript
+                  </span>
+                </div>
+                <p className="text-success text-sm font-display">
+                  ✓ Everything is clean. Everything works.
+                </p>
+              </div>
+
+              {/* Time gap */}
+              <div className="flex items-center gap-3 py-2">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-text-tertiary text-xs font-display">
+                  // A few months later
+                </span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+
+              {/* Act 2 */}
+              <div>
+                <div className="font-display text-sm mb-2">
+                  <span className="text-syntax-keyword">const</span>{" "}
+                  <span className="text-syntax-variable">newProject</span>{" "}
+                  <span className="text-text-tertiary">=</span>
+                </div>
+                <p className="text-text-primary text-base sm:text-lg ml-6">
+                  Same stack. Same requirements.
+                </p>
+              </div>
+
+              {/* The pain */}
+              <div className="bg-error/5 border border-error/20 rounded p-4 ml-6">
+                <p className="text-text-primary text-base sm:text-lg mb-3">
+                  And you start rebuilding{" "}
+                  <span className="text-error font-medium">
+                    everything from scratch
+                  </span>
+                  .
+                </p>
+                <div className="font-display text-xs text-text-tertiary space-y-1">
+                  <div>$ cp ../old-project/Dockerfile .</div>
+                  <div>$ cp ../old-project/.github/workflows/ci.yml .</div>
+                  <div>$ sed -i 's/old-name/new-name/g' **/*</div>
+                  <div className="text-error">
+                    $ # Why am I doing this again?
+                  </div>
+                </div>
+              </div>
+
+              {/* Solution */}
+              <div className="border-t-2 border-accent/30 pt-6 mt-6">
+                <p className="text-text-primary font-display text-base sm:text-lg font-bold mb-2">
+                  SnippetVault{" "}
+                  <span className="text-accent">exists to stop that.</span>
+                </p>
+                <p className="text-text-secondary text-sm">
+                  Save your setups once. Reuse them forever. With variables.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
           {/* Before */}
@@ -410,28 +528,38 @@ function FeaturesSection() {
 
   return (
     <section id="features" className="py-12 sm:py-20 px-4 sm:px-6">
-      <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
-        {features.map((feature) => (
-          <div
-            key={feature.number}
-            className="terminal-block rounded-lg p-4 sm:p-6"
-          >
-            <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-6">
-              <span className="text-accent font-display text-xl sm:text-2xl font-bold flex-shrink-0">
-                {feature.number}
-              </span>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-display text-lg sm:text-xl font-bold mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-text-secondary text-sm sm:text-base">
-                  {feature.description}
-                </p>
-                {feature.visual}
+      <div className="max-w-4xl mx-auto">
+        {/* Intro phrase */}
+        <div className="text-center mb-8 sm:mb-12 px-4">
+          <p className="text-text-secondary text-base sm:text-lg max-w-2xl mx-auto">
+            Your project setups are assets. SnippetVault helps you reuse them
+            instead of rebuilding them.
+          </p>
+        </div>
+
+        <div className="space-y-6 sm:space-y-8">
+          {features.map((feature) => (
+            <div
+              key={feature.number}
+              className="terminal-block rounded-lg p-4 sm:p-6"
+            >
+              <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-6">
+                <span className="text-accent font-display text-xl sm:text-2xl font-bold flex-shrink-0">
+                  {feature.number}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-display text-lg sm:text-xl font-bold mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-text-secondary text-sm sm:text-base">
+                    {feature.description}
+                  </p>
+                  {feature.visual}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
