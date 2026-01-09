@@ -1,24 +1,24 @@
-import { Hono } from 'hono'
-import { nanoid } from 'nanoid'
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
-import * as schema from '@snippetvault/db/schema'
-import { eq } from 'drizzle-orm'
+import { Hono } from "hono";
+import { nanoid } from "nanoid";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import * as schema from "@snippetvault/db/schema";
+import { eq } from "drizzle-orm";
 
 // Re-export schema for convenience
-export { schema }
+export { schema };
 
-type TestDb = PostgresJsDatabase<typeof schema>
+type TestDb = PostgresJsDatabase<typeof schema>;
 
 /**
  * Test user data
  */
 export interface TestUser {
-  id: string
-  name: string
-  email: string
-  username: string
-  sessionToken: string
-  sessionId: string
+  id: string;
+  name: string;
+  email: string;
+  username: string;
+  sessionToken: string;
+  sessionId: string;
 }
 
 /**
@@ -29,22 +29,24 @@ export async function createTestUser(
   db: TestDb,
   overrides: Partial<{ name: string; email: string; username: string }> = {}
 ): Promise<TestUser> {
-  const userId = nanoid()
-  const sessionId = nanoid()
-  const sessionToken = `test-token-${nanoid()}`
+  const userId = nanoid();
+  const sessionId = nanoid();
+  const sessionToken = `test-token-${nanoid()}`;
   // Generate username-safe ID: remove dashes (nanoid can include - which is invalid for usernames)
-  const username = overrides.username ?? `testuser_${nanoid().slice(0, 8).toLowerCase().replace(/-/g, '')}`
+  const username =
+    overrides.username ??
+    `testuser_${nanoid().slice(0, 8).toLowerCase().replace(/-/g, "")}`;
 
   const userData = {
     id: userId,
-    name: overrides.name ?? 'Test User',
+    name: overrides.name ?? "Test User",
     email: overrides.email ?? `test-${nanoid()}@example.com`,
     username,
     emailVerified: false,
-  }
+  };
 
   // Create user
-  await db.insert(schema.users).values(userData)
+  await db.insert(schema.users).values(userData);
 
   // Create session (expires in 7 days)
   await db.insert(schema.sessions).values({
@@ -52,7 +54,7 @@ export async function createTestUser(
     userId,
     token: sessionToken,
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-  })
+  });
 
   return {
     id: userId,
@@ -61,7 +63,7 @@ export async function createTestUser(
     username: userData.username,
     sessionToken,
     sessionId,
-  }
+  };
 }
 
 /**
@@ -72,7 +74,7 @@ export async function createTestTag(
   userId: string,
   overrides: Partial<{ name: string; color: string }> = {}
 ): Promise<typeof schema.tags.$inferSelect> {
-  const tagId = nanoid()
+  const tagId = nanoid();
 
   const [tag] = await db
     .insert(schema.tags)
@@ -80,11 +82,11 @@ export async function createTestTag(
       id: tagId,
       userId,
       name: overrides.name ?? `tag-${nanoid().slice(0, 6)}`,
-      color: overrides.color ?? '#3b82f6',
+      color: overrides.color ?? "#3b82f6",
     })
-    .returning()
+    .returning();
 
-  return tag
+  return tag;
 }
 
 /**
@@ -94,17 +96,21 @@ export async function createTestSnippet(
   db: TestDb,
   userId: string,
   overrides: Partial<{
-    title: string
-    description: string
-    language: string
-    isFavorite: boolean
-    isPublic: boolean
-    files: Array<{ filename: string; content: string; language: string }>
-    variables: Array<{ name: string; defaultValue: string; description?: string }>
-    tagIds: string[]
+    title: string;
+    description: string;
+    language: string;
+    isFavorite: boolean;
+    isPublic: boolean;
+    files: Array<{ filename: string; content: string; language: string }>;
+    variables: Array<{
+      name: string;
+      defaultValue: string;
+      description?: string;
+    }>;
+    tagIds: string[];
   }> = {}
 ): Promise<typeof schema.snippets.$inferSelect> {
-  const snippetId = nanoid()
+  const snippetId = nanoid();
 
   const [snippet] = await db
     .insert(schema.snippets)
@@ -112,12 +118,12 @@ export async function createTestSnippet(
       id: snippetId,
       userId,
       title: overrides.title ?? `Test Snippet ${nanoid().slice(0, 6)}`,
-      description: overrides.description ?? 'A test snippet',
-      language: overrides.language ?? 'typescript',
+      description: overrides.description ?? "A test snippet",
+      language: overrides.language ?? "typescript",
       isFavorite: overrides.isFavorite ?? false,
       isPublic: overrides.isPublic ?? false,
     })
-    .returning()
+    .returning();
 
   // Create files if provided
   if (overrides.files && overrides.files.length > 0) {
@@ -130,7 +136,7 @@ export async function createTestSnippet(
         language: file.language,
         order: index,
       }))
-    )
+    );
   }
 
   // Create variables if provided
@@ -144,33 +150,40 @@ export async function createTestSnippet(
         description: variable.description,
         order: index,
       }))
-    )
+    );
   }
 
   // Associate tags if provided
   if (overrides.tagIds && overrides.tagIds.length > 0) {
     await db.insert(schema.snippetsTags).values(
-      overrides.tagIds.map(tagId => ({
+      overrides.tagIds.map((tagId) => ({
         snippetId,
         tagId,
       }))
-    )
+    );
   }
 
-  return snippet
+  return snippet;
 }
 
 /**
  * Create a mock auth middleware that uses the test session token.
  */
 export function createMockAuthMiddleware(db: TestDb) {
-  return async (c: { req: { raw: { headers: Headers } }; set: (key: string, value: string) => void; json: (data: unknown, status?: number) => Response }, next: () => Promise<void>) => {
+  return async (
+    c: {
+      req: { raw: { headers: Headers } };
+      set: (key: string, value: string) => void;
+      json: (data: unknown, status?: number) => Response;
+    },
+    next: () => Promise<void>
+  ) => {
     // Get token from Authorization header or cookie
-    const authHeader = c.req.raw.headers.get('Authorization')
-    const token = authHeader?.replace('Bearer ', '')
+    const authHeader = c.req.raw.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
 
     if (!token) {
-      return c.json({ error: 'Unauthorized' }, 401)
+      return c.json({ error: "Unauthorized" }, 401);
     }
 
     // Look up session
@@ -179,17 +192,17 @@ export function createMockAuthMiddleware(db: TestDb) {
       with: {
         user: true,
       },
-    })
+    });
 
     if (!session || session.expiresAt < new Date()) {
-      return c.json({ error: 'Unauthorized' }, 401)
+      return c.json({ error: "Unauthorized" }, 401);
     }
 
-    c.set('userId', session.userId)
-    c.set('sessionId', session.id)
+    c.set("userId", session.userId);
+    c.set("sessionId", session.id);
 
-    await next()
-  }
+    await next();
+  };
 }
 
 /**
@@ -203,23 +216,23 @@ export function makeAuthRequest(
   body?: unknown
 ): Promise<Response> {
   const headers: Record<string, string> = {
-    'Authorization': `Bearer ${sessionToken}`,
-  }
+    Authorization: `Bearer ${sessionToken}`,
+  };
 
   if (body) {
-    headers['Content-Type'] = 'application/json'
+    headers["Content-Type"] = "application/json";
   }
 
   return app.request(path, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
-  })
+  });
 }
 
 /**
  * Helper to parse JSON response
  */
 export async function parseResponse<T>(res: Response): Promise<T> {
-  return res.json() as Promise<T>
+  return res.json() as Promise<T>;
 }
