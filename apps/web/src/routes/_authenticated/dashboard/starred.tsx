@@ -62,7 +62,10 @@ function StarredPage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["stars"] });
       showSuccess(`Forked as "${data.snippet.title}"`);
-      navigate({ to: "/dashboard/$snippetId", params: { snippetId: data.snippet.id } });
+      navigate({
+        to: "/dashboard/$snippetId",
+        params: { snippetId: data.snippet.id },
+      });
     },
     onError: (error) => {
       handleApiError(error, "Failed to fork snippet");
@@ -90,12 +93,17 @@ function StarredPage() {
             Starred Snippets
           </h1>
           <p className="text-text-secondary mt-1 text-sm sm:text-base">
-            {snippets.length} {snippets.length === 1 ? "snippet" : "snippets"} from other users
+            {snippets.length} {snippets.length === 1 ? "snippet" : "snippets"}{" "}
+            from other users
           </p>
         </div>
         <Link
           to="/explore"
-          search={{ language: undefined, sortBy: undefined, sortOrder: undefined }}
+          search={{
+            language: undefined,
+            sortBy: undefined,
+            sortOrder: undefined,
+          }}
           className="flex items-center justify-center sm:justify-start gap-2 bg-accent text-bg-primary px-4 py-2 font-medium hover:bg-accent-hover transition-colors text-sm sm:text-base whitespace-nowrap"
         >
           Explore More
@@ -129,7 +137,9 @@ function StarredPage() {
         <div className="text-center py-16">
           <div className="text-error mb-4">Failed to load starred snippets</div>
           <button
-            onClick={() => queryClient.invalidateQueries({ queryKey: ["stars"] })}
+            onClick={() =>
+              queryClient.invalidateQueries({ queryKey: ["stars"] })
+            }
             className="text-accent hover:text-accent-hover transition-colors"
           >
             Try again
@@ -149,7 +159,11 @@ function StarredPage() {
           </p>
           <Link
             to="/explore"
-            search={{ language: undefined, sortBy: undefined, sortOrder: undefined }}
+            search={{
+              language: undefined,
+              sortBy: undefined,
+              sortOrder: undefined,
+            }}
             className="inline-flex items-center gap-2 bg-accent text-bg-primary px-6 py-3 font-medium hover:bg-accent-hover transition-colors"
           >
             Explore Snippets
@@ -158,17 +172,18 @@ function StarredPage() {
       )}
 
       {/* No search results */}
-      {!isLoading && !error && snippets.length > 0 && filteredSnippets.length === 0 && (
-        <div className="text-center py-16">
-          <Search size={48} className="mx-auto text-text-tertiary mb-4" />
-          <h2 className="font-display text-xl font-bold mb-2">
-            No matching snippets
-          </h2>
-          <p className="text-text-secondary">
-            Try a different search term
-          </p>
-        </div>
-      )}
+      {!isLoading &&
+        !error &&
+        snippets.length > 0 &&
+        filteredSnippets.length === 0 && (
+          <div className="text-center py-16">
+            <Search size={48} className="mx-auto text-text-tertiary mb-4" />
+            <h2 className="font-display text-xl font-bold mb-2">
+              No matching snippets
+            </h2>
+            <p className="text-text-secondary">Try a different search term</p>
+          </div>
+        )}
 
       {/* Snippets Grid */}
       {!isLoading && !error && filteredSnippets.length > 0 && (

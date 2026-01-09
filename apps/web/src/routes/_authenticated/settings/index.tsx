@@ -118,7 +118,9 @@ function SettingsPage() {
         <div className="space-y-4">
           {/* Name (read-only) */}
           <div>
-            <label className="block text-sm text-text-secondary mb-2">Name</label>
+            <label className="block text-sm text-text-secondary mb-2">
+              Name
+            </label>
             <div className="bg-bg-primary border border-border px-4 py-3 text-text-primary font-display">
               {user?.name}
             </div>
@@ -126,7 +128,9 @@ function SettingsPage() {
 
           {/* Email (read-only) */}
           <div>
-            <label className="block text-sm text-text-secondary mb-2">Email</label>
+            <label className="block text-sm text-text-secondary mb-2">
+              Email
+            </label>
             <div className="bg-bg-primary border border-border px-4 py-3 text-text-primary font-display">
               {user?.email}
             </div>
@@ -140,7 +144,9 @@ function SettingsPage() {
             </label>
             <div className="flex gap-3">
               <div className="flex-1 relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary">@</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary">
+                  @
+                </span>
                 <input
                   type="text"
                   value={username}
@@ -155,7 +161,11 @@ function SettingsPage() {
               </div>
               <button
                 onClick={handleSaveUsername}
-                disabled={!hasUsernameChanged || !!usernameError || updateUsernameMutation.isPending}
+                disabled={
+                  !hasUsernameChanged ||
+                  !!usernameError ||
+                  updateUsernameMutation.isPending
+                }
                 className={`px-4 py-3 font-medium transition-colors flex items-center gap-2 ${
                   hasUsernameChanged && !usernameError
                     ? "bg-accent text-bg-primary hover:bg-accent-hover"

@@ -66,11 +66,19 @@ function UserProfilePage() {
     enabled: isLoggedIn,
   });
 
-  const starredIds = new Set(starsData?.snippets?.map((s: { id: string }) => s.id) || []);
+  const starredIds = new Set(
+    starsData?.snippets?.map((s: { id: string }) => s.id) || []
+  );
 
   // Star mutation
   const starMutation = useMutation({
-    mutationFn: async ({ snippetId, isStarred }: { snippetId: string; isStarred: boolean }) => {
+    mutationFn: async ({
+      snippetId,
+      isStarred,
+    }: {
+      snippetId: string;
+      isStarred: boolean;
+    }) => {
       const method = isStarred ? "DELETE" : "POST";
       const res = await fetch(`/api/stars/${snippetId}`, {
         method,
@@ -101,7 +109,10 @@ function UserProfilePage() {
     },
     onSuccess: (data) => {
       showSuccess(`Forked as "${data.snippet.title}"`);
-      navigate({ to: "/dashboard/$snippetId", params: { snippetId: data.snippet.id } });
+      navigate({
+        to: "/dashboard/$snippetId",
+        params: { snippetId: data.snippet.id },
+      });
     },
     onError: (error) => {
       handleApiError(error, "Failed to fork snippet");
@@ -145,7 +156,15 @@ function UserProfilePage() {
       <div className="min-h-screen bg-bg-primary flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">User not found</h1>
-          <Link to="/explore" search={{ language: undefined, sortBy: undefined, sortOrder: undefined }} className="text-accent hover:text-accent-hover">
+          <Link
+            to="/explore"
+            search={{
+              language: undefined,
+              sortBy: undefined,
+              sortOrder: undefined,
+            }}
+            className="text-accent hover:text-accent-hover"
+          >
             Back to Explore
           </Link>
         </div>
@@ -170,7 +189,13 @@ function UserProfilePage() {
             {isLoggedIn ? (
               <Link
                 to="/dashboard"
-                search={{ filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
+                search={{
+                  filter: undefined,
+                  tag: undefined,
+                  sortBy: undefined,
+                  sortOrder: undefined,
+                  language: undefined,
+                }}
                 className="text-text-secondary hover:text-text-primary transition-colors text-sm"
               >
                 Dashboard
@@ -194,7 +219,11 @@ function UserProfilePage() {
         {/* Back link */}
         <Link
           to="/explore"
-          search={{ language: undefined, sortBy: undefined, sortOrder: undefined }}
+          search={{
+            language: undefined,
+            sortBy: undefined,
+            sortOrder: undefined,
+          }}
           className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary mb-6"
         >
           <ArrowLeft size={16} />
@@ -230,14 +259,18 @@ function UserProfilePage() {
             {/* Stats */}
             <div className="flex gap-8">
               <div className="text-center">
-                <div className="text-2xl font-bold text-accent">{stats.publicSnippets}</div>
+                <div className="text-2xl font-bold text-accent">
+                  {stats.publicSnippets}
+                </div>
                 <div className="text-text-tertiary text-sm flex items-center gap-1.5 justify-center">
                   <FileCode size={14} />
                   Snippets
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-warning">{stats.totalStars}</div>
+                <div className="text-2xl font-bold text-warning">
+                  {stats.totalStars}
+                </div>
                 <div className="text-text-tertiary text-sm flex items-center gap-1.5 justify-center">
                   <Star size={14} />
                   Stars
@@ -265,7 +298,9 @@ function UserProfilePage() {
         {snippets.length === 0 && (
           <div className="text-center py-16">
             <FileCode size={48} className="mx-auto text-text-tertiary mb-4" />
-            <h2 className="font-display text-xl font-bold mb-2">No public snippets yet</h2>
+            <h2 className="font-display text-xl font-bold mb-2">
+              No public snippets yet
+            </h2>
             <p className="text-text-secondary">
               This user hasn't shared any public snippets.
             </p>

@@ -1,5 +1,15 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Search, Loader2, Compass, LogIn, User, FileCode, Star, GitFork, ArrowUpDown } from "lucide-react";
+import {
+  Search,
+  Loader2,
+  Compass,
+  LogIn,
+  User,
+  FileCode,
+  Star,
+  GitFork,
+  ArrowUpDown,
+} from "lucide-react";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ExploreSnippetCard } from "@/components/explore-snippet-card";
@@ -10,7 +20,9 @@ type SnippetCardData = Parameters<typeof ExploreSnippetCard>[0]["snippet"];
 export const Route = createFileRoute("/explore/")({
   validateSearch: (search: Record<string, unknown>) => ({
     language: (search.language as string) || undefined,
-    sortBy: (search.sortBy as "starCount" | "createdAt" | "forkCount" | undefined) || undefined,
+    sortBy:
+      (search.sortBy as "starCount" | "createdAt" | "forkCount" | undefined) ||
+      undefined,
     sortOrder: (search.sortOrder as "asc" | "desc" | undefined) || undefined,
   }),
   component: ExplorePage,
@@ -74,14 +86,18 @@ function ExplorePage() {
     enabled: isLoggedIn,
   });
 
-  const starredIds = new Set(starsData?.snippets?.map((s: { id: string }) => s.id) || []);
+  const starredIds = new Set(
+    starsData?.snippets?.map((s: { id: string }) => s.id) || []
+  );
 
   // Fetch matching users when searching
   const { data: usersData } = useQuery({
     queryKey: ["user-search", searchQuery],
     queryFn: async () => {
       if (!searchQuery || searchQuery.length < 2) return { users: [] };
-      const res = await fetch(`/api/public/users/search?q=${encodeURIComponent(searchQuery)}`);
+      const res = await fetch(
+        `/api/public/users/search?q=${encodeURIComponent(searchQuery)}`
+      );
       if (!res.ok) return { users: [] };
       return res.json();
     },
@@ -92,7 +108,13 @@ function ExplorePage() {
 
   // Star mutation
   const starMutation = useMutation({
-    mutationFn: async ({ snippetId, isStarred }: { snippetId: string; isStarred: boolean }) => {
+    mutationFn: async ({
+      snippetId,
+      isStarred,
+    }: {
+      snippetId: string;
+      isStarred: boolean;
+    }) => {
       const method = isStarred ? "DELETE" : "POST";
       const res = await fetch(`/api/stars/${snippetId}`, {
         method,
@@ -124,7 +146,10 @@ function ExplorePage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["explore"] });
       showSuccess(`Forked as "${data.snippet.title}"`);
-      navigate({ to: "/dashboard/$snippetId", params: { snippetId: data.snippet.id } });
+      navigate({
+        to: "/dashboard/$snippetId",
+        params: { snippetId: data.snippet.id },
+      });
     },
     onError: (error) => {
       handleApiError(error, "Failed to fork snippet");
@@ -175,7 +200,13 @@ function ExplorePage() {
             {isLoggedIn ? (
               <Link
                 to="/dashboard"
-                search={{ filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
+                search={{
+                  filter: undefined,
+                  tag: undefined,
+                  sortBy: undefined,
+                  sortOrder: undefined,
+                  language: undefined,
+                }}
                 className="text-text-secondary hover:text-text-primary transition-colors text-sm font-display"
               >
                 Dashboard
@@ -239,7 +270,10 @@ function ExplorePage() {
                     onChange={(e) =>
                       navigate({
                         to: "/explore",
-                        search: { ...searchParams, language: e.target.value || undefined },
+                        search: {
+                          ...searchParams,
+                          language: e.target.value || undefined,
+                        },
                       })
                     }
                     className="appearance-none bg-bg-primary border border-border px-4 py-3 pr-10 text-text-primary focus:border-accent focus:outline-none font-display text-sm min-w-[150px] cursor-pointer"
@@ -251,7 +285,10 @@ function ExplorePage() {
                       </option>
                     ))}
                   </select>
-                  <FileCode size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none" />
+                  <FileCode
+                    size={16}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none"
+                  />
                 </div>
 
                 {/* Sort */}
@@ -261,7 +298,13 @@ function ExplorePage() {
                     onChange={(e) =>
                       navigate({
                         to: "/explore",
-                        search: { ...searchParams, sortBy: e.target.value as "starCount" | "createdAt" | "forkCount" },
+                        search: {
+                          ...searchParams,
+                          sortBy: e.target.value as
+                            | "starCount"
+                            | "createdAt"
+                            | "forkCount",
+                        },
                       })
                     }
                     className="appearance-none bg-bg-primary border border-border px-4 py-3 pr-10 text-text-primary focus:border-accent focus:outline-none font-display text-sm min-w-[150px] cursor-pointer"
@@ -272,7 +315,10 @@ function ExplorePage() {
                       </option>
                     ))}
                   </select>
-                  <ArrowUpDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none" />
+                  <ArrowUpDown
+                    size={16}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none"
+                  />
                 </div>
               </div>
             </div>
@@ -280,13 +326,20 @@ function ExplorePage() {
             {/* Active filters indicator */}
             {(language || searchQuery) && (
               <div className="mt-4 pt-4 border-t border-border flex items-center gap-2 flex-wrap">
-                <span className="text-text-tertiary text-xs font-display">FILTERS:</span>
+                <span className="text-text-tertiary text-xs font-display">
+                  FILTERS:
+                </span>
                 {language && (
                   <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-accent/10 border border-accent/30 text-accent text-xs font-display">
                     <FileCode size={12} />
                     {language}
                     <button
-                      onClick={() => navigate({ to: "/explore", search: { ...searchParams, language: undefined } })}
+                      onClick={() =>
+                        navigate({
+                          to: "/explore",
+                          search: { ...searchParams, language: undefined },
+                        })
+                      }
                       className="ml-1 hover:text-accent-hover"
                     >
                       x
@@ -295,8 +348,7 @@ function ExplorePage() {
                 )}
                 {searchQuery && (
                   <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-accent/10 border border-accent/30 text-accent text-xs font-display">
-                    <Search size={12} />
-                    "{searchQuery}"
+                    <Search size={12} />"{searchQuery}"
                     <button
                       onClick={() => setSearchQuery("")}
                       className="ml-1 hover:text-accent-hover"
@@ -315,17 +367,25 @@ function ExplorePage() {
               <div className="p-4 bg-bg-secondary border border-border rounded-lg mb-4">
                 <Loader2 size={32} className="animate-spin text-accent" />
               </div>
-              <p className="text-text-secondary font-display text-sm">Loading snippets...</p>
+              <p className="text-text-secondary font-display text-sm">
+                Loading snippets...
+              </p>
             </div>
           )}
 
           {/* Error state */}
           {error && (
             <div className="terminal-block rounded-lg p-8 text-center">
-              <div className="text-error font-display text-lg mb-2">// Error</div>
-              <p className="text-text-secondary mb-4">Failed to load snippets</p>
+              <div className="text-error font-display text-lg mb-2">
+                // Error
+              </div>
+              <p className="text-text-secondary mb-4">
+                Failed to load snippets
+              </p>
               <button
-                onClick={() => queryClient.invalidateQueries({ queryKey: ["explore"] })}
+                onClick={() =>
+                  queryClient.invalidateQueries({ queryKey: ["explore"] })
+                }
                 className="text-accent hover:text-accent-hover transition-colors font-display"
               >
                 {`> retry`}
@@ -345,47 +405,70 @@ function ExplorePage() {
                 <div className="h-px flex-1 bg-border" />
               </div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {matchingUsers.map((user: { id: string; name: string; username: string; image: string | null; publicSnippets: number }) => (
-                  <Link
-                    key={user.id}
-                    to="/u/$username"
-                    params={{ username: user.username }}
-                    className="terminal-block rounded-lg p-4 hover:border-accent transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      {user.image ? (
-                        <img src={user.image} alt={user.name} className="w-12 h-12 rounded-full border border-border group-hover:border-accent transition-colors" />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                          <User size={22} className="text-accent" />
+                {matchingUsers.map(
+                  (user: {
+                    id: string;
+                    name: string;
+                    username: string;
+                    image: string | null;
+                    publicSnippets: number;
+                  }) => (
+                    <Link
+                      key={user.id}
+                      to="/u/$username"
+                      params={{ username: user.username }}
+                      className="terminal-block rounded-lg p-4 hover:border-accent transition-all group"
+                    >
+                      <div className="flex items-center gap-3">
+                        {user.image ? (
+                          <img
+                            src={user.image}
+                            alt={user.name}
+                            className="w-12 h-12 rounded-full border border-border group-hover:border-accent transition-colors"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                            <User size={22} className="text-accent" />
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="font-display font-medium truncate group-hover:text-accent transition-colors">
+                            {user.name}
+                          </div>
+                          <div className="text-text-tertiary text-sm truncate">
+                            @{user.username}
+                          </div>
                         </div>
-                      )}
-                      <div className="min-w-0 flex-1">
-                        <div className="font-display font-medium truncate group-hover:text-accent transition-colors">{user.name}</div>
-                        <div className="text-text-tertiary text-sm truncate">@{user.username}</div>
                       </div>
-                    </div>
-                    <div className="mt-3 pt-3 border-t border-border flex items-center gap-2 text-text-tertiary text-xs">
-                      <FileCode size={12} className="text-accent" />
-                      <span>{user.publicSnippets} public {user.publicSnippets === 1 ? "snippet" : "snippets"}</span>
-                    </div>
-                  </Link>
-                ))}
+                      <div className="mt-3 pt-3 border-t border-border flex items-center gap-2 text-text-tertiary text-xs">
+                        <FileCode size={12} className="text-accent" />
+                        <span>
+                          {user.publicSnippets} public{" "}
+                          {user.publicSnippets === 1 ? "snippet" : "snippets"}
+                        </span>
+                      </div>
+                    </Link>
+                  )
+                )}
               </div>
             </div>
           )}
 
           {/* Snippets section header */}
-          {!isLoading && !error && snippets.length > 0 && searchQuery.length >= 2 && matchingUsers.length > 0 && (
-            <div className="flex items-center gap-3 mb-5">
-              <div className="h-px flex-1 bg-border" />
-              <h2 className="font-display text-sm text-text-secondary uppercase tracking-wider flex items-center gap-2">
-                <FileCode size={14} className="text-accent" />
-                Snippets ({snippets.length})
-              </h2>
-              <div className="h-px flex-1 bg-border" />
-            </div>
-          )}
+          {!isLoading &&
+            !error &&
+            snippets.length > 0 &&
+            searchQuery.length >= 2 &&
+            matchingUsers.length > 0 && (
+              <div className="flex items-center gap-3 mb-5">
+                <div className="h-px flex-1 bg-border" />
+                <h2 className="font-display text-sm text-text-secondary uppercase tracking-wider flex items-center gap-2">
+                  <FileCode size={14} className="text-accent" />
+                  Snippets ({snippets.length})
+                </h2>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+            )}
 
           {/* Empty state */}
           {!isLoading && !error && snippets.length === 0 && (
@@ -393,7 +476,9 @@ function ExplorePage() {
               <div className="inline-flex items-center justify-center p-4 bg-bg-secondary border border-border rounded-lg mb-6">
                 <Compass size={40} className="text-text-tertiary" />
               </div>
-              <h2 className="font-display text-xl font-bold mb-3">No snippets found</h2>
+              <h2 className="font-display text-xl font-bold mb-3">
+                No snippets found
+              </h2>
               <p className="text-text-secondary mb-6 max-w-md mx-auto">
                 {searchQuery
                   ? `No results for "${searchQuery}". Try a different search term.`
@@ -439,7 +524,12 @@ function ExplorePage() {
             <div className="mt-10 text-center">
               <div className="inline-flex items-center gap-3 px-4 py-2 bg-bg-secondary border border-border rounded-full">
                 <span className="text-text-tertiary text-sm font-display">
-                  Showing <span className="text-accent">{snippets.length}</span> of <span className="text-accent">{exploreData?.total || snippets.length}</span> snippets
+                  Showing <span className="text-accent">{snippets.length}</span>{" "}
+                  of{" "}
+                  <span className="text-accent">
+                    {exploreData?.total || snippets.length}
+                  </span>{" "}
+                  snippets
                 </span>
               </div>
             </div>
