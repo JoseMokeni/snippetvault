@@ -281,16 +281,23 @@ function DashboardPage() {
       {/* Snippets Grid */}
       {!snippetsLoading && !snippetsError && snippets.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {snippets.map((snippet) => (
-            <SnippetCard
-              key={snippet.id}
-              snippet={snippet}
-              filesCount={0} // We don't have this in list view, could add if needed
-              onToggleFavorite={(id) => toggleFavoriteMutation.mutate(id)}
-              onDuplicate={(id) => duplicateMutation.mutate(id)}
-              onDelete={handleDelete}
-            />
-          ))}
+          {snippets.map((snippet) => {
+            const isPending =
+              (toggleFavoriteMutation.isPending && toggleFavoriteMutation.variables === snippet.id) ||
+              (duplicateMutation.isPending && duplicateMutation.variables === snippet.id) ||
+              (deleteMutation.isPending && deleteMutation.variables === snippet.id);
+            return (
+              <SnippetCard
+                key={snippet.id}
+                snippet={snippet}
+                filesCount={0}
+                onToggleFavorite={(id) => toggleFavoriteMutation.mutate(id)}
+                onDuplicate={(id) => duplicateMutation.mutate(id)}
+                onDelete={handleDelete}
+                isPending={isPending}
+              />
+            );
+          })}
         </div>
       )}
     </div>

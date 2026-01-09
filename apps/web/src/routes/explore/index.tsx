@@ -145,6 +145,7 @@ function ExplorePage() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["explore"] });
+      queryClient.invalidateQueries({ queryKey: ["snippets"] });
       showSuccess(`Forked as "${data.snippet.title}"`);
       navigate({
         to: "/dashboard/$snippetId",

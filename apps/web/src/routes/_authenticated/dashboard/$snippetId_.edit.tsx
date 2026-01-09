@@ -306,6 +306,7 @@ function SnippetForm({
               placeholder="My Awesome Snippet"
               className="w-full bg-bg-secondary border border-border px-4 py-3 text-text-primary focus:border-accent focus:outline-none font-display"
               required
+              maxLength={200}
             />
           </div>
 
@@ -319,6 +320,7 @@ function SnippetForm({
               placeholder="A brief description of what this snippet does..."
               rows={2}
               className="w-full bg-bg-secondary border border-border px-4 py-3 text-text-primary focus:border-accent focus:outline-none font-display resize-none"
+              maxLength={500}
             />
           </div>
 

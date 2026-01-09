@@ -108,6 +108,8 @@ function UserProfilePage() {
       return res.json();
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["snippets"] });
+      queryClient.invalidateQueries({ queryKey: ["user-profile", username] });
       showSuccess(`Forked as "${data.snippet.title}"`);
       navigate({
         to: "/dashboard/$snippetId",

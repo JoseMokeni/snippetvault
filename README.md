@@ -127,7 +127,7 @@ Built with modern, performant technologies:
 | **Backend**  | [Hono](https://hono.dev) + [Better Auth](https://better-auth.com) + [Drizzle ORM](https://orm.drizzle.team)      |
 | **Frontend** | [React](https://react.dev) + [Vite](https://vitejs.dev) + [TanStack](https://tanstack.com) (Router, Query, Form) |
 | **Database** | [PostgreSQL](https://postgresql.org)                                                                             |
-| **UI**       | [shadcn/ui](https://ui.shadcn.com) + [Tailwind CSS](https://tailwindcss.com)                                     |
+| **UI**       | [Tailwind CSS](https://tailwindcss.com)                                     |
 | **Auth**     | Email/Password + GitHub OAuth                                                                                    |
 
 ## 🚀 Quick Start
@@ -366,7 +366,6 @@ Built with amazing open-source technologies:
 - [Hono](https://hono.dev) - Ultrafast web framework
 - [Drizzle ORM](https://orm.drizzle.team) - TypeScript ORM
 - [TanStack](https://tanstack.com) - Powerful React tools
-- [shadcn/ui](https://ui.shadcn.com) - Beautiful UI components
 
 ## 📬 Contact & Support
 

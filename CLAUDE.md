@@ -30,4 +30,4 @@ Use this skill when:
 
 ## MCP Tools
 
-- **Context7**: Look up documentation for Hono, Better Auth, Drizzle, TanStack, shadcn/ui
+- **Context7**: Look up documentation for Hono, Better Auth, Drizzle, TanStack

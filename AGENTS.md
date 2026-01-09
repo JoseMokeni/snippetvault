@@ -11,7 +11,7 @@ with a variable system for customization.
 - **Runtime**: Bun
 - **Backend**: Hono + Hono RPC
 - **Frontend**: React + Vite + TanStack (Router, Query, Form)
-- **UI**: shadcn/ui + Tailwind CSS
+- **UI**: Tailwind CSS
 - **Auth**: Better Auth
 - **ORM**: Drizzle
 - **Database**: PostgreSQL

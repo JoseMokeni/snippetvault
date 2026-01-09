@@ -645,6 +645,7 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
                     }
                     className="flex-1 bg-bg-secondary border border-accent px-2 py-1.5 text-xs focus:outline-none text-text-primary"
                     autoFocus
+                    maxLength={255}
                   />
                   <button
                     type="button"
@@ -765,6 +766,7 @@ export function FileTreeEditor({ files, onChange }: FileTreeEditorProps) {
                   placeholder={isAddingFile ? "path/to/file.ts" : "folder/name"}
                   className="flex-1 bg-bg-primary border border-accent px-2 py-1 text-xs focus:outline-none text-text-primary"
                   autoFocus
+                  maxLength={255}
                 />
                 <button
                   type="button"

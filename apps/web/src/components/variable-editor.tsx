@@ -167,6 +167,7 @@ export function VariableForm({ variables, onChange }: VariableFormProps) {
                     }
                     placeholder="VARIABLE_NAME"
                     className="w-full bg-bg-secondary border border-border px-3 py-2 text-sm font-display text-text-primary focus:border-accent focus:outline-none"
+                    maxLength={50}
                   />
                 </div>
                 <div>
@@ -181,6 +182,7 @@ export function VariableForm({ variables, onChange }: VariableFormProps) {
                     }
                     placeholder="default value"
                     className="w-full bg-bg-secondary border border-border px-3 py-2 text-sm font-display text-text-primary focus:border-accent focus:outline-none"
+                    maxLength={500}
                   />
                 </div>
               </div>
@@ -197,6 +199,7 @@ export function VariableForm({ variables, onChange }: VariableFormProps) {
                   }
                   placeholder="What is this variable for?"
                   className="w-full bg-bg-secondary border border-border px-3 py-2 text-sm font-display text-text-primary focus:border-accent focus:outline-none"
+                  maxLength={200}
                 />
               </div>
             </div>

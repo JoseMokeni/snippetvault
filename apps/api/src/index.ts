@@ -6,6 +6,26 @@ import { app as apiRoutes } from "./routes";
 
 const app = new Hono();
 
+// Global error handler - prevents sensitive info leakage
+app.onError((err, c) => {
+  console.error(`[ERROR] ${c.req.method} ${c.req.path}:`, err.message);
+
+  // Don't expose internal error details in production
+  if (process.env.NODE_ENV === "production") {
+    return c.json({ error: "Internal server error" }, 500);
+  }
+
+  // In development, return more details for debugging
+  return c.json(
+    {
+      error: "Internal server error",
+      message: err.message,
+      stack: err.stack,
+    },
+    500
+  );
+});
+
 // Logging
 app.use("*", logger());
 

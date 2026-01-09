@@ -180,6 +180,7 @@ export function TagSelector({
               className="flex-1 bg-bg-primary border border-border px-3 py-2 text-sm focus:border-accent focus:outline-none text-text-primary rounded"
               autoFocus
               disabled={isSubmitting}
+              maxLength={30}
             />
             <button
               type="button"

@@ -330,7 +330,7 @@ export function FileTreeViewer({
 
       <div className="flex h-[400px] lg:h-[500px]">
         {/* File tree sidebar - Desktop only */}
-        <div className="hidden lg:flex w-64 border-r border-border bg-bg-primary flex-col">
+        <div className="hidden lg:flex w-64 flex-shrink-0 border-r border-border bg-bg-primary flex-col">
           <div className="px-3 h-10 flex items-center border-b border-border bg-bg-secondary">
             <span className="text-xs font-display text-text-tertiary uppercase tracking-wider">
               Files
@@ -352,7 +352,7 @@ export function FileTreeViewer({
         </div>
 
         {/* File content viewer */}
-        <div className="flex-1 flex flex-col bg-bg-secondary">
+        <div className="flex-1 min-w-0 flex flex-col bg-bg-secondary">
           {selectedFile ? (
             <>
               {/* File header */}

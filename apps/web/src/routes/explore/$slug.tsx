@@ -5,15 +5,15 @@ import {
   GitFork,
   User,
   Calendar,
-  Copy,
-  Check,
   LogIn,
   ExternalLink,
+  FileText,
 } from "lucide-react";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { CodeEditor } from "@/components/code-editor";
+import { FileTreeViewer } from "@/components/file-tree-viewer";
 import { showSuccess, handleApiError } from "@/lib/toast";
+import Markdown from "react-markdown";
 
 export const Route = createFileRoute("/explore/$slug")({
   component: ExploreSnippetPage,
@@ -23,7 +23,9 @@ function ExploreSnippetPage() {
   const { slug } = Route.useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [copiedFile, setCopiedFile] = useState<string | null>(null);
+  const [variableValues, _setVariableValues] = useState<Record<string, string>>(
+    {}
+  );
 
   // Check if user is logged in
   const { data: sessionData } = useQuery({
@@ -84,7 +86,9 @@ function ExploreSnippetPage() {
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["star-check", snippetData?.snippet?.id] });
+      queryClient.invalidateQueries({
+        queryKey: ["star-check", snippetData?.snippet?.id],
+      });
       queryClient.invalidateQueries({ queryKey: ["public-snippet", slug] });
       showSuccess(isStarred ? "Removed from starred" : "Added to starred");
     },
@@ -96,16 +100,24 @@ function ExploreSnippetPage() {
   // Fork mutation
   const forkMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch(`/api/snippets/${snippetData?.snippet?.id}/fork`, {
-        method: "POST",
-        credentials: "include",
-      });
+      const res = await fetch(
+        `/api/snippets/${snippetData?.snippet?.id}/fork`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
       if (!res.ok) throw new Error("Failed to fork snippet");
       return res.json();
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["snippets"] });
+      queryClient.invalidateQueries({ queryKey: ["public-snippet", slug] });
       showSuccess(`Forked as "${data.snippet.title}"`);
-      navigate({ to: "/dashboard/$snippetId", params: { snippetId: data.snippet.id } });
+      navigate({
+        to: "/dashboard/$snippetId",
+        params: { snippetId: data.snippet.id },
+      });
     },
     onError: (error) => {
       handleApiError(error, "Failed to fork snippet");
@@ -126,13 +138,6 @@ function ExploreSnippetPage() {
       return;
     }
     forkMutation.mutate();
-  };
-
-  const copyToClipboard = async (content: string, fileId: string) => {
-    await navigator.clipboard.writeText(content);
-    setCopiedFile(fileId);
-    showSuccess("Copied to clipboard");
-    setTimeout(() => setCopiedFile(null), 2000);
   };
 
   const formatDate = (date: string) => {
@@ -156,7 +161,15 @@ function ExploreSnippetPage() {
       <div className="min-h-screen bg-bg-primary flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Snippet not found</h1>
-          <Link to="/explore" search={{ language: undefined, sortBy: undefined, sortOrder: undefined }} className="text-accent hover:text-accent-hover">
+          <Link
+            to="/explore"
+            search={{
+              language: undefined,
+              sortBy: undefined,
+              sortOrder: undefined,
+            }}
+            className="text-accent hover:text-accent-hover"
+          >
             Back to Explore
           </Link>
         </div>
@@ -181,7 +194,13 @@ function ExploreSnippetPage() {
             {isLoggedIn ? (
               <Link
                 to="/dashboard"
-                search={{ filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
+                search={{
+                  filter: undefined,
+                  tag: undefined,
+                  sortBy: undefined,
+                  sortOrder: undefined,
+                  language: undefined,
+                }}
                 className="text-text-secondary hover:text-text-primary transition-colors text-sm"
               >
                 Dashboard
@@ -205,7 +224,11 @@ function ExploreSnippetPage() {
         {/* Back link */}
         <Link
           to="/explore"
-          search={{ language: undefined, sortBy: undefined, sortOrder: undefined }}
+          search={{
+            language: undefined,
+            sortBy: undefined,
+            sortOrder: undefined,
+          }}
           className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary mb-6"
         >
           <ArrowLeft size={16} />
@@ -234,14 +257,19 @@ function ExploreSnippetPage() {
                   </span>
                 )}
               </div>
-              <h1 className="font-display text-2xl font-bold">{snippet.title}</h1>
+              <h1 className="font-display text-2xl font-bold">
+                {snippet.title}
+              </h1>
             </div>
 
             {/* Stats and Actions */}
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-4 text-text-secondary">
                 <span className="flex items-center gap-1.5">
-                  <Star size={16} className={isStarred ? "fill-warning text-warning" : ""} />
+                  <Star
+                    size={16}
+                    className={isStarred ? "fill-warning text-warning" : ""}
+                  />
                   {snippet.starCount}
                 </span>
                 <span className="flex items-center gap-1.5">
@@ -312,61 +340,64 @@ function ExploreSnippetPage() {
             {/* Tags */}
             {snippet.tags?.length > 0 && (
               <div className="flex items-center gap-2">
-                {snippet.tags.map((tag: { id: string; name: string; color: string | null }) => (
-                  <span
-                    key={tag.id}
-                    className="text-xs px-2 py-0.5 rounded"
-                    style={{
-                      backgroundColor: `${tag.color || "#6b7280"}20`,
-                      color: tag.color || "#6b7280",
-                    }}
-                  >
-                    {tag.name}
-                  </span>
-                ))}
+                {snippet.tags.map(
+                  (tag: { id: string; name: string; color: string | null }) => (
+                    <span
+                      key={tag.id}
+                      className="text-xs px-2 py-0.5 rounded"
+                      style={{
+                        backgroundColor: `${tag.color || "#6b7280"}20`,
+                        color: tag.color || "#6b7280",
+                      }}
+                    >
+                      {tag.name}
+                    </span>
+                  )
+                )}
               </div>
             )}
           </div>
         </div>
 
-        {/* Files */}
-        {snippet.files?.map((file: { id: string; filename: string; content: string; language: string }) => (
-          <div key={file.id} className="terminal-block rounded-lg mb-4 overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-bg-elevated">
-              <span className="font-mono text-sm text-text-primary">{file.filename}</span>
-              <button
-                onClick={() => copyToClipboard(file.content, file.id)}
-                className="flex items-center gap-1.5 text-text-secondary hover:text-text-primary transition-colors text-sm"
-              >
-                {copiedFile === file.id ? (
-                  <>
-                    <Check size={14} className="text-success" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} />
-                    Copy
-                  </>
-                )}
-              </button>
-            </div>
-            <CodeEditor
-              value={file.content}
-              language={file.language}
-              onChange={() => {}}
-              readOnly
-            />
-          </div>
-        ))}
-
         {/* Instructions */}
         {snippet.instructions && (
-          <div className="terminal-block rounded-lg p-6 mb-6">
-            <h2 className="font-display font-bold mb-4">Instructions</h2>
-            <div className="prose prose-invert prose-sm max-w-none">
-              <pre className="whitespace-pre-wrap text-text-secondary">{snippet.instructions}</pre>
+          <div className="terminal-block rounded-lg p-4 sm:p-6 mb-6">
+            <div className="flex items-center gap-2 mb-3 sm:mb-4">
+              <FileText size={16} className="text-accent" />
+              <h2 className="font-display font-bold text-base sm:text-lg">
+                Instructions
+              </h2>
             </div>
+            <div className="prose prose-invert prose-sm max-w-none prose-headings:text-text-primary prose-headings:font-display prose-p:text-text-secondary prose-a:text-accent prose-strong:text-text-primary prose-code:text-accent prose-code:bg-bg-code prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-pre:bg-bg-code prose-pre:border prose-pre:border-border prose-ul:text-text-secondary prose-ul:list-inside prose-ol:text-text-secondary prose-ol:list-inside prose-li:marker:text-accent overflow-x-auto">
+              <Markdown>{snippet.instructions}</Markdown>
+            </div>
+          </div>
+        )}
+
+        {/* Files */}
+        {snippet.files && snippet.files.length > 0 && (
+          <div className="mb-6">
+            <h2 className="font-display text-lg sm:text-xl font-bold mb-3 sm:mb-4">
+              Files
+            </h2>
+            <FileTreeViewer
+              files={snippet.files.map(
+                (
+                  f: {
+                    id: string;
+                    filename: string;
+                    content: string;
+                    language: string;
+                  },
+                  idx: number
+                ) => ({
+                  ...f,
+                  order: idx,
+                })
+              )}
+              variables={snippet.variables || []}
+              variableValues={variableValues}
+            />
           </div>
         )}
 
@@ -375,19 +406,28 @@ function ExploreSnippetPage() {
           <div className="terminal-block rounded-lg p-6 mb-6">
             <h2 className="font-display font-bold mb-4">Variables</h2>
             <div className="space-y-3">
-              {snippet.variables.map((variable: { id: string; name: string; defaultValue: string; description?: string }) => (
-                <div key={variable.id} className="flex items-start gap-4">
-                  <code className="text-accent font-mono text-sm bg-bg-code px-2 py-1 rounded">
-                    {`{{${variable.name}}}`}
-                  </code>
-                  <div className="flex-1">
-                    <div className="text-text-secondary text-sm">{variable.description}</div>
-                    <div className="text-text-tertiary text-xs mt-1">
-                      Default: {variable.defaultValue}
+              {snippet.variables.map(
+                (variable: {
+                  id: string;
+                  name: string;
+                  defaultValue: string;
+                  description?: string;
+                }) => (
+                  <div key={variable.id} className="flex items-start gap-4">
+                    <code className="text-accent font-mono text-sm bg-bg-code px-2 py-1 rounded">
+                      {`{{${variable.name}}}`}
+                    </code>
+                    <div className="flex-1">
+                      <div className="text-text-secondary text-sm">
+                        {variable.description}
+                      </div>
+                      <div className="text-text-tertiary text-xs mt-1">
+                        Default: {variable.defaultValue}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         )}
@@ -399,7 +439,8 @@ function ExploreSnippetPage() {
               Want to save your own snippets?
             </h2>
             <p className="text-text-secondary mb-6">
-              Create an account to star, fork, and create your own code snippets.
+              Create an account to star, fork, and create your own code
+              snippets.
             </p>
             <Link
               to="/signup"

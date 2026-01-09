@@ -35,6 +35,7 @@ interface SnippetCardProps {
   onToggleFavorite?: (id: string) => void;
   onDuplicate?: (id: string) => void;
   onDelete?: (id: string) => void;
+  isPending?: boolean;
 }
 
 export function SnippetCard({
@@ -43,6 +44,7 @@ export function SnippetCard({
   onToggleFavorite,
   onDuplicate,
   onDelete,
+  isPending = false,
 }: SnippetCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -178,10 +180,16 @@ export function SnippetCard({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                if (isPending) return;
                 onToggleFavorite?.(snippet.id);
                 setMenuOpen(false);
               }}
-              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-bg-secondary transition-colors"
+              disabled={isPending}
+              className={`flex items-center gap-2 w-full px-3 py-2 text-sm transition-colors ${
+                isPending
+                  ? "text-text-tertiary cursor-not-allowed"
+                  : "text-text-secondary hover:text-text-primary hover:bg-bg-secondary"
+              }`}
             >
               <Star
                 size={14}
@@ -195,10 +203,16 @@ export function SnippetCard({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                if (isPending) return;
                 onDuplicate?.(snippet.id);
                 setMenuOpen(false);
               }}
-              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-bg-secondary transition-colors"
+              disabled={isPending}
+              className={`flex items-center gap-2 w-full px-3 py-2 text-sm transition-colors ${
+                isPending
+                  ? "text-text-tertiary cursor-not-allowed"
+                  : "text-text-secondary hover:text-text-primary hover:bg-bg-secondary"
+              }`}
             >
               <Copy size={14} />
               Duplicate
@@ -207,10 +221,16 @@ export function SnippetCard({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                if (isPending) return;
                 onDelete?.(snippet.id);
                 setMenuOpen(false);
               }}
-              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-error/10 transition-colors"
+              disabled={isPending}
+              className={`flex items-center gap-2 w-full px-3 py-2 text-sm transition-colors ${
+                isPending
+                  ? "text-text-tertiary cursor-not-allowed"
+                  : "text-error hover:bg-error/10"
+              }`}
             >
               <Trash2 size={14} />
               Delete
