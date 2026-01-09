@@ -1,8 +1,8 @@
 # SnippetVault VSCode Extension - Architecture Document
 
 > **Version**: 1.0
-> **Status**: Proposed
-> **Author**: Architecture Team
+> **Status**: Reviewed
+> **Author**: José Mokeni
 > **Last Updated**: 2026-01-07
 
 ---

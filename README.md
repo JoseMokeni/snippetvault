@@ -1,32 +1,136 @@
-# SnippetVault
+<div align="center">
+  <img src="docs/assets/banner.svg" alt="SnippetVault Banner" width="100%">
+  
+  <p align="center">
+    <strong>Multi-file code snippets with variable templating</strong>
+  </p>
 
-> A modern code snippet manager for organizing multi-file code packs with variable templating.
+  <p align="center">
+    <a href="https://github.com/JoseMokeni/snippetvault/actions/workflows/release.yml">
+      <img src="https://github.com/JoseMokeni/snippetvault/actions/workflows/release.yml/badge.svg" alt="CI/CD Pipeline">
+    </a>
+    <a href="https://github.com/JoseMokeni/snippetvault/blob/main/LICENSE">
+      <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
+    </a>
+    <a href="https://github.com/JoseMokeni/snippetvault/releases">
+      <img src="https://img.shields.io/github/v/release/JoseMokeni/snippetvault?include_prereleases" alt="Release">
+    </a>
+    <a href="https://bun.sh">
+      <img src="https://img.shields.io/badge/runtime-Bun-black?logo=bun" alt="Bun">
+    </a>
+  </p>
 
-## Overview
+  <p align="center">
+    <a href="#-features">Features</a> •
+    <a href="#-quick-start">Quick Start</a> •
+    <a href="#-demo">Demo</a> •
+    <a href="#-documentation">Documentation</a> •
+    <a href="#-contributing">Contributing</a>
+  </p>
+</div>
 
-SnippetVault allows you to save, organize, and export reusable code snippets as **complete packages** - not just single files. Perfect for Docker setups, React hooks with types, API boilerplates, and configuration bundles.
+---
 
-### Key Features
+## 🎯 Why SnippetVault?
 
-- **Multi-file snippets**: Group related files together (Dockerfile + docker-compose + .dockerignore)
-- **Variable templating**: Use `{{PROJECT_NAME}}` syntax with customizable defaults
-- **Social Discovery**: Explore public snippets, star your favorites, and fork to customize
-- **User Profiles**: Public profile pages showcasing shared snippets and stats
-- **Public sharing**: Generate shareable links for read-only snippet access (no login required)
-- **Smart organization**: Tags, favorites, and full-text search
-- **Export anywhere**: Copy to clipboard or download as ZIP
-- **Type-safe API**: Full TypeScript support with Hono RPC
+Traditional snippet managers store **single files**. SnippetVault stores **complete packages** of related files with smart variable templating - perfect for Docker stacks, React component libraries, API boilerplates, and any reusable code that spans multiple files.
 
-## Tech Stack
+### The Problem
 
-- **Runtime**: Bun
-- **Backend**: Hono + Better Auth + Drizzle ORM
-- **Frontend**: React + Vite + TanStack (Router, Query, Form)
-- **Database**: PostgreSQL
-- **UI**: shadcn/ui + Tailwind CSS
-- **Authentication**: Better Auth with email/password and GitHub OAuth
+You need to share a Docker setup with your team. That's not just a `Dockerfile` - it's:
 
-## Quick Start
+- `Dockerfile`
+- `docker-compose.yml`
+- `.dockerignore`
+- `README.md` with setup instructions
+
+Copy-pasting 4+ files manually? Tedious. Storing them separately? Unorganized.
+
+### The Solution
+
+**SnippetVault** lets you save all those files as a single snippet with variables like `{{PROJECT_NAME}}`, share it with your team, and export it as a complete package with one click.
+
+## ✨ Features
+
+### Core Functionality
+
+- 📦 **Multi-file Packages** - Group related files together (Dockerfile + docker-compose.yml + configs)
+- 🔧 **Variable Templating** - Use `{{PROJECT_NAME}}` syntax with customizable defaults
+- 📤 **Export Anywhere** - Copy to clipboard or download as ZIP
+- 🏷️ **Smart Organization** - Tags, favorites, and full-text search
+
+### Social & Sharing
+
+- 🌐 **Explore Public Snippets** - Discover snippets shared by the community
+- ⭐ **Star & Fork** - Bookmark favorites and create your own versions
+- 👤 **User Profiles** - Public profile pages at `/u/username` with stats
+- 🔗 **Share Links** - Generate read-only links (no login required)
+
+### Developer Experience
+
+- 🔐 **Multiple Auth Methods** - Email/password + GitHub OAuth
+- 🎨 **Terminal Brutalism UI** - Clean, distraction-free interface
+- ⚡ **Lightning Fast** - Built with Bun + Hono + React
+- 📘 **Type-safe** - Full TypeScript with Hono RPC
+
+## 📸 Screenshots
+
+### Multi-File Snippet Editor
+
+Create and organize snippets with multiple files, add descriptions, and configure visibility.
+
+![Snippet Editor](docs/assets/screenshots/editor.png)
+
+### Variable Templating
+
+Define reusable variables with defaults like `{{PROJECT_NAME}}` that can be customized during export.
+
+![Variable Templating](docs/assets/screenshots/variables.png)
+
+### Explore Public Snippets
+
+Discover community-shared snippets, search by language, and filter by popularity.
+
+![Explore Page](docs/assets/screenshots/explore.png)
+
+### User Profiles
+
+Public profile pages showcasing user's snippets, stars, and contributions.
+
+![User Profile](docs/assets/screenshots/profile.png)
+
+### Export & Share
+
+Download as ZIP, copy to clipboard, or generate shareable links.
+
+![Export Options](docs/assets/screenshots/export.png)
+
+## 🎬 Demo
+
+> **Coming soon**: Live demo instance and walkthrough video
+
+**Quick Example Use Cases:**
+
+- 🐳 Docker development environments
+- ⚛️ React component libraries with types
+- 🔌 API endpoint boilerplates
+- 🛠️ Configuration file bundles
+- 📝 Project scaffolding templates
+
+## 🛠️ Tech Stack
+
+Built with modern, performant technologies:
+
+| Layer        | Technologies                                                                                                     |
+| ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| **Runtime**  | [Bun](https://bun.sh)                                                                                            |
+| **Backend**  | [Hono](https://hono.dev) + [Better Auth](https://better-auth.com) + [Drizzle ORM](https://orm.drizzle.team)      |
+| **Frontend** | [React](https://react.dev) + [Vite](https://vitejs.dev) + [TanStack](https://tanstack.com) (Router, Query, Form) |
+| **Database** | [PostgreSQL](https://postgresql.org)                                                                             |
+| **UI**       | [shadcn/ui](https://ui.shadcn.com) + [Tailwind CSS](https://tailwindcss.com)                                     |
+| **Auth**     | Email/Password + GitHub OAuth                                                                                    |
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
@@ -37,11 +141,15 @@ SnippetVault allows you to save, organize, and export reusable code snippets as 
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/JoseMokeni/snippetvault.git
 cd snippetvault
 
 # Install dependencies
 bun install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration (see Environment Variables section)
 
 # Start PostgreSQL
 docker compose up -d
@@ -49,23 +157,61 @@ docker compose up -d
 # Push database schema
 bun run db:push
 
+# (Optional) Seed with demo data
+bun run db:seed
+
 # Start development servers
 bun run dev
 ```
 
-Visit:
+### Access the Application
 
-- Frontend: http://localhost:5173
-- API: http://localhost:3000
-- Health check: http://localhost:3000/api/health
+| Service            | URL                              |
+| ------------------ | -------------------------------- |
+| **Frontend**       | http://localhost:5173            |
+| **API**            | http://localhost:3000            |
+| **Health Check**   | http://localhost:3000/api/health |
+| **Drizzle Studio** | `bun run db:studio`              |
 
-## Development
+## ⚙️ Environment Variables
+
+Create a `.env` file in the root directory. See [.env.example](.env.example) for all available options.
+
+### Required Variables
+
+```env
+# Database
+DATABASE_URL=postgresql://snippetvault:snippetvault@localhost:5432/snippetvault
+
+# Authentication (generate with: openssl rand -base64 32)
+BETTER_AUTH_SECRET=your-secret-min-32-chars
+BETTER_AUTH_URL=http://localhost:5173  # Frontend URL for OAuth
+
+# Server
+NODE_ENV=development
+PORT=3000
+```
+
+### Optional: GitHub OAuth
+
+1. Create a GitHub OAuth App at https://github.com/settings/developers
+2. Set **Authorization callback URL** to: `http://localhost:5173/api/auth/callback/github`
+3. Add to `.env`:
+
+```env
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+```
+
+For production, update the callback URL to your production domain.
+
+## 💻 Development
+
+### Common Commands
 
 ```bash
-# Start all services
-bun run dev
-
-# Start individually
+# Development
+bun run dev          # Start all services
 bun run dev:api      # API server only
 bun run dev:web      # Frontend only
 
@@ -74,254 +220,166 @@ bun run db:generate  # Generate migrations
 bun run db:push      # Push schema (dev)
 bun run db:migrate   # Run migrations (prod)
 bun run db:studio    # Open Drizzle Studio
+bun run db:seed      # Seed with demo data
 
-# Build for production
-bun run build
-
-# Code quality
-bun run typecheck    # Type checking
+# Build & Quality
+bun run build        # Build for production
+bun run typecheck    # TypeScript checks
 bun run lint         # ESLint
+bun run test         # Run test suite
 ```
-
-### Git Hooks
-
-Husky is configured to automatically run quality checks:
-
-- **pre-commit**: Runs `bun lint && bun typecheck` to check code style and types
-- **pre-push**: Runs `bun test` to verify all tests pass
-
-These hooks ensure code quality before committing and pushing changes.
 
 ### Testing
 
-Tests use a dedicated PostgreSQL container via docker-compose for fast, isolated test execution.
-
 ```bash
-# Start the test database (first time only, or after docker compose down)
+# Start test database (first time only)
 docker compose up db-test -d
 
 # Run tests
 bun run test
 
-# Run tests in watch mode
+# Watch mode
 cd apps/api && bun test --watch
 ```
 
-The test database runs on port 5433 to avoid conflicts with the development database.
+Test database runs on port 5433 to avoid conflicts with development.
 
-## Project Structure
+### Git Hooks
+
+Quality checks run automatically via Husky:
+
+- **pre-commit**: `bun lint && bun typecheck`
+- **pre-push**: `bun test`
+
+## 📁 Project Structure
 
 ```
 snippetvault/
 ├── apps/
-│   ├── api/          # Hono backend
-│   └── web/          # React frontend
+│   ├── api/              # Hono backend with Better Auth
+│   │   ├── src/
+│   │   │   ├── routes/   # API routes
+│   │   │   ├── lib/      # Auth & utilities
+│   │   │   └── schemas/  # Zod validation
+│   │   └── test/         # API tests
+│   └── web/              # React frontend
+│       ├── src/
+│       │   ├── routes/   # TanStack Router pages
+│       │   ├── components/
+│       │   └── lib/      # API client & utils
+│       └── public/
 ├── packages/
-│   └── db/           # Drizzle schema & migrations
-└── docs/             # Documentation
+│   └── db/               # Drizzle ORM
+│       ├── src/schema/   # Database schema
+│       └── drizzle/      # Migrations
+└── docs/                 # Documentation
+    ├── assets/           # Images & logos
+    └── architecture/     # Technical docs
 ```
 
-## Environment Variables
+## 🐳 Deployment
 
-Create a `.env` file in the root:
+### Using Docker (Recommended)
 
-```env
-# Database
-DATABASE_URL=postgresql://snippetvault:snippetvault@localhost:5432/snippetvault
-
-# Authentication
-BETTER_AUTH_SECRET=your-secret-min-32-chars  # Generate: openssl rand -base64 32
-BETTER_AUTH_URL=http://localhost:5173       # Frontend URL for OAuth redirects
-
-# GitHub OAuth (optional)
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
-
-# Server
-NODE_ENV=development
-PORT=3000
-```
-
-### Setting Up GitHub OAuth
-
-1. Create a GitHub OAuth App at https://github.com/settings/developers
-2. Set **Authorization callback URL** to: `http://localhost:5173/api/auth/callback/github`
-3. Copy the Client ID and Client Secret to your `.env` file
-4. Restart the dev server
-
-For production, update the callback URL to your production domain.
-
-## CI/CD Pipeline
-
-This project uses GitHub Actions for continuous integration and deployment with a professional DevOps workflow.
-
-### Workflow Overview
-
-The CI/CD pipeline runs on:
-
-- **Push to `main`**: Runs all checks and publishes Docker images
-- **Pull Requests**: Runs all checks without publishing
-- **Version Tags** (`v*.*.*`): Runs all checks and publishes with semantic versioning
-
-### Pipeline Features
-
-- **Concurrency Control**: Automatically cancels in-progress runs when new commits are pushed
-- **Dependency Caching**: Bun dependencies are cached for 30-50% faster builds
-- **Pinned Runtime**: Bun version is pinned (1.3.3) for reproducible builds
-- **Security Scanning**: Trivy vulnerability scanner with GitHub Security integration
-- **Discord Notifications**: Real-time pipeline status notifications to Discord
-- **Reusable Actions**: DRY workflow with composite actions for Bun setup
-
-### Pipeline Stages
-
-1. **Quality Checks** (parallel execution):
-
-   - **Lint**: ESLint code quality checks
-   - **Type Check**: TypeScript type safety verification
-   - **Test**: Full test suite with PostgreSQL service
-   - **Security**: Trivy vulnerability scan (CRITICAL/HIGH severity)
-
-2. **Build & Push** (runs after all checks pass):
-
-   - Multi-platform Docker builds (amd64, arm64)
-   - Layer caching for faster builds
-   - Automated tagging strategy
-   - Push to GitHub Container Registry (GHCR)
-
-3. **Notify** (runs always):
-   - Sends Discord notification with pipeline results
-   - Includes status of all jobs (lint, typecheck, test, security, build)
-
-### Image Tagging Strategy
-
-Images are automatically tagged with:
-
-- `latest`: Latest build from main branch
-- `main-<sha>`: Main branch with commit SHA
-- `v1.2.3`: Semantic version tags (if tagged)
-- `v1.2`: Major.minor version
-- `v1`: Major version only
-
-### Using Published Images
-
-Pull and run the latest image from GHCR:
+Pull the pre-built image from GitHub Container Registry:
 
 ```bash
-# Pull the latest image
-docker pull ghcr.io/JoseMokeni/snippetvault:latest
+# Pull latest image
+docker pull ghcr.io/josemokeni/snippetvault:latest
 
 # Run with environment variables
 docker run -p 3000:3000 \
   -e DATABASE_URL=postgresql://user:pass@host:5432/db \
   -e BETTER_AUTH_SECRET=your-secret \
-  -e BETTER_AUTH_URL=https://your-domain.com \
+  -e BETTER_AUTH_URL=https://yourdomain.com \
   -e NODE_ENV=production \
-  ghcr.io/JoseMokeni/snippetvault:latest
-
-# Or use docker-compose with the published image
-# Update docker-compose.yml to use: image: ghcr.io/JoseMokeni/snippetvault:latest
-docker compose up -d
+  ghcr.io/josemokeni/snippetvault:latest
 ```
-
-### Setup Requirements
-
-The workflow uses GitHub's automatic `GITHUB_TOKEN` - no manual secrets needed. The token automatically has permissions to:
-
-- Read repository contents
-- Write to GitHub Container Registry
-
-To enable GHCR package visibility:
-
-1. Go to your repository → Settings → Actions → General
-2. Under "Workflow permissions", ensure "Read and write permissions" is selected
-3. After first build, go to the package settings and make it public (optional)
-
-### Discord Notifications Setup
-
-To enable Discord notifications for pipeline status:
-
-1. Create a Discord webhook in your server:
-   - Go to Server Settings → Integrations → Webhooks
-   - Click "New Webhook" and copy the URL
-2. Add the webhook URL as a repository secret:
-   - Go to your repository → Settings → Secrets and variables → Actions
-   - Create a new secret named `DISCORD_WEBHOOK` with the webhook URL
-
-### Local Development Testing
-
-Test the CI pipeline locally using [act](https://github.com/nektos/act):
-
-```bash
-# Install act
-brew install act  # macOS
-# or: curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
-
-# Run the full CI pipeline locally
-act push
-
-# Run specific jobs
-act -j lint
-act -j test
-act -j build
-```
-
-## Docker Deployment
 
 ### Building Locally
 
-Build and run with Docker:
-
 ```bash
-# Build the image
 docker build -t snippetvault .
-
-# Run with docker-compose (includes PostgreSQL)
-# Uncomment the 'app' service in docker-compose.yml, then:
 docker compose up -d
-
-# Run migrations inside the container
 docker exec snippetvault-app bun run --filter @snippetvault/db migrate
-
-# Optional: seed the database
-docker exec snippetvault-app bun run --filter @snippetvault/db seed
 ```
 
-The app will be available at http://localhost:3000
+### Production Setup
 
-### Production Deployment
+See [docs/old/DEPLOYMENT.md](docs/old/DEPLOYMENT.md) for detailed guides on:
 
-See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed production deployment instructions:
-
-- Docker Swarm (Dokploy)
-- VPS with PostgreSQL
-- SSL configuration
+- VPS deployment with PostgreSQL
+- SSL/TLS configuration
 - Backup strategies
-- Using GHCR images in production
+- Environment variables
 
-## Documentation
+See [.github/CI_CD.md](.github/CI_CD.md) for CI/CD pipeline documentation.
 
-- [Project Description](docs/PROJECT_DESCRIPTION.md) - Full feature specification
-- [Implementation Plan](docs/IMPLEMENTATION_PLAN.md) - Development roadmap
-- [Deployment Guide](docs/DEPLOYMENT.md) - Production deployment
-- [Demo Snippets](docs/DEMO_SNIPPETS.md) - Example snippets for showcase
+## 📖 Documentation
 
-## Recent Updates
+| Document                                | Description                              |
+| --------------------------------------- | ---------------------------------------- |
+| [AGENTS.md](AGENTS.md)                  | Project directives & coding guidelines   |
+| [.github/CI_CD.md](.github/CI_CD.md)    | CI/CD pipeline & Docker deployment       |
+| [Architecture Docs](docs/architecture/) | Technical architecture & future features |
+| [Old Docs](docs/old/)                   | Project description, implementation plan |
 
-- 🌐 **Social Discovery**: Explore page with public snippets, star/fork functionality, and user profiles
-- 🍴 **Forking**: Fork any public snippet to create your own copy with "Forked from" attribution
-- ⭐ **Stars**: Star snippets you like and view them in your starred collection
-- 👤 **User Profiles**: Public profile pages at `/u/username` showing user's public snippets
-- 🔍 **Search & Filter**: Search snippets and users, filter by language, sort by stars/date/forks
-- 🌱 **Database Seeding**: `bun run db:seed` to populate with sample data for development
-- ✨ **Public Sharing**: Generate shareable links for snippets (read-only, no login required)
-- 🔐 **GitHub OAuth**: Sign in with GitHub alongside email/password authentication
-- 🎨 **Landing Page**: New "Share Anywhere" feature showcase and creator section
-- 🛠️ **Better Auth**: Configured with account linking prevention for separate auth methods
+## 🚀 Roadmap
 
-## Contributing
+- [ ] **CLI Tool** - Install snippets directly from terminal
+- [ ] **VS Code Extension** - Browse and insert snippets in your editor
+- [ ] **Snippet Versioning** - Track changes and roll back
+- [ ] **Collections** - Group related snippets together
+- [ ] **API Keys** - Programmatic access to snippets
+- [ ] **Teams** - Collaborative snippet management
 
-Read [AGENTS.md](AGENTS.md) for project conventions and coding guidelines.
+See [docs/architecture/](docs/architecture/) for detailed feature specs.
 
-## License
+## 🤝 Contributing
 
-MIT
+We welcome contributions! Here's how you can help:
+
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
+
+Please read [AGENTS.md](AGENTS.md) for coding guidelines and project conventions.
+
+### Development Guidelines
+
+- Follow the existing code style
+- Run `bun lint` and `bun typecheck` before committing
+- Write tests for new features
+- Update documentation as needed
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+Built with amazing open-source technologies:
+
+- [Bun](https://bun.sh) - Fast JavaScript runtime
+- [Hono](https://hono.dev) - Ultrafast web framework
+- [Drizzle ORM](https://orm.drizzle.team) - TypeScript ORM
+- [TanStack](https://tanstack.com) - Powerful React tools
+- [shadcn/ui](https://ui.shadcn.com) - Beautiful UI components
+
+## 📬 Contact & Support
+
+- **Issues**: [GitHub Issues](https://github.com/JoseMokeni/snippetvault/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/JoseMokeni/snippetvault/discussions)
+
+---
+
+<div align="center">
+  <p>Made with ⚡ by <a href="https://github.com/JoseMokeni">Jose Mokeni</a></p>
+  <p>
+    <a href="https://github.com/JoseMokeni/snippetvault">⭐ Star this repo</a> •
+    <a href="https://github.com/JoseMokeni/snippetvault/fork">🍴 Fork it</a> •
+    <a href="https://github.com/JoseMokeni/snippetvault/issues">🐛 Report Bug</a>
+  </p>
+</div>

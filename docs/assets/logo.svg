@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="SnippetVault Logo">
+  <!-- Background -->
+  <rect width="800" height="200" rx="8" fill="#0a0a0a"/>
+  
+  <!-- Border accent -->
+  <rect width="800" height="200" rx="8" fill="none" stroke="#00ff9f" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Terminal prompt icon -->
+  <g transform="translate(40, 60)">
+    <rect width="80" height="80" rx="8" fill="#111" stroke="#00ff9f" stroke-width="2"/>
+    <text x="15" y="55" font-family="monospace" font-size="32" font-weight="bold" fill="#00ff9f">&gt;_</text>
+  </g>
+  
+  <!-- Main text -->
+  <text x="150" y="110" font-family="monospace" font-size="48" font-weight="bold" fill="#00ff9f">
+    SnippetVault
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="150" y="145" font-family="monospace" font-size="18" fill="#00ff9f" opacity="0.7">
+    Multi-file code snippets with variables
+  </text>
+  
+  <!-- Decorative elements - terminal cursor blink effect -->
+  <rect x="740" y="95" width="3" height="24" fill="#00ff9f">
+    <animate attributeName="opacity" values="1;0;1" dur="1.5s" repeatCount="indefinite"/>
+  </rect>
+</svg>
