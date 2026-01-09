@@ -102,6 +102,32 @@ export const updateTagSchema = z.object({
 })
 
 // ============================================
+// Public/Explore Schemas
+// ============================================
+
+export const exploreQuerySchema = z.object({
+  language: z.string().optional(),
+  tag: z.string().optional(),
+  search: z.string().optional(),
+  sortBy: z.enum(['starCount', 'createdAt', 'forkCount']).optional().default('starCount'),
+  sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
+  limit: z.string().optional().transform(val => val ? parseInt(val, 10) : 20),
+  offset: z.string().optional().transform(val => val ? parseInt(val, 10) : 0),
+})
+
+export const usernameSchema = z.object({
+  username: z.string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(20, 'Username must be at most 20 characters')
+    .regex(/^[a-z0-9_]+$/, 'Username can only contain lowercase letters, numbers, and underscores'),
+})
+
+export const userSearchSchema = z.object({
+  q: z.string().min(1, 'Search query is required'),
+  limit: z.string().optional().transform(val => val ? parseInt(val, 10) : 10),
+})
+
+// ============================================
 // Type exports for use in route handlers
 // ============================================
 
@@ -115,3 +141,6 @@ export type CreateVariableInput = z.infer<typeof createVariableSchema>
 export type UpdateVariableInput = z.infer<typeof updateVariableSchema>
 export type CreateTagInput = z.infer<typeof createTagSchema>
 export type UpdateTagInput = z.infer<typeof updateTagSchema>
+export type ExploreQueryInput = z.infer<typeof exploreQuerySchema>
+export type UsernameInput = z.infer<typeof usernameSchema>
+export type UserSearchInput = z.infer<typeof userSearchSchema>

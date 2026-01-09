@@ -14,6 +14,7 @@ import {
   FileText,
   Share2,
   Globe,
+  GitFork,
 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { FileTreeViewer } from "@/components/file-tree-viewer";
@@ -112,7 +113,13 @@ function SnippetDetailPage() {
       showSuccess("Snippet deleted");
       navigate({
         to: "/dashboard",
-        search: { filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined },
+        search: {
+          filter: undefined,
+          tag: undefined,
+          sortBy: undefined,
+          sortOrder: undefined,
+          language: undefined,
+        },
       });
     },
     onError: (error) => {
@@ -157,7 +164,13 @@ function SnippetDetailPage() {
       <div className="p-8">
         <Link
           to="/dashboard"
-          search={{ filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
+          search={{
+            filter: undefined,
+            tag: undefined,
+            sortBy: undefined,
+            sortOrder: undefined,
+            language: undefined,
+          }}
           className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors mb-8"
         >
           <ArrowLeft size={18} />
@@ -168,7 +181,13 @@ function SnippetDetailPage() {
           <div className="text-error text-lg mb-4">{error.message}</div>
           <Link
             to="/dashboard"
-            search={{ filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
+            search={{
+              filter: undefined,
+              tag: undefined,
+              sortBy: undefined,
+              sortOrder: undefined,
+              language: undefined,
+            }}
             className="text-accent hover:text-accent-hover transition-colors"
           >
             Go back to dashboard
@@ -187,7 +206,13 @@ function SnippetDetailPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <Link
           to="/dashboard"
-          search={{ filter: undefined, tag: undefined, sortBy: undefined, sortOrder: undefined, language: undefined }}
+          search={{
+            filter: undefined,
+            tag: undefined,
+            sortBy: undefined,
+            sortOrder: undefined,
+            language: undefined,
+          }}
           className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm sm:text-base"
         >
           <ArrowLeft size={18} />
@@ -296,6 +321,32 @@ function SnippetDetailPage() {
           )}
         </div>
 
+        {/* Forked from indicator */}
+        {snippet.forkedFrom && (
+          <div className="flex items-center gap-2 text-sm text-text-secondary mb-3">
+            <GitFork size={14} />
+            <span>Forked from</span>
+            {snippet.forkedFrom.slug ? (
+              <Link
+                to="/explore/$slug"
+                params={{ slug: snippet.forkedFrom.slug }}
+                className="text-accent hover:underline"
+              >
+                {snippet.forkedFrom.title}
+              </Link>
+            ) : (
+              <span className="text-text-tertiary">
+                {snippet.forkedFrom.title}
+              </span>
+            )}
+            {snippet.forkedFrom.user && (
+              <span className="text-text-tertiary">
+                by @{snippet.forkedFrom.user.username}
+              </span>
+            )}
+          </div>
+        )}
+
         {snippet.description && (
           <p className="text-text-secondary text-base sm:text-lg mb-3 sm:mb-4">
             {snippet.description}
@@ -331,7 +382,8 @@ function SnippetDetailPage() {
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-text-secondary mb-3">
-            Share this link with anyone. They can view this snippet without signing in.
+            Share this link with anyone. They can view this snippet without
+            signing in.
           </p>
           <div className="flex items-center gap-2">
             <input

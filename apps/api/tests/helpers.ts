@@ -16,6 +16,7 @@ export interface TestUser {
   id: string
   name: string
   email: string
+  username: string
   sessionToken: string
   sessionId: string
 }
@@ -26,16 +27,18 @@ export interface TestUser {
  */
 export async function createTestUser(
   db: TestDb,
-  overrides: Partial<{ name: string; email: string }> = {}
+  overrides: Partial<{ name: string; email: string; username: string }> = {}
 ): Promise<TestUser> {
   const userId = nanoid()
   const sessionId = nanoid()
   const sessionToken = `test-token-${nanoid()}`
+  const username = overrides.username ?? `testuser_${nanoid().slice(0, 8).toLowerCase()}`
 
   const userData = {
     id: userId,
     name: overrides.name ?? 'Test User',
     email: overrides.email ?? `test-${nanoid()}@example.com`,
+    username,
     emailVerified: false,
   }
 
@@ -54,6 +57,7 @@ export async function createTestUser(
     id: userId,
     name: userData.name,
     email: userData.email,
+    username: userData.username,
     sessionToken,
     sessionId,
   }

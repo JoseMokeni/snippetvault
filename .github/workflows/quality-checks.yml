@@ -1,0 +1,104 @@
+name: Quality Checks
+
+on:
+    workflow_call:
+        outputs:
+            lint-result:
+                description: "Lint job result"
+                value: ${{ jobs.lint.result }}
+            typecheck-result:
+                description: "Typecheck job result"
+                value: ${{ jobs.typecheck.result }}
+            test-result:
+                description: "Test job result"
+                value: ${{ jobs.test.result }}
+            security-result:
+                description: "Security job result"
+                value: ${{ jobs.security.result }}
+
+jobs:
+    lint:
+        name: Lint
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Bun environment
+              uses: ./.github/actions/setup-bun
+
+            - name: Run ESLint
+              run: bun run lint
+
+    typecheck:
+        name: Type Check
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Bun environment
+              uses: ./.github/actions/setup-bun
+
+            - name: Run TypeScript type checking
+              run: bun run typecheck
+
+    test:
+        name: Test
+        runs-on: ubuntu-latest
+        services:
+            postgres:
+                image: postgres:17-alpine
+                env:
+                    POSTGRES_USER: snippetvault
+                    POSTGRES_PASSWORD: snippetvault
+                    POSTGRES_DB: snippetvault
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+                ports:
+                    - 5432:5432
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Bun environment
+              uses: ./.github/actions/setup-bun
+
+            - name: Generate migrations
+              run: bun run db:generate
+
+            - name: Run tests
+              run: bun run test
+              env:
+                  TEST_DATABASE_URL: postgresql://snippetvault:snippetvault@localhost:5432/snippetvault
+                  BETTER_AUTH_SECRET: test-secret-that-is-at-least-32-characters-long
+                  BETTER_AUTH_URL: http://localhost:3000
+
+    security:
+        name: Security Scan
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            security-events: write
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Run Trivy vulnerability scanner
+              uses: aquasecurity/trivy-action@master
+              with:
+                  scan-type: "fs"
+                  scan-ref: "."
+                  format: "sarif"
+                  output: "trivy-results.sarif"
+                  severity: "CRITICAL,HIGH"
+
+            - name: Upload Trivy scan results to GitHub Security
+              uses: github/codeql-action/upload-sarif@v4
+              if: always()
+              with:
+                  sarif_file: "trivy-results.sarif"

@@ -13,9 +13,14 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ExploreIndexRouteImport } from './routes/explore/index'
+import { Route as UUsernameRouteImport } from './routes/u/$username'
 import { Route as SSlugRouteImport } from './routes/s.$slug'
+import { Route as ExploreSlugRouteImport } from './routes/explore/$slug'
 import { Route as AuthErrorRouteImport } from './routes/auth.error'
+import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
+import { Route as AuthenticatedDashboardStarredRouteImport } from './routes/_authenticated/dashboard/starred'
 import { Route as AuthenticatedDashboardNewRouteImport } from './routes/_authenticated/dashboard/new'
 import { Route as AuthenticatedDashboardSnippetIdRouteImport } from './routes/_authenticated/dashboard/$snippetId'
 import { Route as AuthenticatedDashboardSnippetIdEditRouteImport } from './routes/_authenticated/dashboard/$snippetId_.edit'
@@ -39,9 +44,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExploreIndexRoute = ExploreIndexRouteImport.update({
+  id: '/explore/',
+  path: '/explore/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UUsernameRoute = UUsernameRouteImport.update({
+  id: '/u/$username',
+  path: '/u/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SSlugRoute = SSlugRouteImport.update({
   id: '/s/$slug',
   path: '/s/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreSlugRoute = ExploreSlugRouteImport.update({
+  id: '/explore/$slug',
+  path: '/explore/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthErrorRoute = AuthErrorRouteImport.update({
@@ -49,10 +69,22 @@ const AuthErrorRoute = AuthErrorRouteImport.update({
   path: '/auth/error',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedSettingsIndexRoute =
+  AuthenticatedSettingsIndexRouteImport.update({
+    id: '/settings/',
+    path: '/settings/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
     id: '/dashboard/',
     path: '/dashboard/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedDashboardStarredRoute =
+  AuthenticatedDashboardStarredRouteImport.update({
+    id: '/dashboard/starred',
+    path: '/dashboard/starred',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDashboardNewRoute =
@@ -79,10 +111,15 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/auth/error': typeof AuthErrorRoute
+  '/explore/$slug': typeof ExploreSlugRoute
   '/s/$slug': typeof SSlugRoute
+  '/u/$username': typeof UUsernameRoute
+  '/explore': typeof ExploreIndexRoute
   '/dashboard/$snippetId': typeof AuthenticatedDashboardSnippetIdRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
+  '/dashboard/starred': typeof AuthenticatedDashboardStarredRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/settings': typeof AuthenticatedSettingsIndexRoute
   '/dashboard/$snippetId/edit': typeof AuthenticatedDashboardSnippetIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -90,10 +127,15 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/auth/error': typeof AuthErrorRoute
+  '/explore/$slug': typeof ExploreSlugRoute
   '/s/$slug': typeof SSlugRoute
+  '/u/$username': typeof UUsernameRoute
+  '/explore': typeof ExploreIndexRoute
   '/dashboard/$snippetId': typeof AuthenticatedDashboardSnippetIdRoute
   '/dashboard/new': typeof AuthenticatedDashboardNewRoute
+  '/dashboard/starred': typeof AuthenticatedDashboardStarredRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/settings': typeof AuthenticatedSettingsIndexRoute
   '/dashboard/$snippetId/edit': typeof AuthenticatedDashboardSnippetIdEditRoute
 }
 export interface FileRoutesById {
@@ -103,10 +145,15 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/auth/error': typeof AuthErrorRoute
+  '/explore/$slug': typeof ExploreSlugRoute
   '/s/$slug': typeof SSlugRoute
+  '/u/$username': typeof UUsernameRoute
+  '/explore/': typeof ExploreIndexRoute
   '/_authenticated/dashboard/$snippetId': typeof AuthenticatedDashboardSnippetIdRoute
   '/_authenticated/dashboard/new': typeof AuthenticatedDashboardNewRoute
+  '/_authenticated/dashboard/starred': typeof AuthenticatedDashboardStarredRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/dashboard/$snippetId_/edit': typeof AuthenticatedDashboardSnippetIdEditRoute
 }
 export interface FileRouteTypes {
@@ -116,10 +163,15 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/auth/error'
+    | '/explore/$slug'
     | '/s/$slug'
+    | '/u/$username'
+    | '/explore'
     | '/dashboard/$snippetId'
     | '/dashboard/new'
+    | '/dashboard/starred'
     | '/dashboard'
+    | '/settings'
     | '/dashboard/$snippetId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -127,10 +179,15 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/auth/error'
+    | '/explore/$slug'
     | '/s/$slug'
+    | '/u/$username'
+    | '/explore'
     | '/dashboard/$snippetId'
     | '/dashboard/new'
+    | '/dashboard/starred'
     | '/dashboard'
+    | '/settings'
     | '/dashboard/$snippetId/edit'
   id:
     | '__root__'
@@ -139,10 +196,15 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/auth/error'
+    | '/explore/$slug'
     | '/s/$slug'
+    | '/u/$username'
+    | '/explore/'
     | '/_authenticated/dashboard/$snippetId'
     | '/_authenticated/dashboard/new'
+    | '/_authenticated/dashboard/starred'
     | '/_authenticated/dashboard/'
+    | '/_authenticated/settings/'
     | '/_authenticated/dashboard/$snippetId_/edit'
   fileRoutesById: FileRoutesById
 }
@@ -152,7 +214,10 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   AuthErrorRoute: typeof AuthErrorRoute
+  ExploreSlugRoute: typeof ExploreSlugRoute
   SSlugRoute: typeof SSlugRoute
+  UUsernameRoute: typeof UUsernameRoute
+  ExploreIndexRoute: typeof ExploreIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -185,11 +250,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/explore/': {
+      id: '/explore/'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/u/$username': {
+      id: '/u/$username'
+      path: '/u/$username'
+      fullPath: '/u/$username'
+      preLoaderRoute: typeof UUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/s/$slug': {
       id: '/s/$slug'
       path: '/s/$slug'
       fullPath: '/s/$slug'
       preLoaderRoute: typeof SSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/$slug': {
+      id: '/explore/$slug'
+      path: '/explore/$slug'
+      fullPath: '/explore/$slug'
+      preLoaderRoute: typeof ExploreSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/error': {
@@ -199,11 +285,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthErrorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/settings/': {
+      id: '/_authenticated/settings/'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard/': {
       id: '/_authenticated/dashboard/'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard/starred': {
+      id: '/_authenticated/dashboard/starred'
+      path: '/dashboard/starred'
+      fullPath: '/dashboard/starred'
+      preLoaderRoute: typeof AuthenticatedDashboardStarredRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard/new': {
@@ -233,14 +333,18 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardSnippetIdRoute: typeof AuthenticatedDashboardSnippetIdRoute
   AuthenticatedDashboardNewRoute: typeof AuthenticatedDashboardNewRoute
+  AuthenticatedDashboardStarredRoute: typeof AuthenticatedDashboardStarredRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
   AuthenticatedDashboardSnippetIdEditRoute: typeof AuthenticatedDashboardSnippetIdEditRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardSnippetIdRoute: AuthenticatedDashboardSnippetIdRoute,
   AuthenticatedDashboardNewRoute: AuthenticatedDashboardNewRoute,
+  AuthenticatedDashboardStarredRoute: AuthenticatedDashboardStarredRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   AuthenticatedDashboardSnippetIdEditRoute:
     AuthenticatedDashboardSnippetIdEditRoute,
 }
@@ -255,7 +359,10 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   AuthErrorRoute: AuthErrorRoute,
+  ExploreSlugRoute: ExploreSlugRoute,
   SSlugRoute: SSlugRoute,
+  UUsernameRoute: UUsernameRoute,
+  ExploreIndexRoute: ExploreIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

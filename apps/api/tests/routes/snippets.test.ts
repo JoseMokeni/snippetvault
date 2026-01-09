@@ -357,4 +357,82 @@ describe('Snippets API', () => {
       expect(res.status).toBe(404)
     })
   })
+
+  describe('POST /snippets/:id/fork', () => {
+    test('should fork a public snippet from another user', async () => {
+      const db = getTestDb()
+      const otherUser = await createTestUser(db, { email: 'other@example.com', username: 'other_user' })
+      const snippet = await createTestSnippet(db, otherUser.id, {
+        title: 'Original Public',
+        isPublic: true,
+        files: [{ filename: 'index.ts', content: 'code', language: 'typescript' }],
+        variables: [{ name: 'VAR', defaultValue: 'value' }],
+      })
+
+      const res = await app.request(`/snippets/${snippet.id}/fork`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${testUser.sessionToken}` },
+      })
+
+      expect(res.status).toBe(201)
+      const data = await res.json()
+      expect(data.snippet.title).toBe('Original Public') // Same title if no conflict
+      expect(data.snippet.id).not.toBe(snippet.id)
+      expect(data.snippet.files).toHaveLength(1)
+      expect(data.snippet.variables).toHaveLength(1)
+      expect(data.snippet.isPublic).toBe(false) // Forks are private by default
+      expect(data.snippet.forkedFromId).toBe(snippet.id)
+    })
+
+    test('should increment fork count on original', async () => {
+      const db = getTestDb()
+      const otherUser = await createTestUser(db, { email: 'fork_count@example.com', username: 'fork_count_user' })
+      const snippet = await createTestSnippet(db, otherUser.id, { isPublic: true })
+
+      await app.request(`/snippets/${snippet.id}/fork`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${testUser.sessionToken}` },
+      })
+
+      // Check fork count via explore
+      const exploreRes = await app.request('/public/explore')
+      const exploreData = await exploreRes.json()
+      const originalSnippet = exploreData.snippets.find((s: { id: string }) => s.id === snippet.id)
+      expect(originalSnippet.forkCount).toBe(1)
+    })
+
+    test('should not fork private snippet', async () => {
+      const db = getTestDb()
+      const otherUser = await createTestUser(db, { email: 'private@example.com', username: 'private_user' })
+      const snippet = await createTestSnippet(db, otherUser.id, { isPublic: false })
+
+      const res = await app.request(`/snippets/${snippet.id}/fork`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${testUser.sessionToken}` },
+      })
+
+      expect(res.status).toBe(404)
+    })
+
+    test('should not fork own snippet', async () => {
+      const db = getTestDb()
+      const snippet = await createTestSnippet(db, testUser.id, { isPublic: true })
+
+      const res = await app.request(`/snippets/${snippet.id}/fork`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${testUser.sessionToken}` },
+      })
+
+      expect(res.status).toBe(400)
+    })
+
+    test('should return 404 for non-existent snippet', async () => {
+      const res = await app.request('/snippets/non-existent/fork', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${testUser.sessionToken}` },
+      })
+
+      expect(res.status).toBe(404)
+    })
+  })
 })
