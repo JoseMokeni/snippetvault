@@ -8,7 +8,101 @@ import {
   Copy,
   Check,
 } from "lucide-react";
-import { SyntaxHighlighter } from "./syntax-highlighter";
+import CodeMirror, { EditorView } from "@uiw/react-codemirror";
+import { vscodeDark } from "@uiw/codemirror-theme-vscode";
+import { javascript } from "@codemirror/lang-javascript";
+import { python } from "@codemirror/lang-python";
+import { html } from "@codemirror/lang-html";
+import { css } from "@codemirror/lang-css";
+import { json } from "@codemirror/lang-json";
+import { markdown } from "@codemirror/lang-markdown";
+import { sql } from "@codemirror/lang-sql";
+import { xml } from "@codemirror/lang-xml";
+import { yaml } from "@codemirror/lang-yaml";
+import { rust } from "@codemirror/lang-rust";
+import { go } from "@codemirror/lang-go";
+import { java } from "@codemirror/lang-java";
+import { cpp } from "@codemirror/lang-cpp";
+import { php } from "@codemirror/lang-php";
+
+// Map language strings to CodeMirror extensions
+const getLanguageExtension = (language: string) => {
+  const languageMap: Record<string, () => ReturnType<typeof javascript>> = {
+    javascript: () => javascript({ jsx: true }),
+    typescript: () => javascript({ jsx: true, typescript: true }),
+    jsx: () => javascript({ jsx: true }),
+    tsx: () => javascript({ jsx: true, typescript: true }),
+    python: () => python(),
+    html: () => html(),
+    css: () => css(),
+    scss: () => css(),
+    sass: () => css(),
+    less: () => css(),
+    json: () => json(),
+    markdown: () => markdown(),
+    sql: () => sql(),
+    xml: () => xml(),
+    yaml: () => yaml(),
+    rust: () => rust(),
+    go: () => go(),
+    java: () => java(),
+    kotlin: () => java(),
+    cpp: () => cpp(),
+    c: () => cpp(),
+    csharp: () => cpp(),
+    php: () => php(),
+    ruby: () => python(),
+    bash: () => python(),
+    shell: () => python(),
+    dockerfile: () => python(),
+  };
+
+  const factory = languageMap[language.toLowerCase()];
+  return factory ? factory() : [];
+};
+
+// Custom theme for read-only viewer - matches app styling
+const viewerTheme = EditorView.theme({
+  "&": {
+    fontSize: "14px",
+    fontFamily: "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
+    backgroundColor: "transparent",
+  },
+  ".cm-content": {
+    padding: "8px 0",
+    caretColor: "transparent",
+  },
+  ".cm-gutters": {
+    backgroundColor: "transparent",
+    borderRight: "1px solid rgba(255, 255, 255, 0.1)",
+    color: "rgba(255, 255, 255, 0.3)",
+    paddingRight: "8px",
+  },
+  ".cm-gutter.cm-lineNumbers": {
+    minWidth: "40px",
+  },
+  ".cm-activeLineGutter": {
+    backgroundColor: "transparent",
+  },
+  ".cm-activeLine": {
+    backgroundColor: "transparent",
+  },
+  ".cm-selectionBackground": {
+    backgroundColor: "rgba(34, 211, 238, 0.2) !important",
+  },
+  "&.cm-focused .cm-selectionBackground": {
+    backgroundColor: "rgba(34, 211, 238, 0.3) !important",
+  },
+  ".cm-cursor": {
+    display: "none",
+  },
+  ".cm-scroller": {
+    overflow: "auto",
+  },
+  "&.cm-focused": {
+    outline: "none",
+  },
+});
 
 interface FileData {
   id?: string;
@@ -286,6 +380,18 @@ export function FileTreeViewer({
   // Use original content to show variables highlighted
   const displayContent = selectedFile ? selectedFile.content : "";
 
+  // CodeMirror extensions for the selected file
+  const extensions = useMemo(() => {
+    const language = selectedFile?.language || "plaintext";
+    const langExt = getLanguageExtension(language);
+    return [
+      viewerTheme,
+      EditorView.editable.of(false),
+      EditorView.lineWrapping,
+      ...(Array.isArray(langExt) ? langExt : [langExt]),
+    ];
+  }, [selectedFile?.language]);
+
   return (
     <div className="terminal-block rounded-lg overflow-hidden border border-border">
       {/* Mobile file selector button */}
@@ -389,11 +495,32 @@ export function FileTreeViewer({
               </div>
 
               {/* Code content */}
-              <div className="flex-1 overflow-auto p-2 sm:p-4 bg-bg-code">
-                <SyntaxHighlighter
-                  code={displayContent}
-                  language={selectedFile.language || "plaintext"}
-                  showLineNumbers
+              <div className="flex-1 overflow-hidden bg-bg-code">
+                <CodeMirror
+                  value={displayContent}
+                  theme={vscodeDark}
+                  extensions={extensions}
+                  readOnly={true}
+                  editable={false}
+                  height="100%"
+                  basicSetup={{
+                    lineNumbers: true,
+                    highlightActiveLineGutter: false,
+                    highlightActiveLine: false,
+                    foldGutter: false,
+                    dropCursor: false,
+                    allowMultipleSelections: false,
+                    indentOnInput: false,
+                    bracketMatching: false,
+                    closeBrackets: false,
+                    autocompletion: false,
+                    rectangularSelection: false,
+                    crosshairCursor: false,
+                    highlightSelectionMatches: false,
+                    searchKeymap: false,
+                    tabSize: 2,
+                  }}
+                  className="h-full [&_.cm-editor]:h-full [&_.cm-scroller]:!overflow-auto"
                 />
               </div>
             </>
