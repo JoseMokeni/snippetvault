@@ -39,6 +39,23 @@
 
 ---
 
+## Demo
+
+**Production app**: https://snippetvault.app  
+Try SnippetVault now - fully deployed and ready to use.
+
+> **Note:** The public instance is available for demonstration and evaluation only.
+
+**Quick Example Use Cases:**
+
+- 🐳 Docker development environments
+- ⚛️ React component libraries with types
+- 🔌 API endpoint boilerplates
+- 🛠️ Configuration file bundles
+- 📝 Project scaffolding templates
+
+---
+
 ## 🎯 Why SnippetVault?
 
 **Your project setups are assets.** SnippetVault helps you reuse them instead of rebuilding them.
@@ -140,19 +157,6 @@ Public profile pages showcasing user's snippets, stars, and contributions.
 Download as ZIP, copy to clipboard, or generate shareable links.
 
 ![Export Options](docs/assets/screenshots/export.png)
-
-## 🎬 Demo
-
-**Production app**: https://snippetvault.app
-Try SnippetVault now - fully deployed and ready to use.
-
-**Quick Example Use Cases:**
-
-- 🐳 Docker development environments
-- ⚛️ React component libraries with types
-- 🔌 API endpoint boilerplates
-- 🛠️ Configuration file bundles
-- 📝 Project scaffolding templates
 
 ## 🛠️ Tech Stack
 
@@ -354,12 +358,13 @@ See [.github/CI_CD.md](.github/CI_CD.md) for CI/CD pipeline documentation.
 
 ## 📖 Documentation
 
-| Document                                | Description                              |
-| --------------------------------------- | ---------------------------------------- |
-| [AGENTS.md](AGENTS.md)                  | Project directives & coding guidelines   |
-| [.github/CI_CD.md](.github/CI_CD.md)    | CI/CD pipeline & Docker deployment       |
-| [Architecture Docs](docs/architecture/) | Technical architecture & future features |
-| [Old Docs](docs/old/)                   | Project description, implementation plan |
+| Document                                             | Description                                           |
+| ---------------------------------------------------- | ----------------------------------------------------- |
+| [AGENTS.md](AGENTS.md)                               | Project directives & coding guidelines                |
+| [ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) | Technical decisions, trade-offs & scalability roadmap |
+| [.github/CI_CD.md](.github/CI_CD.md)                 | CI/CD pipeline & Docker deployment                    |
+| [Architecture Docs](docs/architecture/)              | Future features & technical specs                     |
+| [Old Docs](docs/old/)                                | Project description, implementation plan              |
 
 ## 🚀 Roadmap
 
