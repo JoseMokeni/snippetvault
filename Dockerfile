@@ -38,6 +38,10 @@ ENV PORT=3000
 
 EXPOSE 3000
 
+# Use Bun to check health endpoint
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD ["bun", "run", "-e", "fetch('http://localhost:3000/api/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
+
 WORKDIR /app/apps/api
 
 CMD ["bun", "run", "src/index.ts"]
