@@ -1,5 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Settings, User, AtSign, Check, Loader2 } from "lucide-react";
+import {
+  Settings,
+  User,
+  AtSign,
+  Check,
+  Loader2,
+  Trash2,
+  AlertTriangle,
+} from "lucide-react";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { showSuccess, handleApiError } from "@/lib/toast";
@@ -13,6 +21,9 @@ function SettingsPage() {
   const [usernameError, setUsernameError] = useState("");
   // Track if user has started editing (to avoid resetting their changes)
   const [editedUsername, setEditedUsername] = useState<string | null>(null);
+  // Delete account modal state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   // Fetch current user
   const { data: userData, isLoading } = useQuery({
@@ -54,6 +65,31 @@ function SettingsPage() {
     },
   });
 
+  // Delete account mutation
+  const deleteAccountMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/users/me", {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to delete account");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      // Clear all queries and redirect to home
+      queryClient.clear();
+      showSuccess("Account deleted successfully");
+      // Use window.location to ensure fresh session state
+      window.location.href = "/";
+    },
+    onError: (error) => {
+      handleApiError(error, "Failed to delete account");
+    },
+  });
+
   const validateUsername = (value: string) => {
     if (value.length < 3) {
       return "Username must be at least 3 characters";
@@ -83,6 +119,11 @@ function SettingsPage() {
       return; // No change
     }
     updateUsernameMutation.mutate(username);
+  };
+
+  const handleDeleteAccount = () => {
+    if (deleteConfirmText !== "DELETE") return;
+    deleteAccountMutation.mutate();
   };
 
   if (isLoading) {
@@ -206,6 +247,103 @@ function SettingsPage() {
           </p>
         </div>
       </div>
+
+      {/* Danger Zone */}
+      <div className="terminal-block rounded-lg p-6 mt-6 border-error/50">
+        <h2 className="font-display font-bold text-lg mb-4 flex items-center gap-2 text-error">
+          <AlertTriangle size={20} />
+          Danger Zone
+        </h2>
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h3 className="font-medium text-text-primary">Delete Account</h3>
+              <p className="text-text-secondary text-sm mt-1">
+                Permanently delete your account and all associated data. This
+                action cannot be undone.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="px-4 py-2 bg-error/10 border border-error text-error hover:bg-error hover:text-bg-primary transition-colors font-medium flex items-center gap-2 shrink-0"
+            >
+              <Trash2 size={16} />
+              Delete Account
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Delete Account Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-bg-secondary border border-border max-w-md w-full p-6 rounded-lg">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-error/10 rounded-lg">
+                <AlertTriangle size={24} className="text-error" />
+              </div>
+              <h2 className="font-display font-bold text-lg">Delete Account</h2>
+            </div>
+
+            <p className="text-text-secondary mb-4">
+              This will permanently delete your account, including:
+            </p>
+            <ul className="text-text-secondary text-sm mb-4 space-y-1 list-disc list-inside">
+              <li>All your snippets and files</li>
+              <li>Your profile and username</li>
+              <li>All stars you've given</li>
+              <li>Your session and login data</li>
+            </ul>
+
+            <p className="text-text-secondary text-sm mb-4">
+              Type{" "}
+              <span className="font-mono text-error font-bold">DELETE</span> to
+              confirm:
+            </p>
+
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) =>
+                setDeleteConfirmText(e.target.value.toUpperCase())
+              }
+              placeholder="Type DELETE"
+              className="w-full bg-bg-primary border border-border px-4 py-3 text-text-primary font-mono focus:outline-none focus:border-error mb-4"
+            />
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteConfirmText("");
+                }}
+                className="flex-1 px-4 py-3 border border-border text-text-primary hover:bg-bg-elevated transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={
+                  deleteConfirmText !== "DELETE" ||
+                  deleteAccountMutation.isPending
+                }
+                className={`flex-1 px-4 py-3 font-medium transition-colors flex items-center justify-center gap-2 ${
+                  deleteConfirmText === "DELETE"
+                    ? "bg-error text-white hover:bg-error/90"
+                    : "bg-bg-elevated text-text-tertiary cursor-not-allowed"
+                }`}
+              >
+                {deleteAccountMutation.isPending ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Trash2 size={16} />
+                )}
+                Delete Forever
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
